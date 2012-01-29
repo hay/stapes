@@ -1,0 +1,344 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Classy.js documentation</title>
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #333;
+            padding: 20px;
+            background: #eee;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 24px;
+        }
+
+        body > h1 {
+            font-family: Georgia;
+            color: #150683;
+            font-size: 48px;
+            letter-spacing: 1px;
+        }
+
+        pre {
+            border-left: 5px solid #999;
+            background: white;
+        }
+
+        h3 {
+            font-size: 24px;
+            color: #150683;
+            margin-top: 40px;
+        }
+
+        article {
+            margin: 20px 0;
+        }
+
+        article h1 {
+            font-size: 18px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            color: #666;
+        }
+
+        article h2 {
+            font-family: monospace;
+            font-size: 14px;
+            background: #eee;
+            padding: 10px;
+        }
+
+        p code {
+            background: white;
+            border: 1px solid #ccc;
+            padding: 1px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Classy.js</h1>
+
+    <p>A tiny MVC framework / class system</p>
+
+    <p>Provided 'Classy' is a global in your scope, write your Classy modules
+    like this</p>
+
+    <pre><code>
+    function Module(context) {
+        var module = Classy(), // this is the object we return at the end
+            privateVar; // you can define as many private variables as you like
+
+        function privateFunction() {
+            // Has access to all variables, but can't be reached outside this
+            // function
+        }
+
+        model.extend({
+            "init" : function() {
+                // It's common to have an 'init' function in your module and
+                // let it emit a 'ready' event
+                this.emit('ready');
+            }
+        });
+
+        return module;
+    }
+    </code></pre>
+
+    <p>Then, use it like this.</p>
+
+    <pre><code>
+    var module = Module({
+        "option1" : true
+    });
+
+    module.on('ready', function() {
+        console.log('woot! ready!');
+    });
+
+    module.init();
+    </code></pre>
+
+    <h3>Using it together with RequireJS and the Javascript server</h3>
+
+    <p>Classy is a submodule from the <code>util</code> module. You can use
+    it like this:</p>
+
+    <pre><code>
+    // 'module.js'
+    require(["vpro/util/${pom.version}/util"], function(util) {
+        return function(context) {
+            var module = util.Classy();
+
+            module.extend({
+                "hello" : function() {
+                    return "Hello " + context.name + "!";
+                }
+            });
+
+            return module;
+        };
+    });
+
+    // somewhere else
+    require(['module'], function(Module) {
+        var module = Module({
+            "name" : "Elvis"
+        });
+
+        console.log( module.hello() ); // 'Hello Elvis'
+    });
+    </code></pre>
+
+    <h3>General methods</h3>
+    <article>
+        <h1>extend</h1>
+
+        <h2>module.extend([context, ]object)</h2>
+
+        <p>Extend your module  by giving an
+        object. Keys with the same value will be overwritten. <code>this</code>
+        will be set to the objects context. When setting no <code>context</code>
+        the properties will be inserted in the current object. However, if you want
+        to insert properties 'deeper' into the object, you can specificy that
+        as the first parameter</p>
+
+        <pre><code>
+        module.extend({
+            "names" : {
+                "woman" : ['claire', 'alice']
+            },
+
+            "sayName" : function(i) {
+                console.log( "Hello " + this.names.woman[i] + "!" );
+            }
+        });
+
+        module.extend(module.names, {
+            "man" : ['clark', 'elvis']
+        });
+
+        console.log(module.names);
+        // Gives:
+        // {
+        //   "woman" : ['claire', 'alice'],
+        //   "man" : ['clark', 'elvis']
+        // }
+        </code></pre>
+    </article>
+
+    <h3>Events</h3>
+    <article>
+        <h1>on</h1>
+
+        <h2>module.on(eventName, handler, context)</h2>
+        <h2>module.on(object, context);</h2>
+
+        <p>Event listener. Events are only thrown on this object and won't
+        be thrown in other Classy objects. <code>handler</code> will be called
+        with two arguments: <code>data</code>, which may contain any data, and an
+        <code>eventObject</code> that contains some useful information about the
+        event, such as the scope, target and event name</p>
+
+        <pre><code>
+        module.on('ready', function() {
+            console.log('your module is ready!');
+        });
+
+        module.on({
+            "talk" : function() {
+                console.log('your module is talking!');
+            },
+
+            "walk" : function() {
+                console.log('your module is walking!');
+            }
+        })
+        </code></pre>
+    </article>
+
+    <article>
+        <h1>emit</h1>
+
+        <h2>module.emit(eventName[, data])</h2>
+
+        <p>Trigger an event. <code>eventName</code> can be a space seperated
+        string if you want to trigger more events. <code>data</code> can be any
+        Javascript variable you want, and will be passed to any event listeners</p>
+
+        <code><pre>
+        module.extend({
+            "sleep" : function() {
+                this.emit('sleeping', 'very deep');
+            }
+        });
+        </pre></code>
+    </article>
+
+    <h3>Data methods</h3>
+    <article>
+        <h1>configureAttributes</h1>
+
+        <h2>module.configureAttributes( attributeArray )</h2>
+        <h2>module.configureAttributes( attributeObject )</h2>
+
+        <p>Add private attributes to the object that can later be modified by
+        using <code>get</code>, <code>set</code> and so on. Note that these
+        won't become a part of your object, you can't reach them simply by using
+        module.keyName;</p>
+
+        <p>When given an array all attributes will simply be added. When giving an
+        object you can add a function as the value that will be used for validation</p>
+
+        <code><pre>
+        module.configAttributes(['name']);
+
+        module.set('name', 'Elvis');
+
+        module.get('name'); // 'Elvis'
+
+        module.configAttributes({
+            "profession" : function(value) {
+                return value === "singer";
+            }
+        });
+
+        module.set('profession', 'Barber'); // will return 'false'
+
+        module.get('profession'); // 'null'
+        </pre></code>
+    </article>
+
+    <article>
+        <h1>delete</h1>
+
+        <h2>module.delete( key );</h2>
+
+        <p>Deletes an attribute. Triggers <code>delete</code> and
+        <code>change</code> events.</p>
+    </article>
+
+    <article>
+        <h1>get</h1>
+
+        <h2>module.get( key );</h2>
+
+        <p>Gets an attribute. If the item is not available will return
+        <code>null</code></p>
+    </article>
+
+    <article>
+        <h1>getAll</h1>
+
+        <h2>module.getAll();</h2>
+
+        <p>Returns all attributes as an object.</p>
+    </article>
+
+    <article>
+        <h1>set</h1>
+
+        <h2>module.set(key, value);</h2>
+        <h2>module.set(object);</h2>
+
+        <p>Sets attributes. You can either set one attribute, or a whole
+        set of attributes by using an object.</p>
+
+        <p>Every attribute will trigger a <code>change</code> event. A key
+        that doesn't exist will trigger a <code>create</code> event, a key
+        that does exist will trigger an <code>update</code> event.</p>
+
+        <p>All events will have the key of the attribute as their event value.</p>
+
+        <pre><code>
+            module.on({
+                "change" : function(key) {
+                    console.log('Something happened with ' + key);
+                },
+
+                "create" : function(key) {
+                    console.log("New attribute " + key + " added!");
+                },
+
+                "update" : function(key) {
+                    console.log("Attribute " + key + " was updated!");
+                }
+            });
+
+            module.set('name', 'Elvis'); // will trigger 'change' and 'create' events
+            module.set('name', 'Johnny'); // will trigger 'change' and 'update' events
+        </code></pre>
+    </article>
+
+    <article>
+        <h1>filter</h1>
+
+        <h2>module.filter( function );</h2>
+
+        <p>Gets an attribute using a custom function.</p>
+
+        <pre><code>
+            module.set('singer', {
+                'name' : 'Elvis',
+                'instrument' : 'Guitar'
+            });
+
+            var singer = module.filter(function(item) {
+                return item.name === "Elvis";
+            });
+        </code></pre>
+    </article>
+
+    <article>
+        <h1>has</h1>
+
+        <h2>module.has( key );</h2>
+
+        <p>Checks if a key is available and returns true or false.</p>
+    </article>
+</body>
+</html>
