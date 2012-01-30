@@ -6,10 +6,15 @@ function TodoController() {
     todoModel.on({
         "change" : function() {
             todoView.render( todoModel.getAll() );
+            todoView.showLeft( todoModel.getLeft() );
         }
     });
 
     todoView.on({
+        "clearcompleted" : function() {
+            todoModel.clearCompleted();
+        },
+
         "taskadd" : function(task) {
             todoModel.addTask(task);
             todoView.clearInput();
@@ -17,6 +22,18 @@ function TodoController() {
 
         "taskdelete" : function(id) {
             todoModel.delete(id);
+        },
+
+        "taskdone" : function(id) {
+            var todo = todoModel.get(id);
+            todo.done = true;
+            todoModel.set(id, todo);
+        },
+
+        "taskundone" : function(id) {
+            var todo = todoModel.get(id);
+            todo.done = false;
+            todoModel.set(id, todo);
         }
     })
 

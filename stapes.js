@@ -28,16 +28,6 @@
             });
         }
 
-        function map(arr, fn) {
-            var newArr = [];
-
-            each(toArray(arr), function(item) {
-                newArr.push( fn(item) );
-            });
-
-            return newArr;
-        }
-
         function toArray(arr) {
             return Array.prototype.slice.call(arr, 0);
         }
@@ -138,11 +128,15 @@
             },
 
             filter : function(fn) {
-                return map(attributes, function(item) {
-                    if (fn.call(this, item)) {
-                        return item;
+                var items = [];
+
+                each(attributes, function(item) {
+                    if (fn(item)) {
+                        items.push(item);
                     }
                 });
+
+                return items;
             },
 
             get : function(key) {

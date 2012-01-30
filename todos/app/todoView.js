@@ -11,6 +11,15 @@ function TodoView() {
         $("#tasks").on('click', '.destroy', function() {
             todoView.emit('taskdelete', $(this).parents('.item').data('id'));
         });
+
+        $("#tasks").on('click', 'input[type=checkbox]', function(e) {
+            var event = $(this).is(':checked') ? 'taskdone' : 'taskundone';
+            todoView.emit(event, $(this).parents('.item').data('id'));
+        });
+
+        $(".clear").on('click', function() {
+            todoView.emit('clearcompleted');
+        })
     }
 
     function loadTemplates(cb) {
@@ -42,6 +51,10 @@ function TodoView() {
             $.each(tasks, function(i, task) {
                 $("#tasks .items").append( taskTmpl(task) );
             });
+        },
+
+        "showLeft" : function(left) {
+            $(".countVal").text( left );
         }
     });
 
