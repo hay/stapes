@@ -6,10 +6,17 @@
 
         /** Utility functions
          *
-         *  Note that these aren't that failsafe as the options in libraries
-         *  such as Underscore.js, so that's why they're very simple and not
-         *  usable outside this scope
+         *  Note that these functions are only used inside Stapes, and therefore
+         *  aren't that failsafe as the options in libraries
+         *  such as Underscore.js, so that's why they're not usable outside
+         *  the private scope.
          */
+        function bind(fn, ctx) {
+            return function() {
+                return fn.apply(ctx, arguments);
+            };
+        }
+
         function each(obj, fn) {
             for (var key in obj) {
                 fn( obj[key] );
@@ -91,11 +98,13 @@
                 }
             },
 
-            "delete" : function(id) {
-                if (this.has(id)) {
-                    delete attributes[id];
-                    this.emit('delete change');
-                }
+            "delete" : function(ids) {
+                each(toArray(ids), bind(function(id) {
+                    if (this.has(id)) {
+                        delete attributes[id];
+                        this.emit('delete change');
+                    }
+                }, this));
             },
 
             emit : function(types, data) {
@@ -144,7 +153,7 @@
             },
 
             getAll : function() {
-                return attributes
+                return attributes;
             },
 
             has : function(key) {
@@ -193,16 +202,8 @@
                 setAttribute.call(this, uuid, value);
             },
 
-            set : function(objOrKey, value) {
-                if (typeof objOrKey === "string") {
-                    // Single value
-                    setAttribute.call(this, objOrKey, value);
-                } else {
-                    // Multiple values
-                    each(objOrKey, function(value, key) {
-                         setAttribute.call(this, key, value);
-                    });
-                }
+            set : function(key, value) {
+                setAttribute.call(this, key, value);
             }
         };
 

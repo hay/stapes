@@ -1,10 +1,12 @@
 function TodoController() {
     var todoController = Stapes(),
         todoModel = TodoModel(),
-        todoView = TodoView();
+        todoView = TodoView(),
+        todoStore = TodoStore();
 
     todoModel.on({
         "change" : function() {
+            todoStore.save( todoModel.getAll() );
             todoView.render( todoModel.getAll() );
             todoView.showLeft( todoModel.getLeft() );
         }
@@ -13,6 +15,16 @@ function TodoController() {
     todoView.on({
         "clearcompleted" : function() {
             todoModel.clearCompleted();
+        },
+
+        "ready" : function() {
+            var data = todoStore.load();
+            if (data) {
+                for (var key in data) {
+                    var value = data[key];
+                    todoModel.set(key, value);
+                }
+            }
         },
 
         "taskadd" : function(task) {
@@ -41,6 +53,7 @@ function TodoController() {
         "init" : function() {
             todoModel.init();
             todoView.init();
+            todoStore.init();
         }
     });
 
