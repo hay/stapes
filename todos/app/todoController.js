@@ -33,7 +33,7 @@ function TodoController() {
         },
 
         "taskdelete" : function(id) {
-            todoModel.delete(id);
+            todoModel.remove(id);
         },
 
         "taskdone" : function(id) {

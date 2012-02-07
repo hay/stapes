@@ -10,11 +10,9 @@ function TodoModel() {
         },
 
         "clearCompleted" : function() {
-            todoModel.delete(
-                this.filter(function(item) {
-                    return item.done === true;
-                })
-            );
+            todoModel.remove(function(item) {
+                return item.done === true;
+            });
         },
 
         "getLeft" : function() {

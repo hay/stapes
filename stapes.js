@@ -19,7 +19,7 @@
 
         function each(obj, fn) {
             for (var key in obj) {
-                fn( obj[key] );
+                fn( obj[key], key );
             }
         }
 
@@ -96,15 +96,6 @@
                         };
                     });
                 }
-            },
-
-            "delete" : function(ids) {
-                each(toArray(ids), bind(function(id) {
-                    if (this.has(id)) {
-                        delete attributes[id];
-                        this.emit('delete change');
-                    }
-                }, this));
             },
 
             emit : function(types, data) {
@@ -201,6 +192,29 @@
 
                 setAttribute.call(this, uuid, value);
             },
+
+            remove : function(input) {
+                if (typeof input === "function") {
+                    each(attributes, bind(function(item, key) {
+                        if (input(item)) {
+                            delete attributes[key];
+                            this.emit('delete change');
+                        }
+                    }, this));
+                } else {
+                    if (typeof input === "string") {
+                        input = [input];
+                    }
+
+                    each(toArray(input), bind(function(id) {
+                        if (this.has(id)) {
+                            delete attributes[id];
+                            this.emit('delete change');
+                        }
+                    }, this));
+                }
+            },
+
 
             set : function(key, value) {
                 setAttribute.call(this, key, value);
