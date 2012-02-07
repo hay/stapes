@@ -139,8 +139,15 @@
                 return items;
             },
 
-            get : function(key) {
-                return this.has(key) ? attributes[key] : null;
+            get : function(input) {
+                if (typeof input === "string") {
+                    return this.has(input) ? attributes[input] : null;
+                } else if (typeof input === "function") {
+                    var items = this.filter(input);
+                    if (items.length) {
+                        return items.length[0];
+                    }
+                }
             },
 
             getAll : function() {

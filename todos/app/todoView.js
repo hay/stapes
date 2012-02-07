@@ -53,6 +53,14 @@ function TodoView() {
             });
         },
 
+        "showClearCompleted" : function(bool) {
+            if (bool) {
+                $(".clear").show();
+            } else {
+                $(".clear").hide();
+            }
+        },
+
         "showLeft" : function(left) {
             $(".countVal").text( left );
         }

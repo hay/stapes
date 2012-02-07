@@ -9,6 +9,10 @@ function TodoController() {
             todoStore.save( todoModel.getAll() );
             todoView.render( todoModel.getAll() );
             todoView.showLeft( todoModel.getLeft() );
+        },
+
+        "change ready" : function() {
+            todoView.showClearCompleted( todoModel.getLeft() > 0);
         }
     });
 
