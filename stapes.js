@@ -206,11 +206,19 @@
 
     // This library can be used as an AMD module, a Node.js module, or an
     // old fashioned global
-    if (typeof module !== "undefined" && module.exports) {
-        module.exports = Stapes;
-    } else if (typeof define !== "undefined") {
-        define( Stapes );
+    if (typeof exports !== "undefined") {
+        // Server
+        if (typeof module !== "undefined" && module.exports) {
+            exports = module.exports = Stapes;
+        }
+        exports.Stapes = Stapes;
+    } else if (typeof define === "function" && define.amd) {
+        // AMD
+        define(function() {
+            return Stapes;
+        });
     } else {
+        // Global scope
         window.Stapes = Stapes;
     }
 })();
