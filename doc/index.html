@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Stapes.js documentation</title>
+    <title>Stapes.js - a (really) tiny Javascript MVC microframework</title>
     <style>
         body {
             font-family: Helvetica, Arial, sans-serif;
@@ -62,7 +62,7 @@
 <body>
     <h1>Stapes.js</h1>
 
-    <p>A tiny MVC framework / class system</p>
+    <p>A (really) tiny Javascript MVC microframework</p>
 
     <p>Provided 'Stapes' is a global in your scope, write your Stapes modules
     like this</p>
@@ -218,45 +218,22 @@
 
     <h3>Data methods</h3>
     <article>
-        <h1>configureAttributes</h1>
+        <h1>remove</h1>
 
-        <h2>module.configureAttributes( attributeArray )</h2>
-        <h2>module.configureAttributes( attributeObject )</h2>
-
-        <p>Add private attributes to the object that can later be modified by
-        using <code>get</code>, <code>set</code> and so on. Note that these
-        won't become a part of your object, you can't reach them simply by using
-        module.keyName;</p>
-
-        <p>When given an array all attributes will simply be added. When giving an
-        object you can add a function as the value that will be used for validation</p>
-
-        <code><pre>
-        module.configAttributes(['name']);
-
-        module.set('name', 'Elvis');
-
-        module.get('name'); // 'Elvis'
-
-        module.configAttributes({
-            "profession" : function(value) {
-                return value === "singer";
-            }
-        });
-
-        module.set('profession', 'Barber'); // will return 'false'
-
-        module.get('profession'); // 'null'
-        </pre></code>
-    </article>
-
-    <article>
-        <h1>delete</h1>
-
-        <h2>module.delete( key );</h2>
+        <h2>module.remove( key );</h2>
+        <h2>module.remove( function );</h2>
 
         <p>Deletes an attribute. Triggers <code>delete</code> and
         <code>change</code> events.</p>
+
+        <p>You can either use a <code>key</code> as an argument or a
+        <code>function</code></p>
+
+        <code><pre>
+        module.remove(function(item) {
+            return item.done === true;
+        });
+        </pre></code>
     </article>
 
     <article>
@@ -280,10 +257,10 @@
         <h1>set</h1>
 
         <h2>module.set(key, value);</h2>
-        <h2>module.set(object);</h2>
+        <h2>module.set(value);</h2>
 
-        <p>Sets attributes. You can either set one attribute, or a whole
-        set of attributes by using an object.</p>
+        <p>Sets attributes. You can either set one attribute, or 'push' an
+        variable that will automatically be assigned an uuid.</p>
 
         <p>Every attribute will trigger a <code>change</code> event. A key
         that doesn't exist will trigger a <code>create</code> event, a key

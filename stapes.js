@@ -56,13 +56,6 @@
         }
 
         function setAttribute(key, value) {
-            if (attributes[key] && attributes[key].validate) {
-                if (!attributes[key].validate.call(this, value)) {
-                    this.emit('validationerror', key);
-                    return false;
-                }
-            }
-
             // We need to do this before we actually add the item :)
             var itemExists = this.has(key);
 
@@ -80,24 +73,6 @@
         }
 
         Module.prototype = {
-            configureAttributes : function(attributes) {
-                if (isArray(attributes)) {
-                    // 'Dumb' attributes without a validation function
-                    each(attributes, function(attribute) {
-                        attribute[ attribute ] = {
-                            "key" : attribute
-                        };
-                    });
-                } else {
-                    each(attributes, function(validate, attribute) {
-                        attributes[ attribute ] = {
-                            "key" : attribute,
-                            "validate" : validate
-                        };
-                    });
-                }
-            },
-
             emit : function(types, data) {
                 data = data || null;
 
