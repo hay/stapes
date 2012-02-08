@@ -12,7 +12,7 @@ function TodoController() {
         },
 
         "change ready" : function() {
-            todoView.showClearCompleted( todoModel.getLeft() > 0);
+            todoView.showClearCompleted( todoModel.getDone() > 0);
         }
     });
 

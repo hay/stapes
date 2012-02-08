@@ -15,6 +15,12 @@ function TodoModel() {
             });
         },
 
+        "getDone" : function() {
+            return this.filter(function(item) {
+                return item.done === true;
+            }).length;
+        },
+
         "getLeft" : function() {
             return this.filter(function(item) {
                 return item.done === false;
