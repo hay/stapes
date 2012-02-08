@@ -65,11 +65,17 @@
             // Throw a generic event
             this.emit('change', key);
 
+            // And a namespaced event as well, NOTE that we pass value instead of
+            // key here!
+            this.emit('change:' + key, value);
+
             // Also throw a specific event for this type of set
-            this.emit(
-                itemExists ? 'update' : 'create',
-                key
-            );
+            var specificEvent = itemExists ? 'update' : 'create';
+
+            this.emit(specificEvent, key);
+
+            // And a namespaced event as well, NOTE that we pass value instead of key
+            this.emit(specificEvent + ':' + key, value);
         }
 
         Module.prototype = {
