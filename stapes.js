@@ -192,14 +192,6 @@
                 }
             },
 
-            // akin to set(), but with a single value
-            push : function(value) {
-                var uuid = makeUuid();
-                value.id = uuid;
-
-                setAttribute.call(this, uuid, value);
-            },
-
             remove : function(input) {
                 if (typeof input === "function") {
                     each(attributes, bind(function(item, key) {
@@ -224,6 +216,12 @@
 
 
             set : function(key, value) {
+                // If only key is given, make a uuid for key and use key as value
+                if (typeof value === "undefined") {
+                    value = key;
+                    value.id = key = makeUuid();
+                }
+
                 setAttribute.call(this, key, value);
             }
         };
