@@ -3,7 +3,7 @@ function TodoModel() {
 
     todoModel.extend({
         "addTask" : function(name) {
-            this.set({
+            this.push({
                 "done" : false,
                 "name" : name
             });

@@ -48,7 +48,8 @@ function TodoView() {
         "render" : function(tasks) {
             $("#tasks .items").empty();
 
-            $.each(tasks, function(i, task) {
+            $.each(tasks, function(id, task) {
+                task.id = id;
                 $("#tasks .items").append( taskTmpl(task) );
             });
         },
