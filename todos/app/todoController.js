@@ -22,13 +22,7 @@ function TodoController() {
         },
 
         "ready" : function() {
-            var data = todoStore.load();
-            if (data) {
-                for (var key in data) {
-                    var value = data[key];
-                    todoModel.set(key, value);
-                }
-            }
+            todoModel.set( todoStore.load() );
         },
 
         "taskadd" : function(task) {
@@ -40,15 +34,9 @@ function TodoController() {
             todoModel.remove(id);
         },
 
-        "taskdone" : function(id) {
+        "taskdone taskundone" : function(id, e) {
             var todo = todoModel.get(id);
-            todo.done = true;
-            todoModel.set(id, todo);
-        },
-
-        "taskundone" : function(id) {
-            var todo = todoModel.get(id);
-            todo.done = false;
+            todo.done = e.type === "taskdone";
             todoModel.set(id, todo);
         }
     })

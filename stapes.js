@@ -220,8 +220,14 @@
             },
 
 
-            set : function(key, value) {
-                setAttribute.call(this, key, value);
+            set : function(objOrKey, value) {
+                if (value) {
+                    setAttribute.call(this, objOrKey, value);
+                } else {
+                    each(objOrKey, bind(function(value, key) {
+                        setAttribute.call(this, key, value);
+                    }, this));
+                }
             }
         };
 
