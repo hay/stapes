@@ -55,11 +55,7 @@ function TodoView() {
         },
 
         "showClearCompleted" : function(bool) {
-            if (bool) {
-                $(".clear").show();
-            } else {
-                $(".clear").hide();
-            }
+            $(".clear").toggle(bool);
         },
 
         "showLeft" : function(left) {

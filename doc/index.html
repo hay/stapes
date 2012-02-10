@@ -258,9 +258,12 @@
         <h1>set</h1>
 
         <h2>module.set(key, value);</h2>
+        <h2>module.set(object);</h2>
 
         <p>Sets an attribute. Use <code>push</code> if you want to 'push' a value
         with a random uuid, for collections</p>
+
+        <p>To set multiple attributes in one go, use an object as the first argument.</p>
 
         <p>Every attribute will trigger a <code>change</code> event. A key
         that doesn't exist will trigger a <code>create</code> event, a key
@@ -285,6 +288,10 @@
 
             module.set('name', 'Elvis'); // will trigger 'change' and 'create' events
             module.set('name', 'Johnny'); // will trigger 'change' and 'update' events
+            module.set({
+                "name" : "Elvis",
+                "instrument" : "guitar"
+            });
         </code></pre>
     </article>
 
