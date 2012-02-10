@@ -55,6 +55,19 @@
             });
         }
 
+        function emitEvents(type, data, explicitType) {
+            explicitType = explicitType || false;
+
+            each(eventHandlers[type], function(event) {
+                var scope = (event.scope) ? event.scope : this;
+                if (explicitType) {
+                    event.type = explicitType;
+                }
+                event.scope = scope;
+                event.handler.call(event.scope, data, event);
+            });
+        }
+
         function setAttribute(key, value) {
             // We need to do this before we actually add the item :)
             var itemExists = this.has(key);
@@ -82,15 +95,15 @@
             emit : function(types, data) {
                 data = data || null;
 
-                each(types.split(" "), function(type) {
+                each(types.split(" "), bind(function(type) {
+                    if (eventHandlers["all"]) {
+                        emitEvents.call(this, "all", data, type);
+                    }
+
                     if (!eventHandlers[type]) return;
 
-                    each(eventHandlers[type], function(event) {
-                        var scope = (event.scope) ? event.scope : this;
-                        event.scope = scope;
-                        event.handler.call(event.scope, data, event);
-                    });
-                });
+                    emitEvents.call(this, type, data);
+                }, this));
             },
 
             extend : function(objectOrValues, valuesIfObject) {
