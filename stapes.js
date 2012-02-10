@@ -174,8 +174,14 @@
             },
 
             // Akin to set(), but makes a unique id
-            push : function(value) {
-                setAttribute.call(this, makeUuid(), value);
+            push : function(input) {
+                if (isArray(input)) {
+                    each(input, function(value) {
+                        setAttribute.call(this, makeUuid(), value);
+                    });
+                } else {
+                    setAttribute.call(this, makeUuid(), input);
+                }
             },
 
             remove : function(input) {

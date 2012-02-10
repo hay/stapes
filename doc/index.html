@@ -18,6 +18,7 @@
 
         body > h1 {
             font-family: Georgia;
+            font-style: italic;
             color: #150683;
             font-size: 48px;
             letter-spacing: 1px;
@@ -257,10 +258,9 @@
         <h1>set</h1>
 
         <h2>module.set(key, value);</h2>
-        <h2>module.set(value);</h2>
 
-        <p>Sets attributes. You can either set one attribute, or 'push' an
-        variable that will automatically be assigned an uuid.</p>
+        <p>Sets an attribute. Use <code>push</code> if you want to 'push' a value
+        with a random uuid, for collections</p>
 
         <p>Every attribute will trigger a <code>change</code> event. A key
         that doesn't exist will trigger a <code>create</code> event, a key
@@ -286,6 +286,19 @@
             module.set('name', 'Elvis'); // will trigger 'change' and 'create' events
             module.set('name', 'Johnny'); // will trigger 'change' and 'update' events
         </code></pre>
+    </article>
+
+    <article>
+        <h1>push</h1>
+
+        <h2>module.push( value );</h2>
+        <h2>module.push( array );</h2>
+
+        <p>Sets a value, automatically generates an unique id</p>
+
+        <p>You can also push an array of values.</p>
+
+        <p>Behaves exactly the same as <code>set</code>, but doesn't need a key.</p>
     </article>
 
     <article>
