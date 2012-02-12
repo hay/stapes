@@ -1,4 +1,4 @@
-define(["../../stapes", "lib/mustache", "lib/jquery"], function(Stapes, Mustache) {
+define(["../../stapes", "../lib/mustache", "../lib/jquery"], function(Stapes, Mustache) {
     var $ = jQuery;
 
     var todoView = Stapes.create(),
