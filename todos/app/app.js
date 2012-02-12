@@ -1,2 +1,2 @@
-var todoController = TodoController();
+var todoController = TodoController.create();
 todoController.init();

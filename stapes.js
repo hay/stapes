@@ -92,6 +92,10 @@
         }
 
         Module.prototype = {
+            create : function() {
+                return new Module();
+            },
+
             emit : function(types, data) {
                 data = data || null;
 
@@ -251,21 +255,27 @@
         return new Module();
     }
 
+    var initalizer = {
+        "create" : function() {
+            return Stapes();
+        }
+    };
+
     // This library can be used as an AMD module, a Node.js module, or an
     // old fashioned global
     if (typeof exports !== "undefined") {
         // Server
         if (typeof module !== "undefined" && module.exports) {
-            exports = module.exports = Stapes;
+            exports = module.exports = initalizer;
         }
         exports.Stapes = Stapes;
     } else if (typeof define === "function" && define.amd) {
         // AMD
         define(function() {
-            return Stapes;
+            return initalizer;
         });
     } else {
         // Global scope
-        window.Stapes = Stapes;
+        window.Stapes = initalizer;
     }
 })();
