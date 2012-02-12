@@ -37,6 +37,7 @@ function TodoView() {
 
         "init" : function() {
             bindEventHandlers();
+
             loadTemplates(function(tmpl) {
                 taskTmpl = tmpl;
                 todoView.emit('ready');

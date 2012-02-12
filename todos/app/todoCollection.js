@@ -35,7 +35,7 @@ function TodoCollection() {
                 return item.get('done') === false;
             }).length;
         }
-    })
+    });
 
     return todoCollection;
 }

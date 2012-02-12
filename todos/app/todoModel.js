@@ -26,7 +26,7 @@ function TodoModel() {
                 return item.done === false;
             }).length;
         }
-    })
+    });
 
     return todoModel;
 }
