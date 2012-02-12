@@ -7,7 +7,7 @@ function TodoController() {
     todoModel.on({
         "change" : function() {
             todoStore.save( todoModel.getAll() );
-            todoView.render( todoModel.getAll() );
+            todoView.render( todoModel.getAllAsArray() );
             todoView.showLeft( todoModel.getLeft() );
         },
 
@@ -35,9 +35,9 @@ function TodoController() {
         },
 
         "taskdone taskundone" : function(id, e) {
-            var todo = todoModel.get(id);
-            todo.done = e.type === "taskdone";
-            todoModel.set(id, todo);
+            todoModel.update(id, function(item) {
+                item.done = e.type === "taskdone";
+            });
         }
     })
 

@@ -148,6 +148,17 @@
                 return attributes;
             },
 
+            getAllAsArray : function() {
+                var arr = [];
+                each(attributes, function(value, key) {
+                    value.id = key;
+                    arr.push(value);
+                });
+
+                return arr;
+
+            },
+
             has : function(key) {
                 return (typeof attributes[key] !== "undefined");
             },
@@ -228,6 +239,12 @@
                         setAttribute.call(this, key, value);
                     }, this));
                 }
+            },
+
+            update : function(key, fn) {
+                var item = this.get(key);
+                fn(item);
+                setAttribute.call(this, key, item);
             }
         };
 

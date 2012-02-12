@@ -24,11 +24,9 @@ function TodoView() {
 
     function loadTemplates(cb) {
         $.get(window.location + 'templates/task.html', function(tmpl) {
-            cb(
-                function(view) {
-                    return Mustache.to_html(tmpl, view);
-                }
-            );
+            cb(function(view) {
+                return Mustache.to_html(tmpl, view);
+            });
         });
     }
 
@@ -46,12 +44,8 @@ function TodoView() {
         },
 
         "render" : function(tasks) {
-            $("#tasks .items").empty();
-
-            $.each(tasks, function(id, task) {
-                task.id = id;
-                $("#tasks .items").append( taskTmpl(task) );
-            });
+            var html = taskTmpl({ "tasks" : tasks });
+            $("#tasks .items").html( html );
         },
 
         "showClearCompleted" : function(bool) {
