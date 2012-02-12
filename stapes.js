@@ -27,6 +27,10 @@
             return Object.prototype.toString.call( val ) === "[object Array]";
         }
 
+        function isObject(val) {
+            return (typeof val === "object") && (!isArray(val) && val !== null);
+        }
+
         // from http://stackoverflow.com/a/2117523/152809
         function makeUuid() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -156,8 +160,12 @@
 
             getAllAsArray : function() {
                 var arr = [];
+
                 each(attributes, function(value, key) {
-                    value.id = key;
+                    if (isObject(value) {
+                        value.id = key;
+                    }
+
                     arr.push(value);
                 });
 
