@@ -1,53 +1,52 @@
-function TodoController() {
-    var todoController = Stapes(),
-        todoModel = TodoModel(),
-        todoView = TodoView(),
-        todoStore = TodoStore();
+var TodoController = Stapes.create().extend({
+    "bindEventHandlers" : function() {
+        this.model.on({
+            "change" : function() {
+                this.store.save( this.model.getAll() );
+                this.view.render( this.model.getAllAsArray() );
+                this.view.showLeft( this.model.getLeft() );
+            },
 
-    todoModel.on({
-        "change" : function() {
-            todoStore.save( todoModel.getAll() );
-            todoView.render( todoModel.getAllAsArray() );
-            todoView.showLeft( todoModel.getLeft() );
-        },
+            "change ready" : function() {
+                this.view.showClearCompleted( this.model.getDone() > 0);
+            }
+        }, this);
 
-        "change ready" : function() {
-            todoView.showClearCompleted( todoModel.getDone() > 0);
-        }
-    });
+        this.view.on({
+            "clearcompleted" : function() {
+                this.model.clearCompleted();
+            },
 
-    todoView.on({
-        "clearcompleted" : function() {
-            todoModel.clearCompleted();
-        },
+            "ready" : function() {
+                this.model.set( this.store.load() );
+            },
 
-        "ready" : function() {
-            todoModel.set( todoStore.load() );
-        },
+            "taskadd" : function(task) {
+                this.model.addTask(task);
+                this.view.clearInput();
+            },
 
-        "taskadd" : function(task) {
-            todoModel.addTask(task);
-            todoView.clearInput();
-        },
+            "taskdelete" : function(id) {
+                this.model.remove(id);
+            },
 
-        "taskdelete" : function(id) {
-            todoModel.remove(id);
-        },
+            "taskdone taskundone" : function(id, e) {
+                this.model.update(id, function(item) {
+                    item.done = e.type === "taskdone";
+                });
+            }
+        }, this);
+    },
 
-        "taskdone taskundone" : function(id, e) {
-            todoModel.update(id, function(item) {
-                item.done = e.type === "taskdone";
-            });
-        }
-    })
+    "init" : function() {
+        this.model = TodoModel.create();
+        this.view = TodoView.create();
+        this.store = TodoStore.create();
 
-    todoController.extend({
-        "init" : function() {
-            todoModel.init();
-            todoView.init();
-            todoStore.init();
-        }
-    });
+        this.bindEventHandlers();
 
-    return todoController;
-}
+        this.model.init();
+        this.view.init();
+        this.store.init();
+    }
+});

@@ -63,76 +63,107 @@
 <body>
     <h1>Stapes.js</h1>
 
-    <p>A (really) tiny Javascript MVC microframework</p>
+    <p>A (really) tiny Javascript MVC microframework.</p>
 
     <p>Provided 'Stapes' is a global in your scope, write your Stapes modules
     like this</p>
 
     <pre><code>
-    function Module(context) {
-        var module = Stapes(), // this is the object we return at the end
-            privateVar; // you can define as many private variables as you like
+    var Module = Stapes.create();
 
-        function privateFunction() {
-            // Has access to all variables, but can't be reached outside this
-            // function
+    Module.extend({
+        "init" : function() {
+            this.emit('ready');
         }
-
-        model.extend({
-            "init" : function() {
-                // It's common to have an 'init' function in your module and
-                // let it emit a 'ready' event
-                this.emit('ready');
-            }
-        });
-
-        return module;
-    }
+    });
     </code></pre>
 
     <p>Then, use it like this.</p>
 
     <pre><code>
-    var module = Module({
-        "option1" : true
-    });
+    var module = Module.create();
 
     module.on('ready', function() {
         console.log('woot! ready!');
     });
 
-    module.init();
+    module.init(); // 'woot! ready!'
+    </code></pre>
+
+    <p><code>create()</code> returns <code>this</code>, so yo could write the
+    previous example like this as well.</p>
+
+    <pre><code>
+    var Module = Stapes.create().extend({
+        "init" : function() {
+            this.emit('ready');
+        }
+    });
+    </code></pre>
+
+    <p>If you want to use private variables and functions, use Stapes like this</p>
+
+    <pre><code>
+    (function() {
+        var private;
+
+        function showPrivate() {
+            console.log("You shouldn't be seeing this", private);
+        }
+
+        window.Module = Stapes.create().extend({
+            "show" : function(var) {
+                private = var;
+                showPrivate();
+            }
+        });
+    })();
     </code></pre>
 
     <h3>Using it together with RequireJS</h3>
 
+    <p>To avoid lots of global variables you can use a dependency loader like
+    <a href="http://www.requirejs.org">Require.JS</a>. This also makes the
+    previous example easier to read.
+
     <pre><code>
     // 'module.js'
     require(["path/to/Stapes"], function(Stapes) {
-        return function(context) {
-            var module = Stapes();
+        var private;
 
-            module.extend({
-                "hello" : function() {
-                    return "Hello " + context.name + "!";
-                }
-            });
+        function showPrivate() {
+            console.log("This is private: " + private);s
+        }
 
-            return module;
-        };
+        return Stapes.create().extend({
+            "show" : function(var) {
+                private = var;
+                showPrivate();
+            }
+        });
     });
 
     // somewhere else
     require(['module'], function(Module) {
-        var module = Module({
-            "name" : "Elvis"
-        });
+        var module = Module.create();
 
-        console.log( module.hello() ); // 'Hello Elvis'
+        console.log( module.show("Elvis") ); // 'This is private: Elvis',
     });
     </code></pre>
 
     <h3>General methods</h3>
+    <article>
+        <h1>create</h1>
+
+        <h2>Stapes.create()</h2>
+        <h2>module.create()</h2>
+
+        <p>Create a new instance of a Stapes object.</p>
+
+        <p>Always returns <code>this</code>, so you can easily chain
+        <code>create</code> with <code>extend</code></p>
+    </article>
+
     <article>
         <h1>extend</h1>
 
@@ -208,13 +239,13 @@
         string if you want to trigger more events. <code>data</code> can be any
         Javascript variable you want, and will be passed to any event listeners</p>
 
-        <code><pre>
+        <pre><code>
         module.extend({
             "sleep" : function() {
                 this.emit('sleeping', 'very deep');
             }
         });
-        </pre></code>
+        </code></pre>
     </article>
 
     <h3>Data methods</h3>
@@ -230,11 +261,11 @@
         <p>You can either use a <code>key</code> as an argument or a
         <code>function</code></p>
 
-        <code><pre>
+        <pre><code>
         module.remove(function(item) {
             return item.done === true;
         });
-        </pre></code>
+        </code></pre>
     </article>
 
     <article>
@@ -252,6 +283,16 @@
         <h2>module.getAll();</h2>
 
         <p>Returns all attributes as an object.</p>
+    </article>
+
+    <article>
+        <h1>getAllAsArray</h1>
+
+        <h2>module.getAllAsArray();</h2>
+
+        <p>Returns all attributes as an array, so you can easily iterate.
+        Note that the original key of the attribute is always available as a
+        'id' key in the the value, provided your value is an object.</p>
     </article>
 
     <article>

@@ -27,6 +27,10 @@
             return Object.prototype.toString.call( val ) === "[object Array]";
         }
 
+        function isObject(val) {
+            return (typeof val === "object") && (!isArray(val) && val !== null);
+        }
+
         // from http://stackoverflow.com/a/2117523/152809
         function makeUuid() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -92,6 +96,10 @@
         }
 
         Module.prototype = {
+            create : function() {
+                return new Module();
+            },
+
             emit : function(types, data) {
                 data = data || null;
 
@@ -119,6 +127,8 @@
                         object.prototype[key] = val;
                     }
                 }
+
+                return this;
             },
 
             filter : function(fn) {
@@ -150,8 +160,12 @@
 
             getAllAsArray : function() {
                 var arr = [];
+
                 each(attributes, function(value, key) {
-                    value.id = key;
+                    if (isObject(value) {
+                        value.id = key;
+                    }
+
                     arr.push(value);
                 });
 
@@ -165,6 +179,7 @@
 
             init : function() {
                 this.emit('ready');
+                return this;
             },
 
             // 'Eventparam' can either be a string with space-seperated events
@@ -251,21 +266,27 @@
         return new Module();
     }
 
+    var initalizer = {
+        "create" : function() {
+            return Stapes();
+        }
+    };
+
     // This library can be used as an AMD module, a Node.js module, or an
     // old fashioned global
     if (typeof exports !== "undefined") {
         // Server
         if (typeof module !== "undefined" && module.exports) {
-            exports = module.exports = Stapes;
+            exports = module.exports = initalizer;
         }
         exports.Stapes = Stapes;
     } else if (typeof define === "function" && define.amd) {
         // AMD
         define(function() {
-            return Stapes;
+            return initalizer;
         });
     } else {
         // Global scope
-        window.Stapes = Stapes;
+        window.Stapes = initalizer;
     }
 })();

@@ -1,32 +1,26 @@
-function TodoModel() {
-    var todoModel = Stapes();
+var TodoModel = Stapes.create().extend({
+    "addTask" : function(name) {
+        this.push({
+            "done" : false,
+            "name" : name
+        });
+    },
 
-    todoModel.extend({
-        "addTask" : function(name) {
-            this.push({
-                "done" : false,
-                "name" : name
-            });
-        },
+    "clearCompleted" : function() {
+        this.remove(function(item) {
+            return item.done === true;
+        });
+    },
 
-        "clearCompleted" : function() {
-            todoModel.remove(function(item) {
-                return item.done === true;
-            });
-        },
+    "getDone" : function() {
+        return this.filter(function(item) {
+            return item.done === true;
+        }).length;
+    },
 
-        "getDone" : function() {
-            return this.filter(function(item) {
-                return item.done === true;
-            }).length;
-        },
-
-        "getLeft" : function() {
-            return this.filter(function(item) {
-                return item.done === false;
-            }).length;
-        }
-    });
-
-    return todoModel;
-}
+    "getLeft" : function() {
+        return this.filter(function(item) {
+            return item.done === false;
+        }).length;
+    }
+});

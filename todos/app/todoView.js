@@ -1,5 +1,5 @@
-function TodoView() {
-    var todoView = Stapes(),
+(function() {
+    var todoView = Stapes.create(),
         taskTmpl;
 
     function bindEventHandlers() {
@@ -58,5 +58,5 @@ function TodoView() {
         }
     });
 
-    return todoView;
-}
+    window.TodoView = todoView;
+})();
