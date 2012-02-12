@@ -123,6 +123,8 @@
                         object.prototype[key] = val;
                     }
                 }
+
+                return this;
             },
 
             filter : function(fn) {
@@ -169,6 +171,7 @@
 
             init : function() {
                 this.emit('ready');
+                return this;
             },
 
             // 'Eventparam' can either be a string with space-seperated events

@@ -1,6 +1,4 @@
-var TodoModel = Stapes.create();
-
-TodoModel.extend({
+var TodoModel = Stapes.create().extend({
     "addTask" : function(name) {
         this.push({
             "done" : false,

@@ -1,6 +1,4 @@
-var TodoStore = Stapes.create();
-
-TodoStore.extend({
+var TodoStore = Stapes.create().extend({
     "init" : function() {
         if (!"localStorage" in window) {
             throw new Error("Your browser doesn't support localStorage");
