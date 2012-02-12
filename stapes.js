@@ -162,7 +162,7 @@
                 var arr = [];
 
                 each(attributes, function(value, key) {
-                    if (isObject(value) {
+                    if (isObject(value)) {
                         value.id = key;
                     }
 
