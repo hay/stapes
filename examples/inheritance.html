@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <script src="../stapes.js"></script>
+    <script>
+        var Car = Stapes.create().extend({
+            "type" : "normal car",
+
+            "getType" : function() {
+                console.log("Car type " + this.type);
+            }
+        });
+
+        var SportsCar = Car.create();
+        SportsCar.extend({
+            "type" : "sports car"
+        });
+
+        var car = Car.create();
+        car.getType();
+
+        var sportsCar = SportsCar.create();
+        sportsCar.getType();
+    </script>
+</body>
+</html>

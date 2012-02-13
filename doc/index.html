@@ -101,6 +101,23 @@
     });
     </code></pre>
 
+    <p><code>create()</code> accepts an object as an argument, that you can use
+    to include properties in the object before it gets initialized.</p>
+
+    <pre><code>
+    var Module = Stapes.create().extend({
+        "init" : function() {
+            console.log("I am " + this.name);
+        }
+    });
+
+    var m = Module.create({
+        "name" : "Elvis"
+    });
+
+    m.init(); // "I am Elvis"
+    </code></pre>
+
     <p>If you want to use private variables and functions, use Stapes like this</p>
 
     <pre><code>
@@ -155,10 +172,13 @@
     <article>
         <h1>create</h1>
 
-        <h2>Stapes.create()</h2>
-        <h2>module.create()</h2>
+        <h2>Stapes.create( obj )</h2>
+        <h2>module.create( obj )</h2>
 
         <p>Create a new instance of a Stapes object.</p>
+
+        <p>If you give the optional <code>obj</code> parameter you can
+        initialize an object with extra properties.</p>
 
         <p>Always returns <code>this</code>, so you can easily chain
         <code>create</code> with <code>extend</code></p>
@@ -174,7 +194,7 @@
         will be set to the objects context. When setting no <code>context</code>
         the properties will be inserted in the current object. However, if you want
         to insert properties 'deeper' into the object, you can specificy that
-        as the first parameter</p>
+        as the first parameter.</p>
 
         <pre><code>
         module.extend({

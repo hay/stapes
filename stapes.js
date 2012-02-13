@@ -1,47 +1,59 @@
 (function() {
-    function Stapes() {
-        var eventHandlers = {},
-            attributes = {},
-            Module = function(){};
-
-        /** Utility functions
-         *
-         *  Note that these functions are only used inside Stapes, and therefore
-         *  aren't that failsafe as the options in libraries
-         *  such as Underscore.js, so that's why they're not usable outside
-         *  the private scope.
-         */
-        function bind(fn, ctx) {
+    /** Utility functions
+     *
+     *  Note that these functions are only used inside Stapes, and therefore
+     *  aren't that failsafe as the options in libraries
+     *  such as Underscore.js, so that's why they're not usable outside
+     *  the private scope.
+     */
+    var util = {
+        bind : function(fn, ctx) {
             return function() {
                 return fn.apply(ctx, arguments);
             };
-        }
+        },
 
-        function each(obj, fn) {
+        create : function(Context, obj) {
+            var instance = new Context();
+
+            if (obj) {
+                instance.extend( obj );
+            }
+
+            return instance;
+        },
+
+        each : function(obj, fn) {
             for (var key in obj) {
                 fn( obj[key], key );
             }
-        }
+        },
 
-        function isArray(val) {
+        isArray : function(val) {
             return Object.prototype.toString.call( val ) === "[object Array]";
-        }
+        },
 
-        function isObject(val) {
-            return (typeof val === "object") && (!isArray(val) && val !== null);
-        }
+        isObject : function(val) {
+            return (typeof val === "object") && (!util.isArray(val) && val !== null);
+        },
 
         // from http://stackoverflow.com/a/2117523/152809
-        function makeUuid() {
+        makeUuid : function() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
                 return v.toString(16);
             });
-        }
+        },
 
-        function toArray(arr) {
+        toArray : function(arr) {
             return Array.prototype.slice.call(arr, 0);
         }
+    };
+
+    function Stapes() {
+        var eventHandlers = {},
+            attributes = {},
+            Module = function(){};
 
         /** Private helper functions */
         function addEvent(event) {
@@ -62,7 +74,7 @@
         function emitEvents(type, data, explicitType) {
             explicitType = explicitType || false;
 
-            each(eventHandlers[type], function(event) {
+            util.each(eventHandlers[type], function(event) {
                 var scope = (event.scope) ? event.scope : this;
                 if (explicitType) {
                     event.type = explicitType;
@@ -97,19 +109,13 @@
 
         Module.prototype = {
             create : function(obj) {
-                var m = new Module();
-
-                if (obj) {
-                    m.extend(obj);
-                }
-
-                return m;
+                return util.create(Module, obj || false);
             },
 
             emit : function(types, data) {
                 data = data || null;
 
-                each(types.split(" "), bind(function(type) {
+                util.each(types.split(" "), util.bind(function(type) {
                     if (eventHandlers["all"]) {
                         emitEvents.call(this, "all", data, type);
                     }
@@ -140,7 +146,7 @@
             filter : function(fn) {
                 var items = [];
 
-                each(attributes, function(item) {
+                util.each(attributes, function(item) {
                     if (fn(item)) {
                         items.push(item);
                     }
@@ -167,8 +173,8 @@
             getAllAsArray : function() {
                 var arr = [];
 
-                each(attributes, function(value, key) {
-                    if (isObject(value)) {
+                util.each(attributes, function(value, key) {
+                    if (util.isObject(value)) {
                         value.id = key;
                     }
 
@@ -220,18 +226,18 @@
 
             // Akin to set(), but makes a unique id
             push : function(input) {
-                if (isArray(input)) {
-                    each(input, function(value) {
-                        setAttribute.call(this, makeUuid(), value);
+                if (util.isArray(input)) {
+                    util.each(input, function(value) {
+                        setAttribute.call(this, util.makeUuid(), value);
                     });
                 } else {
-                    setAttribute.call(this, makeUuid(), input);
+                    setAttribute.call(this, util.makeUuid(), input);
                 }
             },
 
             remove : function(input) {
                 if (typeof input === "function") {
-                    each(attributes, bind(function(item, key) {
+                    util.each(attributes, util.bind(function(item, key) {
                         if (input(item)) {
                             delete attributes[key];
                             this.emit('delete change');
@@ -242,7 +248,7 @@
                         input = [input];
                     }
 
-                    each(toArray(input), bind(function(id) {
+                    util.each(util.toArray(input), util.bind(function(id) {
                         if (this.has(id)) {
                             delete attributes[id];
                             this.emit('delete change');
@@ -253,8 +259,8 @@
 
 
             set : function(objOrKey, value) {
-                if (isObject(objOrKey)) {
-                    each(objOrKey, bind(function(value, key) {
+                if (util.isObject(objOrKey)) {
+                    util.each(objOrKey, util.bind(function(value, key) {
                         setAttribute.call(this, key, value);
                     }, this));
                 } else {
@@ -274,13 +280,7 @@
 
     var initalizer = {
         "create" : function(obj) {
-            var m = new Stapes();
-
-            if (obj) {
-                m.extend(obj);
-            }
-
-            return m;
+            return util.create(Stapes, obj || false);
         }
     };
 
