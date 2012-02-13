@@ -96,8 +96,14 @@
         }
 
         Module.prototype = {
-            create : function() {
-                return new Module();
+            create : function(obj) {
+                var m = new Module();
+
+                if (obj) {
+                    m.extend(obj);
+                }
+
+                return m;
             },
 
             emit : function(types, data) {
@@ -267,8 +273,14 @@
     }
 
     var initalizer = {
-        "create" : function() {
-            return Stapes();
+        "create" : function(obj) {
+            var m = new Stapes();
+
+            if (obj) {
+                m.extend(obj);
+            }
+
+            return m;
         }
     };
 

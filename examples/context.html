@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <script src="../stapes.js"></script>
+    <script>
+        var Module2 = Stapes.create().extend({
+            "foo" : function() {
+                console.log(this.name);
+            }
+        });
+
+        var Module1 = Stapes.create().extend({
+            "init" : function() {
+                this.module2 = Module2.create({
+                    "name" : "foo"
+                });
+                this.module2.foo();
+            }
+        });
+
+        var m = Module1.create();
+        m.init();
+    </script>
+</body>
+</html>
