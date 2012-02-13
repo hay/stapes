@@ -253,12 +253,12 @@
 
 
             set : function(objOrKey, value) {
-                if (value) {
-                    setAttribute.call(this, objOrKey, value);
-                } else {
+                if (isObject(objOrKey)) {
                     each(objOrKey, bind(function(value, key) {
                         setAttribute.call(this, key, value);
                     }, this));
+                } else {
+                    setAttribute.call(this, objOrKey, value);
                 }
             },
 
