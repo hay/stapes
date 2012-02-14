@@ -20,11 +20,19 @@
             "type" : "sports car"
         });
 
+        var UltraSportsCar = SportsCar.create();
+        UltraSportsCar.extend({
+            "type" : "ultra sports car"
+        });
+
         var car = Car.create();
         car.getType();
 
         var sportsCar = SportsCar.create();
         sportsCar.getType();
+
+        var ultraSportsCar = UltraSportsCar.create();
+        ultraSportsCar.getType();
     </script>
 </body>
 </html>

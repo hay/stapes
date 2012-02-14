@@ -13,8 +13,10 @@
             };
         },
 
-        create : function(Context, obj) {
-            var instance = new Context();
+        create : function(context, obj) {
+            var F = function(){};
+            F.prototype = context;
+            var instance = new F();
 
             if (obj) {
                 instance.extend( obj );
@@ -53,7 +55,7 @@
     function Stapes() {
         var eventHandlers = {},
             attributes = {},
-            Module = function(){};
+            Module;
 
         /** Private helper functions */
         function addEvent(event) {
@@ -107,9 +109,9 @@
             this.emit(specificEvent + ':' + key, value);
         }
 
-        Module.prototype = {
+        Module = {
             create : function(obj) {
-                return util.create(Module, obj || false);
+                return util.create(this, obj || false);
             },
 
             emit : function(types, data) {
@@ -127,17 +129,13 @@
             },
 
             extend : function(objectOrValues, valuesIfObject) {
-                var object = (valuesIfObject) ? objectOrValues : Module,
+                var object = (valuesIfObject) ? objectOrValues : this,
                     values = (valuesIfObject) ? valuesIfObject : objectOrValues;
 
                 for (var key in values) {
                     var val = values[key];
 
-                    if (valuesIfObject) {
-                        object[key] = val;
-                    } else {
-                        object.prototype[key] = val;
-                    }
+                    object[key] = val;
                 }
 
                 return this;
@@ -275,12 +273,12 @@
             }
         };
 
-        return new Module();
+        return Module;
     }
 
     var initalizer = {
         "create" : function(obj) {
-            return util.create(Stapes, obj || false);
+            return util.create(Stapes(), obj || false);
         }
     };
 
