@@ -9,33 +9,41 @@ define(["../../stapes", "../lib/mustache"], function(Stapes, Mustache) {
     }
 
     function on(selector, eventType, handler) {
-        $(selector).addEventHandler(eventType, handler, false);
+        $(selector).addEventListener(eventType, function(e) {
+            handler.call(e.target, e);
+        }, false);
     }
 
     function httpRequest(url, cb) {
         var request = new XMLHttpRequest();
         request.open("GET", url, true);
-        request.onreadystatechange = function(e) {
-            if (e.readyState === 4) {
-                cb(e.status === 200 ? e.responseText : e.statusText);
+        request.onreadystatechange = function() {
+            if (request.readyState === 4) {
+                cb(request.status === 200 ? request.responseText : request.statusText);
             }
         }
         request.send(null);
     }
 
     function bindEventHandlers() {
-        on('#tasks form', 'submit', function(e) {
-            e.preventDefault();
-            todoView.emit('taskadd', $(this).find("input").val());
+        on('#tasks', 'submit', function(e) {
+            if (this === $("#tasks form")) {
+                e.preventDefault();
+                todoView.emit('taskadd', $("#tasks input").value);
+            }
         });
 
-        on('#tasks .destroy', 'click', function() {
-            todoView.emit('taskdelete', $(this).parents('.item').data('id'));
+        on('#tasks', 'click', function() {
+            if (this === $("#tasks .destroy")) {
+                todoView.emit('taskdelete', this.dataset.id);
+            }
         });
 
-        on('#tasks input[type=checkbox]', 'click', function(e) {
-            var event = $(this).is(':checked') ? 'taskdone' : 'taskundone';
-            todoView.emit(event, $(this).parents('.item').data('id'));
+        on('#tasks', 'click', function(e) {
+            if (this === $("#tasks input[type=checkbox]")) {
+                var event = $(this).is(':checked') ? 'taskdone' : 'taskundone';
+                todoView.emit(event, this.dataset.id);
+            }
         });
 
         on('.clear', 'click', function() {
