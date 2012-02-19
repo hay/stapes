@@ -1,31 +1,50 @@
-define(["../../stapes", "../lib/mustache", "../lib/jquery"], function(Stapes, Mustache) {
-    var $ = jQuery;
-
+define(["../../stapes", "../lib/mustache"], function(Stapes, Mustache) {
     var todoView = Stapes.create(),
         taskTmpl;
 
+    // Simple utility functions
+    function $(selector) {
+        var result = Array.prototype.slice.call(document.querySelectorAll(selector), 0);
+        return result.length === 1 ? result[0] : result;
+    }
+
+    function on(selector, eventType, handler) {
+        $(selector).addEventHandler(eventType, handler, false);
+    }
+
+    function httpRequest(url, cb) {
+        var request = new XMLHttpRequest();
+        request.open("GET", url, true);
+        request.onreadystatechange = function(e) {
+            if (e.readyState === 4) {
+                cb(e.status === 200 ? e.responseText : e.statusText);
+            }
+        }
+        request.send(null);
+    }
+
     function bindEventHandlers() {
-        $("#tasks").on('submit', 'form', function(e) {
+        on('#tasks form', 'submit', function(e) {
             e.preventDefault();
             todoView.emit('taskadd', $(this).find("input").val());
         });
 
-        $("#tasks").on('click', '.destroy', function() {
+        on('#tasks .destroy', 'click', function() {
             todoView.emit('taskdelete', $(this).parents('.item').data('id'));
         });
 
-        $("#tasks").on('click', 'input[type=checkbox]', function(e) {
+        on('#tasks input[type=checkbox]', 'click', function(e) {
             var event = $(this).is(':checked') ? 'taskdone' : 'taskundone';
             todoView.emit(event, $(this).parents('.item').data('id'));
         });
 
-        $(".clear").on('click', function() {
+        on('.clear', 'click', function() {
             todoView.emit('clearcompleted');
-        })
+        });
     }
 
     function loadTemplates(cb) {
-        $.get(window.location + 'templates/task.html', function(tmpl) {
+        httpRequest(window.location + 'templates/task.html', function(tmpl) {
             cb(function(view) {
                 return Mustache.to_html(tmpl, view);
             });
@@ -34,7 +53,7 @@ define(["../../stapes", "../lib/mustache", "../lib/jquery"], function(Stapes, Mu
 
     todoView.extend({
         "clearInput" : function() {
-            $("#tasks input").val('');
+            $("#tasks input").value == "";
         },
 
         "init" : function() {
@@ -48,15 +67,15 @@ define(["../../stapes", "../lib/mustache", "../lib/jquery"], function(Stapes, Mu
 
         "render" : function(tasks) {
             var html = taskTmpl({ "tasks" : tasks });
-            $("#tasks .items").html( html );
+            $("#tasks .items").innerHTML = html;
         },
 
         "showClearCompleted" : function(bool) {
-            $(".clear").toggle(bool);
+            $(".clear").style.display = (bool) ? "block" : "none";
         },
 
         "showLeft" : function(left) {
-            $(".countVal").text( left );
+            $(".countVal").innerHTML = left;
         }
     });
 
