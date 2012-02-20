@@ -29,19 +29,19 @@ define(["../../stapes", "../lib/mustache"], function(Stapes, Mustache) {
         on('#tasks', 'submit', function(e) {
             if (this === $("#tasks form")) {
                 e.preventDefault();
-                todoView.emit('taskadd', $("#tasks input").value);
+                todoView.emit('taskadd', $("#tasks form input").value);
             }
         });
 
         on('#tasks', 'click', function() {
-            if (this === $("#tasks .destroy")) {
+            if (this.classList.contains('destroy')) {
                 todoView.emit('taskdelete', this.dataset.id);
             }
         });
 
         on('#tasks', 'click', function(e) {
-            if (this === $("#tasks input[type=checkbox]")) {
-                var event = $(this).is(':checked') ? 'taskdone' : 'taskundone';
+            if (this.type === "checkbox") {
+                var event = this.checked ? 'taskdone' : 'taskundone';
                 todoView.emit(event, this.dataset.id);
             }
         });
@@ -61,7 +61,7 @@ define(["../../stapes", "../lib/mustache"], function(Stapes, Mustache) {
 
     todoView.extend({
         "clearInput" : function() {
-            $("#tasks input").value == "";
+            $("#tasks form input").value = "";
         },
 
         "init" : function() {
