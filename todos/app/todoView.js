@@ -1,5 +1,5 @@
 (function() {
-    var todoView = Stapes.create(),
+    var todoView = Stapes.create({name : "TodoView"}),
         taskTmpl;
 
     function bindEventHandlers() {

@@ -17,7 +17,7 @@
             };
         },
 
-        create : function(context, obj) {
+        create : function(context, obj, newGuid) {
             var F = function(){};
             F.prototype = context;
             var instance = new F();
@@ -26,9 +26,11 @@
                 instance.extend( obj );
             }
 
-            instance._guid = guid++;
-            attributes[instance._guid] = {};
-            eventHandlers[instance._guid] = {};
+            if (newGuid) {
+                instance._guid = guid++;
+                attributes[instance._guid] = {};
+                eventHandlers[instance._guid] = {};
+            }
 
             return instance;
         },
@@ -114,7 +116,7 @@
 
     var Module = {
         create : function(obj) {
-            return util.create(this, obj || false);
+            return util.create(this, obj || false, false);
         },
 
         emit : function(types, data) {
@@ -238,7 +240,7 @@
 
         remove : function(input) {
             if (typeof input === "function") {
-                util.each(attributes, util.bind(function(item, key) {
+                util.each(attributes[this._guid], util.bind(function(item, key) {
                     if (input(item)) {
                         delete attributes[this._guid][key];
                         this.emit('delete change');
@@ -275,23 +277,15 @@
         }
     };
 
-    function Stapes() {
-        return util.create( Module );
-    }
-
-    var initalizer = {
+    var Stapes = {
         "create" : function(obj) {
-            return util.create(Stapes(), obj || false);
+            return util.create(Module, obj || false, true);
         },
 
         "extend" : function(obj) {
             util.each(obj, function(key, value) {
                 Module[key] = value;
             });
-        },
-
-        "data" : function() {
-            console.log(eventHandlers, attributes);
         }
     };
 
@@ -306,10 +300,10 @@
     } else if (typeof define === "function" && define.amd) {
         // AMD
         define(function() {
-            return initalizer;
+            return Stapes;
         });
     } else {
         // Global scope
-        window.Stapes = initalizer;
+        window.Stapes = Stapes;
     }
 })();

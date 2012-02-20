@@ -1,4 +1,4 @@
-var TodoController = Stapes.create().extend({
+var TodoController = Stapes.create({ name : "TodoController"}).extend({
     "bindEventHandlers" : function() {
         this.model.on({
             "change" : function() {
