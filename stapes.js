@@ -303,10 +303,6 @@
             return util.create(Module, obj || false, true);
         },
 
-        "data" : function() {
-            console.log(eventHandlers, attributes);
-        },
-
         "extend" : function(obj) {
             util.each(obj, function(value, key) {
                 Module[key] = value;
