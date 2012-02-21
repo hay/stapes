@@ -113,14 +113,14 @@
         explicitType = explicitType || false;
         explicitGuid = explicitGuid || this._guid;
 
-        util.each(eventHandlers[explicitGuid][type], function(event) {
+        util.each(eventHandlers[explicitGuid][type], util.bind(function(event) {
             var scope = (event.scope) ? event.scope : this;
             if (explicitType) {
                 event.type = explicitType;
             }
             event.scope = scope;
             event.handler.call(event.scope, data, event);
-        });
+        }, this));
     }
 
     function setAttribute(key, value) {
@@ -159,6 +159,11 @@
                 // global stack?
                 if (eventHandlers[-1].all) {
                     emitEvents.call(this, "all", data, type, -1);
+                }
+
+                // Catch all events for this type?
+                if (eventHandlers[-1][type]) {
+                    emitEvents.call(this, type, data, type, -1);
                 }
 
                 // 'all' event for this specific module?
