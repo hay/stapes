@@ -225,9 +225,9 @@
             // Akin to set(), but makes a unique id
             push : function(input) {
                 if (util.isArray(input)) {
-                    util.each(input, function(value) {
+                    util.each(input, util.bind(function(value) {
                         setAttribute.call(this, util.makeUuid(), value);
-                    });
+                    }, this));
                 } else {
                     setAttribute.call(this, util.makeUuid(), input);
                 }
