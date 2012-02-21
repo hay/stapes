@@ -39,9 +39,9 @@ var TodoController = Stapes.create({ name : "TodoController"}).extend({
     },
 
     "init" : function() {
-        this.model = TodoModel.create();
-        this.view = TodoView.create();
-        this.store = TodoStore.create();
+        this.model = TodoModel.sub();
+        this.view = TodoView.sub();
+        this.store = TodoStore.sub();
 
         this.bindEventHandlers();
 

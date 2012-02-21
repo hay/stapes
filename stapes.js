@@ -7,7 +7,7 @@
      *  the private scope.
      */
     var attributes = {},
-        eventHandlers = {},
+        eventHandlers = {"-1" : {}},
         guid = 0;
 
     var util = {
@@ -66,22 +66,54 @@
     function addEvent(event) {
         // If we don't have any handlers for this type of event, add a new
         // array we can use to push new handlers
-        if (!eventHandlers[this._guid][event.type]) {
-            eventHandlers[this._guid][event.type] = [];
+        if (!eventHandlers[event.guid][event.type]) {
+            eventHandlers[event.guid][event.type] = [];
         }
 
         // Push an event object
-        eventHandlers[this._guid][event.type].push({
+        eventHandlers[event.guid][event.type].push({
+            "guid" : event.guid,
             "handler" : event.handler,
             "scope" : event.scope,
             "type" : event.type
         });
     }
 
-    function emitEvents(type, data, explicitType) {
-        explicitType = explicitType || false;
+    function addEventHandler(argTypeOrMap, argHandlerOrScope, argScope) {
+        var eventMap = {},
+            scope,
+            guid = this._guid || -1;
 
-        util.each(eventHandlers[this._guid][type], function(event) {
+        if (typeof argTypeOrMap === "string") {
+            scope = argScope || false;
+            eventMap[ argTypeOrMap ] = argHandlerOrScope;
+        } else {
+            scope = argHandlerOrScope || false;
+            eventMap = argTypeOrMap;
+        }
+
+        for (var eventString in eventMap) {
+            var handler = eventMap[ eventString ],
+                events = eventString.split(" ");
+
+            for (var i = 0, l = events.length; i < l; i++) {
+                var eventType = events[i];
+
+                addEvent.call(this, {
+                    "guid" : guid,
+                    "handler" : handler,
+                    "scope" : scope,
+                    "type" : eventType
+                });
+            }
+        }
+    }
+
+    function emitEvents(type, data, explicitType, explicitGuid) {
+        explicitType = explicitType || false;
+        explicitGuid = explicitGuid || this._guid;
+
+        util.each(eventHandlers[explicitGuid][type], function(event) {
             var scope = (event.scope) ? event.scope : this;
             if (explicitType) {
                 event.type = explicitType;
@@ -116,22 +148,28 @@
 
     var Module = {
         create : function(obj) {
-            return util.create(this, obj || false, false);
+            return util.create(this, obj || false, true);
         },
 
         emit : function(types, data) {
             data = data || null;
 
             util.each(types.split(" "), util.bind(function(type) {
-                /*
-                if (eventHandlers.all) {
+                // First 'all' type events: is there an 'all' handler in the
+                // global stack?
+                if (eventHandlers[-1].all) {
+                    emitEvents.call(this, "all", data, type, -1);
+                }
+
+                // 'all' event for this specific module?
+                if (eventHandlers[this._guid]["all"]) {
                     emitEvents.call(this, "all", data, type);
                 }
-                */
 
-                if (!eventHandlers[this._guid][type]) return;
-
-                emitEvents.call(this, type, data);
+                // Finally, normal events :)
+                if (eventHandlers[this._guid][type]) {
+                    emitEvents.call(this, type, data);
+                }
             }, this));
         },
 
@@ -197,34 +235,8 @@
             return this;
         },
 
-        // 'Eventparam' can either be a string with space-seperated events
-        // or an object with key / value pairs for events and handlers
-        on : function(argTypeOrMap, argHandlerOrScope, argScope) {
-            var eventMap = {},
-                scope;
-
-            if (typeof argTypeOrMap === "string") {
-                scope = argScope || false;
-                eventMap[ argTypeOrMap ] = argHandlerOrScope;
-            } else {
-                scope = argHandlerOrScope || false;
-                eventMap = argTypeOrMap;
-            }
-
-            for (var eventString in eventMap) {
-                var handler = eventMap[ eventString ],
-                    events = eventString.split(" ");
-
-                for (var i = 0, l = events.length; i < l; i++) {
-                    var eventType = events[i];
-
-                    addEvent.call(this, {
-                        "handler" : handler,
-                        "scope" : scope,
-                        "type" : eventType
-                    });
-                }
-            }
+        on : function() {
+            addEventHandler.apply(this, arguments);
         },
 
         // Akin to set(), but makes a unique id
@@ -270,6 +282,10 @@
             }
         },
 
+        sub : function(obj) {
+            return util.create(this, obj || false, false);
+        },
+
         update : function(key, fn) {
             var item = this.get(key);
             fn(item);
@@ -282,10 +298,18 @@
             return util.create(Module, obj || false, true);
         },
 
+        "data" : function() {
+            console.log(eventHandlers, attributes);
+        },
+
         "extend" : function(obj) {
-            util.each(obj, function(key, value) {
+            util.each(obj, function(value, key) {
                 Module[key] = value;
             });
+        },
+
+        "on" : function() {
+            addEventHandler.apply(Module, arguments);
         }
     };
 
