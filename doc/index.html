@@ -4,6 +4,19 @@
     <meta charset="utf-8" />
     <title>Stapes.js - a (really) tiny Javascript MVC microframework</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2, h3, h4, p {
+            padding: 10px 0;
+        }
+
+        ul {
+            padding-left: 30px;
+        }
+
         body {
             font-family: Helvetica, Arial, sans-serif;
             color: #333;
@@ -16,7 +29,27 @@
             line-height: 24px;
         }
 
-        body > h1 {
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 210px;
+            height: 100%;
+            padding: 16px;
+            background: white;
+            overflow-y: scroll;
+        }
+
+        nav li {
+            padding: 1px 0;
+        }
+
+        #content {
+            padding-left: 240px;
+            max-width: 600px;
+        }
+
+        #content > h1 {
             font-family: Georgia;
             font-style: italic;
             color: #150683;
@@ -58,342 +91,442 @@
             border: 1px solid #ccc;
             padding: 1px;
         }
+
+        ul li {
+            line-height: 150%;
+        }
     </style>
 </head>
 <body>
-    <h1>Stapes.js</h1>
+    <nav>
+        <h1>Stapes.js</h1>
 
-    <p>A (really) tiny Javascript MVC microframework.</p>
+        <ul class="toc"></ul>
+    </nav>
 
-    <p>Provided 'Stapes' is a global in your scope, write your Stapes modules
-    like this</p>
+    <section id="content">
+        <h1>Stapes.js</h1>
+        <h2>A (really) tiny Javascript MVC microframework.</h2>
 
-    <pre><code>
-    var Module = Stapes.create();
+        <h3 id="m-phil">Philosophy</h3>
+        <p><em>Right. There's a zillion other Javascript MVC frameworks, why
+        should i choose Stapes.js?</em></p>
 
-    Module.extend({
-        "init" : function() {
-            this.emit('ready');
-        }
-    });
-    </code></pre>
+        <p>Here's why i think you should use it: it's tiny, really tiny (1kb minfied and gzipped). And it's
+        easy to fit in an exisitng codebase, because it doesn't force you in to
+        writing your code in a specific style.</p>
 
-    <p>Then, use it like this.</p>
+        <p><em>So, Stapes.js isn't a traditional MVC framework?</em></p>
 
-    <pre><code>
-    var module = Module.create();
+        <p>No. Stapes doesn't have any pre-defined Models, Views or Controllers.
+        It also doesn't have Collections, Routers, or stuff you might find in other
+        libraries (remember, it's tiny :).</p>
 
-    module.on('ready', function() {
-        console.log('woot! ready!');
-    });
+        <p><em>Right.. so how do i write my code?</em></p>
 
-    module.init(); // 'woot! ready!'
-    </code></pre>
+        <p>Any way you want. Stapes has all the building blocks you need when
+        writing a MVC app.</p>
 
-    <p><code>create()</code> returns <code>this</code>, so yo could write the
-    previous example like this as well.</p>
+        <p><em>Like, such as?</em></p>
 
-    <pre><code>
-    var Module = Stapes.create().extend({
-        "init" : function() {
-            this.emit('ready');
-        }
-    });
-    </code></pre>
+        <p>Here's a list:</p>
+        <ul>
+            <li>A powerful yet simple event system using <a href="#m-on"><code>on</code></a> and
+            <a href="m-emit"><code>emit</code></a> methods.</li>
+            <li>Inheritance using <a href="m-create"><code>create</code></a> and
+            <a href="m-extend"><code>extend</code></a></li>
+            <li>Event-triggering attributes using <a href="m-get"><code>get</code></a> and <a href="m-set"><code>set</code></a></li>
+            <li>Powerful <a href="#m-filter"><code>filter</code></a> and <a href="#m-remove"><code>remove</code></a> methods for attributes</li>
+            <li>Usable in traditional Javascript, as an AMD module (for <a href="http://requirejs.org">Require.js</a>)
+            or on the server with <a href="http://www.nodejs.org">Node.js</a></li>
+        </ul>
 
-    <p><code>create()</code> accepts an object as an argument, that you can use
-    to include properties in the object before it gets initialized.</p>
+        <p><em>But what about templating, persistence, routing, history management, etc?</em></p>
 
-    <pre><code>
-    var Module = Stapes.create().extend({
-        "init" : function() {
-            console.log("I am " + this.name);
-        }
-    });
+        <p>That's the flexibility of Stapes: you're free to use any library you want. To see how that
+        works in practice, try out the two <a href="#m-examples">todo examples</a>. The first one
+        uses global variables and jQuery, while the 'require' version uses require.js and vanilla DOM
+        scripting.</p>
 
-    var m = Module.create({
-        "name" : "Elvis"
-    });
+        <p><em>Right, so this is your hobby project. Does this actually work in production?</em></p>
 
-    m.init(); // "I am Elvis"
-    </code></pre>
+        <p>Stapes was written for a complex HTML5 media player in a high-traffic website,
+        and it works nicely there.</p>
 
-    <p>If you want to use private variables and functions, use Stapes like this</p>
+        <h3 id="m-docs">Documentation</h3>
 
-    <pre><code>
-    (function() {
-        var private;
+        <p>Write your Stapes modules like this</p>
 
-        function showPrivate() {
-            console.log("You shouldn't be seeing this", private);
-        }
+        <pre><code>
+        var Module = Stapes.create();
 
-        window.Module = Stapes.create().extend({
-            "show" : function(var) {
-                private = var;
-                showPrivate();
+        Module.extend({
+            "init" : function() {
+                this.emit('ready');
             }
         });
-    })();
-    </code></pre>
+        </code></pre>
 
-    <h3>Using it together with RequireJS</h3>
+        <p>Then, use it like this.</p>
 
-    <p>To avoid lots of global variables you can use a dependency loader like
-    <a href="http://www.requirejs.org">Require.JS</a>. This also makes the
-    previous example easier to read.
-
-    <pre><code>
-    // 'module.js'
-    require(["path/to/Stapes"], function(Stapes) {
-        var private;
-
-        function showPrivate() {
-            console.log("This is private: " + private);s
-        }
-
-        return Stapes.create().extend({
-            "show" : function(var) {
-                private = var;
-                showPrivate();
-            }
-        });
-    });
-
-    // somewhere else
-    require(['module'], function(Module) {
+        <pre><code>
         var module = Module.create();
 
-        console.log( module.show("Elvis") ); // 'This is private: Elvis',
-    });
-    </code></pre>
-
-    <h3>General methods</h3>
-    <article>
-        <h1>create</h1>
-
-        <h2>Stapes.create( obj )</h2>
-        <h2>module.create( obj )</h2>
-
-        <p>Create a new instance of a Stapes object.</p>
-
-        <p>If you give the optional <code>obj</code> parameter you can
-        initialize an object with extra properties.</p>
-
-        <p>Always returns <code>this</code>, so you can easily chain
-        <code>create</code> with <code>extend</code></p>
-    </article>
-
-    <article>
-        <h1>extend</h1>
-
-        <h2>module.extend([context, ]object)</h2>
-
-        <p>Extend your module  by giving an
-        object. Keys with the same value will be overwritten. <code>this</code>
-        will be set to the objects context. When setting no <code>context</code>
-        the properties will be inserted in the current object. However, if you want
-        to insert properties 'deeper' into the object, you can specificy that
-        as the first parameter.</p>
-
-        <pre><code>
-        module.extend({
-            "names" : {
-                "woman" : ['claire', 'alice']
-            },
-
-            "sayName" : function(i) {
-                console.log( "Hello " + this.names.woman[i] + "!" );
-            }
-        });
-
-        module.extend(module.names, {
-            "man" : ['clark', 'elvis']
-        });
-
-        console.log(module.names);
-        // Gives:
-        // {
-        //   "woman" : ['claire', 'alice'],
-        //   "man" : ['clark', 'elvis']
-        // }
-        </code></pre>
-    </article>
-
-    <h3>Events</h3>
-    <article>
-        <h1>on</h1>
-
-        <h2>module.on(eventName, handler, context)</h2>
-        <h2>module.on(object, context);</h2>
-
-        <p>Event listener. Events are only thrown on this object and won't
-        be thrown in other Stapes objects. <code>handler</code> will be called
-        with two arguments: <code>data</code>, which may contain any data, and an
-        <code>eventObject</code> that contains some useful information about the
-        event, such as the scope, target and event name</p>
-
-        <pre><code>
         module.on('ready', function() {
-            console.log('your module is ready!');
+            console.log('woot! ready!');
         });
 
-        module.on({
-            "talk" : function() {
-                console.log('your module is talking!');
-            },
-
-            "walk" : function() {
-                console.log('your module is walking!');
-            }
-        })
+        module.init(); // 'woot! ready!'
         </code></pre>
-    </article>
 
-    <article>
-        <h1>emit</h1>
-
-        <h2>module.emit(eventName[, data])</h2>
-
-        <p>Trigger an event. <code>eventName</code> can be a space seperated
-        string if you want to trigger more events. <code>data</code> can be any
-        Javascript variable you want, and will be passed to any event listeners</p>
+        <p><code>create()</code> returns <code>this</code>, so yo could write the
+        previous example like this as well.</p>
 
         <pre><code>
-        module.extend({
-            "sleep" : function() {
-                this.emit('sleeping', 'very deep');
+        var Module = Stapes.create().extend({
+            "init" : function() {
+                this.emit('ready');
             }
         });
         </code></pre>
-    </article>
 
-    <h3>Data methods</h3>
-    <article>
-        <h1>remove</h1>
-
-        <h2>module.remove( key );</h2>
-        <h2>module.remove( function );</h2>
-
-        <p>Deletes an attribute. Triggers <code>delete</code> and
-        <code>change</code> events.</p>
-
-        <p>You can either use a <code>key</code> as an argument or a
-        <code>function</code></p>
+        <p><code>create()</code> accepts an object as an argument, that you can use
+        to include properties in the object before it gets initialized.</p>
 
         <pre><code>
-        module.remove(function(item) {
-            return item.done === true;
+        var Module = Stapes.create().extend({
+            "init" : function() {
+                console.log("I am " + this.name);
+            }
+        });
+
+        var m = Module.create({
+            "name" : "Elvis"
+        });
+
+        m.init(); // "I am Elvis"
+        </code></pre>
+
+        <p>If you want to use private variables and functions, use Stapes like this</p>
+
+        <pre><code>
+        (function() {
+            var private;
+
+            function showPrivate() {
+                console.log("You shouldn't be seeing this", private);
+            }
+
+            window.Module = Stapes.create().extend({
+                "show" : function(var) {
+                    private = var;
+                    showPrivate();
+                }
+            });
+        })();
+        </code></pre>
+
+        <h3 id="m-require">Using it together with RequireJS</h3>
+
+        <p>To avoid lots of global variables you can use a dependency loader like
+        <a href="http://www.requirejs.org">Require.JS</a>. This also makes the
+        previous example easier to read.
+
+        <pre><code>
+        // 'module.js'
+        require(["path/to/Stapes"], function(Stapes) {
+            var private;
+
+            function showPrivate() {
+                console.log("This is private: " + private);s
+            }
+
+            return Stapes.create().extend({
+                "show" : function(var) {
+                    private = var;
+                    showPrivate();
+                }
+            });
+        });
+
+        // somewhere else
+        require(['module'], function(Module) {
+            var module = Module.create();
+
+            console.log( module.show("Elvis") ); // 'This is private: Elvis',
         });
         </code></pre>
-    </article>
 
-    <article>
-        <h1>get</h1>
+        <h3 id="m-general">General methods</h3>
+        <article id="m-create">
+            <h1>create</h1>
 
-        <h2>module.get( key );</h2>
+            <h2>Stapes.create( obj )</h2>
+            <h2>module.create( obj )</h2>
 
-        <p>Gets an attribute. If the item is not available will return
-        <code>null</code></p>
-    </article>
+            <p>Create a new instance of a Stapes object.</p>
 
-    <article>
-        <h1>getAll</h1>
+            <p>If you give the optional <code>obj</code> parameter you can
+            initialize an object with extra properties.</p>
 
-        <h2>module.getAll();</h2>
+            <p>Always returns <code>this</code>, so you can easily chain
+            <code>create</code> with <code>extend</code></p>
+        </article>
 
-        <p>Returns all attributes as an object.</p>
-    </article>
+        <article id="m-extend">
+            <h1>extend</h1>
 
-    <article>
-        <h1>getAllAsArray</h1>
+            <h2>module.extend([context, ]object)</h2>
 
-        <h2>module.getAllAsArray();</h2>
+            <p>Extend your module  by giving an
+            object. Keys with the same value will be overwritten. <code>this</code>
+            will be set to the objects context. When setting no <code>context</code>
+            the properties will be inserted in the current object. However, if you want
+            to insert properties 'deeper' into the object, you can specificy that
+            as the first parameter.</p>
 
-        <p>Returns all attributes as an array, so you can easily iterate.
-        Note that the original key of the attribute is always available as a
-        'id' key in the the value, provided your value is an object.</p>
-    </article>
-
-    <article>
-        <h1>set</h1>
-
-        <h2>module.set(key, value);</h2>
-        <h2>module.set(object);</h2>
-
-        <p>Sets an attribute. Use <code>push</code> if you want to 'push' a value
-        with a random uuid, for collections</p>
-
-        <p>To set multiple attributes in one go, use an object as the first argument.</p>
-
-        <p>Every attribute will trigger a <code>change</code> event. A key
-        that doesn't exist will trigger a <code>create</code> event, a key
-        that does exist will trigger an <code>update</code> event.</p>
-
-        <p>All events will have the key of the attribute as their event value.</p>
-
-        <pre><code>
-            module.on({
-                "change" : function(key) {
-                    console.log('Something happened with ' + key);
+            <pre><code>
+            module.extend({
+                "names" : {
+                    "woman" : ['claire', 'alice']
                 },
 
-                "create" : function(key) {
-                    console.log("New attribute " + key + " added!");
-                },
-
-                "update" : function(key) {
-                    console.log("Attribute " + key + " was updated!");
+                "sayName" : function(i) {
+                    console.log( "Hello " + this.names.woman[i] + "!" );
                 }
             });
 
-            module.set('name', 'Elvis'); // will trigger 'change' and 'create' events
-            module.set('name', 'Johnny'); // will trigger 'change' and 'update' events
-            module.set({
-                "name" : "Elvis",
-                "instrument" : "guitar"
-            });
-        </code></pre>
-    </article>
-
-    <article>
-        <h1>push</h1>
-
-        <h2>module.push( value );</h2>
-        <h2>module.push( array );</h2>
-
-        <p>Sets a value, automatically generates an unique id</p>
-
-        <p>You can also push an array of values.</p>
-
-        <p>Behaves exactly the same as <code>set</code>, but doesn't need a key.</p>
-    </article>
-
-    <article>
-        <h1>filter</h1>
-
-        <h2>module.filter( function );</h2>
-
-        <p>Gets an attribute using a custom function.</p>
-
-        <pre><code>
-            module.set('singer', {
-                'name' : 'Elvis',
-                'instrument' : 'Guitar'
+            module.extend(module.names, {
+                "man" : ['clark', 'elvis']
             });
 
-            var singer = module.filter(function(item) {
-                return item.name === "Elvis";
+            console.log(module.names);
+            // Gives:
+            // {
+            //   "woman" : ['claire', 'alice'],
+            //   "man" : ['clark', 'elvis']
+            // }
+            </code></pre>
+        </article>
+
+        <h3 id="m-events">Events</h3>
+        <article id="m-on">
+            <h1>on</h1>
+
+            <h2>module.on(eventName, handler, context)</h2>
+            <h2>module.on(object, context);</h2>
+
+            <p>Event listener. Events are only thrown on this object and won't
+            be thrown in other Stapes objects. <code>handler</code> will be called
+            with two arguments: <code>data</code>, which may contain any data, and an
+            <code>eventObject</code> that contains some useful information about the
+            event, such as the scope, target and event name</p>
+
+            <pre><code>
+            module.on('ready', function() {
+                console.log('your module is ready!');
             });
-        </code></pre>
-    </article>
 
-    <article>
-        <h1>has</h1>
+            module.on({
+                "talk" : function() {
+                    console.log('your module is talking!');
+                },
 
-        <h2>module.has( key );</h2>
+                "walk" : function() {
+                    console.log('your module is walking!');
+                }
+            })
+            </code></pre>
+        </article>
 
-        <p>Checks if a key is available and returns true or false.</p>
-    </article>
+        <article id="m-emit">
+            <h1>emit</h1>
+
+            <h2>module.emit(eventName[, data])</h2>
+
+            <p>Trigger an event. <code>eventName</code> can be a space seperated
+            string if you want to trigger more events. <code>data</code> can be any
+            Javascript variable you want, and will be passed to any event listeners</p>
+
+            <pre><code>
+            module.extend({
+                "sleep" : function() {
+                    this.emit('sleeping', 'very deep');
+                }
+            });
+            </code></pre>
+        </article>
+
+        <h3 id="m-data">Data methods</h3>
+        <article id="m-remove">
+            <h1>remove</h1>
+
+            <h2>module.remove( key );</h2>
+            <h2>module.remove( function );</h2>
+
+            <p>Deletes an attribute. Triggers <code>delete</code> and
+            <code>change</code> events.</p>
+
+            <p>You can either use a <code>key</code> as an argument or a
+            <code>function</code></p>
+
+            <pre><code>
+            module.remove(function(item) {
+                return item.done === true;
+            });
+            </code></pre>
+        </article>
+
+        <article id="m-get">
+            <h1>get</h1>
+
+            <h2>module.get( key );</h2>
+
+            <p>Gets an attribute. If the item is not available will return
+            <code>null</code></p>
+        </article>
+
+        <article id="m-getall">
+            <h1>getAll</h1>
+
+            <h2>module.getAll();</h2>
+
+            <p>Returns all attributes as an object.</p>
+        </article>
+
+        <article id="m-getallasarray">
+            <h1>getAllAsArray</h1>
+
+            <h2>module.getAllAsArray();</h2>
+
+            <p>Returns all attributes as an array, so you can easily iterate.
+            Note that the original key of the attribute is always available as a
+            'id' key in the the value, provided your value is an object.</p>
+        </article>
+
+        <article id="m-set">
+            <h1>set</h1>
+
+            <h2>module.set(key, value);</h2>
+            <h2>module.set(object);</h2>
+
+            <p>Sets an attribute. Use <code>push</code> if you want to 'push' a value
+            with a random uuid, for collections</p>
+
+            <p>To set multiple attributes in one go, use an object as the first argument.</p>
+
+            <p>Every attribute will trigger a <code>change</code> event. A key
+            that doesn't exist will trigger a <code>create</code> event, a key
+            that does exist will trigger an <code>update</code> event.</p>
+
+            <p>All events will have the key of the attribute as their event value.</p>
+
+            <pre><code>
+                module.on({
+                    "change" : function(key) {
+                        console.log('Something happened with ' + key);
+                    },
+
+                    "create" : function(key) {
+                        console.log("New attribute " + key + " added!");
+                    },
+
+                    "update" : function(key) {
+                        console.log("Attribute " + key + " was updated!");
+                    }
+                });
+
+                module.set('name', 'Elvis'); // will trigger 'change' and 'create' events
+                module.set('name', 'Johnny'); // will trigger 'change' and 'update' events
+                module.set({
+                    "name" : "Elvis",
+                    "instrument" : "guitar"
+                });
+            </code></pre>
+        </article>
+
+        <article id="m-push">
+            <h1>push</h1>
+
+            <h2>module.push( value );</h2>
+            <h2>module.push( array );</h2>
+
+            <p>Sets a value, automatically generates an unique id</p>
+
+            <p>You can also push an array of values.</p>
+
+            <p>Behaves exactly the same as <code>set</code>, but doesn't need a key.</p>
+        </article>
+
+        <article id="m-filter">
+            <h1>filter</h1>
+
+            <h2>module.filter( function );</h2>
+
+            <p>Gets an attribute using a custom function.</p>
+
+            <pre><code>
+                module.set('singer', {
+                    'name' : 'Elvis',
+                    'instrument' : 'Guitar'
+                });
+
+                var singer = module.filter(function(item) {
+                    return item.name === "Elvis";
+                });
+            </code></pre>
+        </article>
+
+        <article id="m-has">
+            <h1>has</h1>
+
+            <h2>module.has( key );</h2>
+
+            <p>Checks if a key is available and returns true or false.</p>
+        </article>
+    </section> <!-- #content -->
+
+    <script>
+        (function() {
+            function createToc() {
+                var nodes = document.querySelectorAll("section > *"),
+                    toc = document.querySelector('.toc'),
+                    openH3 = false,
+                    html = '';
+
+                nodes = [].slice.call(nodes, 0);
+
+                nodes.forEach(function(node) {
+                    if (node.tagName === "H3") {
+                        if (openH3) {
+                            html += "</ul>";
+                            openH3 = false;
+                        }
+
+                        html += ''.concat(
+                            '<li><a href="#' + node.id + '">',
+                            node.innerHTML,
+                            '</a></li>',
+                            '<ul>'
+                        );
+
+                        openH3 = true;
+                    }
+
+                    if (node.tagName === "ARTICLE") {
+                        html += ''.concat(
+                            '<li><a href="#' + node.id + '">',
+                            node.querySelector("h1").innerHTML,
+                            '</a></li>'
+                        );
+                    }
+                });
+
+                toc.innerHTML = html;
+            }
+
+            createToc();
+        })();
+    </script>
 </body>
 </html>
