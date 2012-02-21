@@ -1,3 +1,4 @@
+// 0.2
 (function() {
     /** Utility functions
      *
@@ -57,8 +58,15 @@
             });
         },
 
-        toArray : function(arr) {
-            return Array.prototype.slice.call(arr, 0);
+        toArray : function(val) {
+            if (util.isObject(val)) return values(val);
+            return Array.prototype.slice.call(val, 0);
+        },
+
+        values : function(obj) {
+            return map(obj, function(value) {
+                return value;
+            });
         }
     };
 
@@ -250,6 +258,8 @@
                 util.each(input, function(value) {
                     setAttribute.call(this, util.makeUuid(), value);
                 });
+
+                this.emit('changemany createmany', util.toArray(input).length);
             } else {
                 setAttribute.call(this, util.makeUuid(), input);
             }
@@ -282,6 +292,8 @@
                 util.each(objOrKey, util.bind(function(value, key) {
                     setAttribute.call(this, key, value);
                 }, this));
+
+                this.emit('changemany', objOrKey.length);
             } else {
                 setAttribute.call(this, objOrKey, value);
             }
