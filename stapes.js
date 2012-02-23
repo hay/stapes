@@ -1,3 +1,4 @@
+//
 //  ____  _                           _
 // / ___|| |_ __ _ _ __   ___  ___   (_)___
 // \___ \| __/ _` | '_ \ / _ \/ __|  | / __|
@@ -19,10 +20,6 @@
      *  such as Underscore.js, so that's why they're not usable outside
      *  the private scope.
      */
-    var attributes = {},
-        eventHandlers = {"-1" : {}},
-        guid = 0;
-
     var util = {
         bind : function(fn, ctx) {
             return function() {
@@ -30,7 +27,7 @@
             };
         },
 
-        create : function(context, obj, newGuid) {
+        create : function(context, obj) {
             var F = function(){};
             F.prototype = context;
             var instance = new F();
@@ -39,11 +36,9 @@
                 instance.extend( obj );
             }
 
-            if (newGuid) {
-                instance._guid = guid++;
-                attributes[instance._guid] = {};
-                eventHandlers[instance._guid] = {};
-            }
+            instance._guid = guid++;
+            attributes[instance._guid] = {};
+            eventHandlers[instance._guid] = {};
 
             return instance;
         },
@@ -166,9 +161,13 @@
         this.emit(specificEvent + ':' + key, value);
     }
 
+    var attributes = {},
+        eventHandlers = {"-1" : {}},
+        guid = 0;
+
     var Module = {
         create : function(obj) {
-            return util.create(this, obj || false, true);
+            return util.create(this, obj || false);
         },
 
         emit : function(types, data) {
@@ -309,10 +308,6 @@
             } else {
                 setAttribute.call(this, objOrKey, value);
             }
-        },
-
-        sub : function(obj) {
-            return util.create(this, obj || false, false);
         },
 
         update : function(key, fn) {
