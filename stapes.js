@@ -1,4 +1,16 @@
-// 0.2
+//  ____  _                           _
+// / ___|| |_ __ _ _ __   ___  ___   (_)___
+// \___ \| __/ _` | '_ \ / _ \/ __|  | / __|
+//  ___) | || (_| | |_) |  __/\__ \_ | \__ \
+// |____/ \__\__,_| .__/ \___||___(_)/ |___/
+//              |_|              |__/
+//
+// (c) Hay Kranen < hay@bykr.org >
+// Version 0.2 - Released under the terms of the MIT license
+// < http://en.wikipedia.org/wiki/MIT_License >
+//
+// Stapes.js : http://projects.haykranen.nl/stapes
+
 (function() {
     /** Utility functions
      *
