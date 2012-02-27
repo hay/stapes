@@ -39,9 +39,19 @@
             return instance;
         },
 
-        each : function(obj, fn) {
-            for (var key in obj) {
-                fn( obj[key], key );
+        each : function(list, fn) {
+            if (util.isArray(list)) {
+                if (Array.prototype.forEach) {
+                    list.forEach( fn );
+                } else {
+                    for (var i = 0, l = list.length; i < l; i++) {
+                        fn( list[i], i);
+                    }
+                }
+            } else {
+                for (var key in list) {
+                    fn( list[key], key );
+                }
             }
         },
 
@@ -102,21 +112,18 @@
             eventMap = argTypeOrMap;
         }
 
-        for (var eventString in eventMap) {
-            var handler = eventMap[ eventString ],
-                events = eventString.split(" ");
+        util.each(eventMap, util.bind(function(handler, eventString) {
+            var events = eventString.split(" ");
 
-            for (var i = 0, l = events.length; i < l; i++) {
-                var eventType = events[i];
-
+            util.each(events, util.bind(function(eventType) {
                 addEvent.call(this, {
                     "guid" : this._guid,
                     "handler" : handler,
                     "scope" : scope,
                     "type" : eventType
                 });
-            }
-        }
+            }, this));
+        }, this));
     }
 
     function emitEvents(type, data, explicitType, explicitGuid) {
