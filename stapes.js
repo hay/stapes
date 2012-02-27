@@ -22,15 +22,27 @@
      */
     var util = {
         bind : function(fn, ctx) {
-            return function() {
-                return fn.apply(ctx, arguments);
-            };
+            if (Function.prototype.bind) {
+                // Native
+                return fn.bind(ctx);
+            } else {
+                // Non-native
+                return function() {
+                    return fn.apply(ctx, arguments);
+                };
+            }
         },
 
         create : function(context) {
-            var F = function(){};
-            F.prototype = context;
-            var instance = new F();
+            if (typeof Object.create === "function") {
+                // Native
+                var instance = Object.create(context);
+            } else {
+                // Non-native
+                var F = function(){};
+                F.prototype = context;
+                var instance = new F();
+            }
 
             instance._guid = guid++;
             Stapes._attributes[instance._guid] = {};
@@ -42,6 +54,7 @@
         each : function(list, fn) {
             if (util.isArray(list)) {
                 if (Array.prototype.forEach) {
+                    // Native forEach
                     list.forEach( fn );
                 } else {
                     for (var i = 0, l = list.length; i < l; i++) {
@@ -72,14 +85,21 @@
         },
 
         toArray : function(val) {
-            if (util.isObject(val)) return values(val);
-            return Array.prototype.slice.call(val, 0);
+            if (util.isObject(val)) {
+                return util.values(val);
+            } else {
+                return Array.prototype.slice.call(val, 0);
+            }
         },
 
         values : function(obj) {
-            return map(obj, function(value) {
-                return value;
+            var values = [];
+
+            util.each(obj, function(value, key) {
+                values.push(value);
             });
+
+            return values;
         }
     };
 
@@ -266,9 +286,9 @@
         // Akin to set(), but makes a unique id
         push : function(input) {
             if (util.isArray(input)) {
-                util.each(input, function(value) {
+                util.each(input, util.bind(function(value) {
                     setAttribute.call(this, util.makeUuid(), value);
-                });
+                }, this));
 
                 this.emit('changemany createmany', util.toArray(input).length);
             } else {
