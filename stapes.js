@@ -37,8 +37,8 @@
             }
 
             instance._guid = guid++;
-            attributes[instance._guid] = {};
-            eventHandlers[instance._guid] = {};
+            Stapes._attributes[instance._guid] = {};
+            Stapes._eventHandlers[instance._guid] = {};
 
             return instance;
         },
@@ -81,12 +81,12 @@
     function addEvent(event) {
         // If we don't have any handlers for this type of event, add a new
         // array we can use to push new handlers
-        if (!eventHandlers[event.guid][event.type]) {
-            eventHandlers[event.guid][event.type] = [];
+        if (!Stapes._eventHandlers[event.guid][event.type]) {
+            Stapes._eventHandlers[event.guid][event.type] = [];
         }
 
         // Push an event object
-        eventHandlers[event.guid][event.type].push({
+        Stapes._eventHandlers[event.guid][event.type].push({
             "guid" : event.guid,
             "handler" : event.handler,
             "scope" : event.scope,
@@ -128,7 +128,7 @@
         explicitType = explicitType || false;
         explicitGuid = explicitGuid || this._guid;
 
-        util.each(eventHandlers[explicitGuid][type], util.bind(function(event) {
+        util.each(Stapes._eventHandlers[explicitGuid][type], util.bind(function(event) {
             var scope = (event.scope) ? event.scope : this;
             if (explicitType) {
                 event.type = explicitType;
@@ -143,7 +143,7 @@
         var itemExists = this.has(key);
 
         // Actually add the item to the attributes
-        attributes[this._guid][key] = value;
+        Stapes._attributes[this._guid][key] = value;
 
         // Throw a generic event
         this.emit('change', key);
@@ -161,9 +161,7 @@
         this.emit(specificEvent + ':' + key, value);
     }
 
-    var attributes = {},
-        eventHandlers = {"-1" : {}},
-        guid = 0;
+    var guid = 0;
 
     var Module = {
         create : function(obj) {
@@ -176,22 +174,22 @@
             util.each(types.split(" "), util.bind(function(type) {
                 // First 'all' type events: is there an 'all' handler in the
                 // global stack?
-                if (eventHandlers[-1].all) {
+                if (Stapes._eventHandlers[-1].all) {
                     emitEvents.call(this, "all", data, type, -1);
                 }
 
                 // Catch all events for this type?
-                if (eventHandlers[-1][type]) {
+                if (Stapes._eventHandlers[-1][type]) {
                     emitEvents.call(this, type, data, type, -1);
                 }
 
                 // 'all' event for this specific module?
-                if (eventHandlers[this._guid]["all"]) {
+                if (Stapes._eventHandlers[this._guid]["all"]) {
                     emitEvents.call(this, "all", data, type);
                 }
 
                 // Finally, normal events :)
-                if (eventHandlers[this._guid][type]) {
+                if (Stapes._eventHandlers[this._guid][type]) {
                     emitEvents.call(this, type, data);
                 }
             }, this));
@@ -211,7 +209,7 @@
         filter : function(fn) {
             var items = [];
 
-            util.each(attributes[this._guid], function(item) {
+            util.each(Stapes._attributes[this._guid], function(item) {
                 if (fn(item)) {
                     items.push(item);
                 }
@@ -222,7 +220,7 @@
 
         get : function(input) {
             if (typeof input === "string") {
-                return this.has(input) ? attributes[this._guid][input] : null;
+                return this.has(input) ? Stapes._attributes[this._guid][input] : null;
             } else if (typeof input === "function") {
                 var items = this.filter(input);
                 if (items.length) {
@@ -232,13 +230,13 @@
         },
 
         getAll : function() {
-            return attributes[this._guid];
+            return Stapes._attributes[this._guid];
         },
 
         getAllAsArray : function() {
             var arr = [];
 
-            util.each(attributes[this._guid], function(value, key) {
+            util.each(Stapes._attributes[this._guid], function(value, key) {
                 if (util.isObject(value)) {
                     value.id = key;
                 }
@@ -251,7 +249,7 @@
         },
 
         has : function(key) {
-            return (typeof attributes[this._guid][key] !== "undefined");
+            return (typeof Stapes._attributes[this._guid][key] !== "undefined");
         },
 
         init : function() {
@@ -278,10 +276,10 @@
 
         remove : function(input) {
             if (typeof input === "function") {
-                util.each(attributes[this._guid], util.bind(function(item, key) {
+                util.each(Stapes._attributes[this._guid], util.bind(function(item, key) {
                     if (input(item)) {
-                        delete attributes[this._guid][key];
-                        this.emit('delete change');
+                        delete Stapes._attributes[this._guid][key];
+                        this.emit('remove change');
                     }
                 }, this));
             } else {
@@ -291,8 +289,8 @@
 
                 util.each(util.toArray(input), util.bind(function(id) {
                     if (this.has(id)) {
-                        delete attributes[this._guid][id];
-                        this.emit('delete change');
+                        delete Stapes._attributes[this._guid][id];
+                        this.emit('remove change');
                     }
                 }, this));
             }
@@ -318,6 +316,12 @@
     };
 
     var Stapes = {
+        "_attributes" : {},
+
+        "_eventHandlers" : {
+            "-1" : {} // '-1' is used for the global event handling
+        },
+
         "create" : function(obj) {
             return util.create(Module, obj || false, true);
         },
