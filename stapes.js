@@ -27,14 +27,10 @@
             };
         },
 
-        create : function(context, obj) {
+        create : function(context) {
             var F = function(){};
             F.prototype = context;
             var instance = new F();
-
-            if (obj) {
-                instance.extend( obj );
-            }
 
             instance._guid = guid++;
             Stapes._attributes[instance._guid] = {};
@@ -96,8 +92,7 @@
 
     function addEventHandler(argTypeOrMap, argHandlerOrScope, argScope) {
         var eventMap = {},
-            scope,
-            guid = this._guid || -1;
+            scope;
 
         if (typeof argTypeOrMap === "string") {
             scope = argScope || false;
@@ -115,7 +110,7 @@
                 var eventType = events[i];
 
                 addEvent.call(this, {
-                    "guid" : guid,
+                    "guid" : this._guid,
                     "handler" : handler,
                     "scope" : scope,
                     "type" : eventType
@@ -164,8 +159,8 @@
     var guid = 0;
 
     var Module = {
-        create : function(obj) {
-            return util.create(this, obj || false);
+        create : function() {
+            return util.create(this);
         },
 
         emit : function(types, data) {
@@ -322,8 +317,10 @@
             "-1" : {} // '-1' is used for the global event handling
         },
 
-        "create" : function(obj) {
-            return util.create(Module, obj || false, true);
+        "_guid" : -1,
+
+        "create" : function() {
+            return util.create(Module);
         },
 
         "extend" : function(obj) {
@@ -333,7 +330,7 @@
         },
 
         "on" : function() {
-            addEventHandler.apply(Module, arguments);
+            addEventHandler.apply(this, arguments);
         }
     };
 

@@ -101,23 +101,6 @@
     });
     </code></pre>
 
-    <p><code>create()</code> accepts an object as an argument, that you can use
-    to include properties in the object before it gets initialized.</p>
-
-    <pre><code>
-    var Module = Stapes.create().extend({
-        "init" : function() {
-            console.log("I am " + this.name);
-        }
-    });
-
-    var m = Module.create({
-        "name" : "Elvis"
-    });
-
-    m.init(); // "I am Elvis"
-    </code></pre>
-
     <p>If you want to use private variables and functions, use Stapes like this</p>
 
     <pre><code>
@@ -176,9 +159,6 @@
         <h2>module.create( obj )</h2>
 
         <p>Create a new instance of a Stapes object.</p>
-
-        <p>If you give the optional <code>obj</code> parameter you can
-        initialize an object with extra properties.</p>
 
         <p>Always returns <code>this</code>, so you can easily chain
         <code>create</code> with <code>extend</code></p>
