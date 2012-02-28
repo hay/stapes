@@ -24,12 +24,19 @@
   <script src="lib/jquery.js"></script>
   <script src="lib/mustache.js"></script>
   <script src="../stapes.js"></script>
+  <script>
+    Stapes.extend({
+      "events" : function() {
+        console.log(eventHandlers);
+      }
+    });
+  </script>
   <script src="app/todoController.js"></script>
   <script src="app/todoModel.js"></script>
   <script src="app/todoView.js"></script>
   <script src="app/todoStore.js"></script>
   <script>
-      TodoController.create().init();
+      TodoController.create({name : "app"}).init();
   </script>
 </body>
 </html>

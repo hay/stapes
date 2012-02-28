@@ -42,9 +42,9 @@ function(Stapes, TodoModel, TodoView, TodoStore) {
         },
 
         "init" : function() {
-            this.model = TodoModel.create();
-            this.view = TodoView.create();
-            this.store = TodoStore.create();
+            this.model = TodoModel;
+            this.view = TodoView;
+            this.store = TodoStore;
 
             this.bindEventHandlers();
 
