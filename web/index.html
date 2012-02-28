@@ -81,13 +81,11 @@
         <p>Then, use it like this.</p>
 
         <pre><code>
-        var module = Module.create();
-
-        module.on('ready', function() {
+        Module.on('ready', function() {
             console.log('woot! ready!');
         });
 
-        module.init(); // 'woot! ready!'
+        Module.init(); // 'woot! ready!'
         </code></pre>
 
         <p><code>create()</code> returns <code>this</code>, so yo could write the
@@ -99,23 +97,6 @@
                 this.emit('ready');
             }
         });
-        </code></pre>
-
-        <p><code>create()</code> accepts an object as an argument, that you can use
-        to include properties in the object before it gets initialized.</p>
-
-        <pre><code>
-        var Module = Stapes.create().extend({
-            "init" : function() {
-                console.log("I am " + this.name);
-            }
-        });
-
-        var m = Module.create({
-            "name" : "Elvis"
-        });
-
-        m.init(); // "I am Elvis"
         </code></pre>
 
         <p>If you want to use private variables and functions, use Stapes like this</p>
@@ -162,9 +143,7 @@
 
         // somewhere else
         require(['module'], function(Module) {
-            var module = Module.create();
-
-            console.log( module.show("Elvis") ); // 'This is private: Elvis',
+            console.log( Module.show("Elvis") ); // 'This is private: Elvis',
         });
         </code></pre>
 
@@ -172,13 +151,10 @@
         <article id="m-create">
             <h1>create</h1>
 
-            <h2>Stapes.create( obj )</h2>
-            <h2>module.create( obj )</h2>
+            <h2>Stapes.create()</h2>
+            <h2>module.create()</h2>
 
             <p>Create a new instance of a Stapes object.</p>
-
-            <p>If you give the optional <code>obj</code> parameter you can
-            initialize an object with extra properties.</p>
 
             <p>Always returns <code>this</code>, so you can easily chain
             <code>create</code> with <code>extend</code></p>
