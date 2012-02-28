@@ -1,0 +1,2 @@
+#!/bin/bash
+uglifyjs ../stapes.js | gzip -9f | wc -c
