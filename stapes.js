@@ -332,8 +332,7 @@
 
         update : function(key, fn) {
             var item = this.get(key);
-            fn(item);
-            setAttribute.call(this, key, item);
+            setAttribute.call(this, key, fn( item ));
         }
     };
 
