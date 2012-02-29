@@ -245,9 +245,7 @@
                 return this.has(input) ? Stapes._attributes[this._guid][input] : null;
             } else if (typeof input === "function") {
                 var items = this.filter(input);
-                if (items.length) {
-                    return items.length[0];
-                }
+                return (items.length) ? items.length[0] : false;
             }
         },
 
@@ -365,7 +363,7 @@
     if (typeof exports !== "undefined") {
         // Server
         if (typeof module !== "undefined" && module.exports) {
-            exports = module.exports = initalizer;
+            exports = module.exports = Stapes;
         }
         exports.Stapes = Stapes;
     } else if (typeof define === "function" && define.amd) {
