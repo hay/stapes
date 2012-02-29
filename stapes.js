@@ -245,7 +245,7 @@
                 return this.has(input) ? Stapes._attributes[this._guid][input] : null;
             } else if (typeof input === "function") {
                 var items = this.filter(input);
-                return (items.length) ? items.length[0] : false;
+                return (items.length) ? items[0] : false;
             }
         },
 
