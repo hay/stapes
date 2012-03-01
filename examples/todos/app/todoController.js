@@ -33,6 +33,7 @@ var TodoController = Stapes.create({ name : "TodoController"}).extend({
             "taskdone taskundone" : function(id, e) {
                 this.model.update(id, function(item) {
                     item.done = e.type === "taskdone";
+                    return item;
                 });
             }
         }, this);
