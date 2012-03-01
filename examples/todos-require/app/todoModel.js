@@ -1,4 +1,4 @@
-define(["../../stapes"], function(Stapes) {
+define(["stapes"], function(Stapes) {
     return Stapes.create().extend({
         "addTask" : function(name) {
             this.push({

@@ -1,4 +1,4 @@
-define(["../../stapes", "../lib/mustache"], function(Stapes, Mustache) {
+define(["stapes", "../lib/mustache"], function(Stapes, Mustache) {
     var todoView = Stapes.create(),
         taskTmpl;
 
