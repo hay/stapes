@@ -19,7 +19,7 @@
         <p><em>Right. There's a zillion other Javascript MVC frameworks, why
         should i choose Stapes.js?</em></p>
 
-        <p>Here's why i think you should use it: it's really tiny (<strong>1kb</strong> minified and gzipped),
+        <p>Here's why i think you should use it: it's really tiny (<strong>1.5kb</strong> minified and gzipped),
         easy to fit in an exisitng codebase, and doesn't force you to
         write your code in a specific style.</p>
 
@@ -34,7 +34,7 @@
         <p>Any way you want. Stapes has all the building blocks you need when
         writing a MVC app.</p>
 
-        <p><em>Like, such as?</em></p>
+        <p><em>Like what?</em></p>
 
         <p>Here's a list:</p>
         <ul>
@@ -370,6 +370,25 @@
             <h2>module.has( key );</h2>
 
             <p>Checks if a key is available and returns true or false.</p>
+        </article>
+
+        <article id="m-update">
+            <h1>update</h1>
+
+            <h2>module.update( key, fn );</h2>
+
+            <p>Updates an attribute with a new value, based on the return value
+                of a function</p>
+
+            <pre><code>
+                module.set('singer', 'Elvis');
+
+                module.update('singer', function(singer) {
+                    return 'Johnny';
+                });
+
+                console.log( module.get('singer') ); // 'Johnny';
+            </code></pre>
         </article>
     </section> <!-- #content -->
 

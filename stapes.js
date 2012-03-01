@@ -15,6 +15,8 @@
 // Stapes.js : http://projects.haykranen.nl/stapes
 
 (function() {
+    var VERSION = "0.2";
+
     /** Utility functions
      *
      *  Note that these functions are only used inside Stapes, and therefore
@@ -357,7 +359,9 @@
 
         "on" : function() {
             addEventHandler.apply(this, arguments);
-        }
+        },
+
+        "version" : VERSION
     };
 
     // This library can be used as an AMD module, a Node.js module, or an
