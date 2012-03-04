@@ -1,7 +1,8 @@
 require(
     {
         paths : {
-            "stapes" : "../../../stapes"
+            "stapes" : "../../../stapes",
+            "mustache" : "../../lib/mustache"
         }
     },
     ["todoController"],
