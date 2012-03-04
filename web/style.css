@@ -36,15 +36,16 @@ nav {
     top: 0;
     left: 0;
     width: 200px;
-    height: 100%;
+    height: 95%;
     padding: 16px;
     background: white;
-    overflow-y: auto;
+    overflow-y: scroll;
     border-right: 3px double #999;
 }
 
 nav li {
     padding: 1px 0;
+    font-size: 14px;
 }
 
 #content {

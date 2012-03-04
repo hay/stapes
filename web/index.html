@@ -18,12 +18,12 @@
         <h3>Downloads</h3>
         <ul>
             <li><a href="http://github.com/hay/stapes/stapes.min.js">
-                Download production version 0.2 (minified)</a></li>
+                Download production version 0.2 (minified, library only)</a></li>
 
             <li><a href="http://github.com/hay/stapes/stapes.js">
-                Download development version 0.2 (full source)</a></li>
+                Download development version 0.2 (full source with examples and docs)</a></li>
 
-            <li><a href="http://github.com/hay/stapes">Fork on Github</a></li>
+            <li><a href="http://github.com/hay/stapes">Fork it and report bugs on Github</a></li>
         </ul>
 
         <h3 id="m-phil">Philosophy</h3>
@@ -57,6 +57,7 @@
             <li>Powerful <a href="#m-filter"><code>filter</code></a> and <a href="#m-remove"><code>remove</code></a> methods for attributes</li>
             <li>Usable in traditional Javascript, as an AMD module (for <a href="http://requirejs.org">Require.js</a>)
             or on the server with <a href="http://www.nodejs.org">Node.js</a></li>
+            <li><a href="#m-plugins">A simple mechanism</a> for writing plugins and extensions to extend the functionality of Stapes.</li>
             <li>Compatible with IE6+, Chrome, Firefox, Safari, Opera, Android and iOS browsers</li>
         </ul>
 
@@ -76,7 +77,7 @@
 
         <p>Read on...</p>
 
-        <h3 id="m-docs">Documentation</h3>
+        <h3 id="m-intro">Introduction</h3>
 
         <p>Write your Stapes modules like this</p>
 
@@ -215,6 +216,7 @@
             <h1>extend</h1>
 
             <h2>module.extend([context, ]object)</h2>
+            <h2>Stapes.extend( object )</h2>
 
             <p>Extend your module  by giving an
             object. Keys with the same value will be overwritten. <code>this</code>
@@ -245,6 +247,28 @@
             //   "man" : ['clark', 'elvis']
             // }
             </code></pre>
+
+            <p id="m-plugins"><code>Stapes.extend()</code> can be used for writing extra methods
+                and properties that will be available on all Stapes modules,
+                even after you have created them. This is very useful for
+                writing plugins for functionality that isn't in Stapes.</p>
+
+            <pre><code>
+                Stapes.extend({
+                    // Sets an DOM element for views
+                    "setElement" : function(el) {
+                        this.el = el;
+                        this.$el = $(el); // jQuery or Zepto reference
+                    }
+                });
+
+                var module = Stapes.create();
+
+                module.setElement( document.getElementById("app") );
+
+                console.log( module.el ); // "#app" DOM element
+                console.log( module.$el ); // jQuery or Zepto element
+            </code></pre>
         </article>
 
         <h3 id="m-events">Events</h3>
@@ -256,11 +280,18 @@
             <h2>Stapes.on(object, context)</h2>
             <h2>Stapes.on(eventName, handler, context)</h2>
 
-            <p>Event listener. Events are only thrown on this object and won't
-            be thrown in other Stapes objects. <code>handler</code> will be called
+            <p>Add an event listener to a Stapes module. When an event is
+                <a href="#m-emit">triggered</a> the <code>handler</code> will be called
             with two arguments: <code>data</code>, which may contain any data, and an
             <code>eventObject</code> that contains some useful information about the
-            event, such as the scope, target and event name</p>
+            event, such as the scope, target and event name.</p>
+
+            <p>As an optional third (when defining a single listener) or second
+                (when defining multipe listeners using an object) parameter you can set what the value of
+                <code>this</code> should be in the scope of the event handler.
+                This is handy to prevent having to temporary save the scope
+                to a <code>self</code> or <code>that</code> variable or with a
+                custom function bind utility.</p>
 
             <pre><code>
             module.on('ready', function() {
@@ -276,6 +307,13 @@
                     console.log('your module is walking!');
                 }
             })
+
+            // Set the scope for the event handler to 'this'
+            module.on({
+                "eat" : function( food ) {
+                    this.set('food', food);
+                }
+            }, this);
             </code></pre>
 
             <p>The <code>on</code> method on the global <code>Stapes</code>
@@ -314,7 +352,7 @@
 
             <h2>module.emit(eventName[, data])</h2>
 
-            <p>Trigger an event. <code>eventName</code> can be a space seperated
+            <p>Trigger an event on the module. <code>eventName</code> can be a space seperated
             string if you want to trigger more events. <code>data</code> can be any
             Javascript variable you want, and will be passed to any event listeners</p>
 
@@ -547,6 +585,28 @@
 
                 console.log( module.get('singer') ); // 'Johnny';
             </code></pre>
+        </article>
+
+        <h3 id="m-util">Utility</h3>
+        <article id="m-version">
+            <h1>version</h1>
+
+            <h2>Stapes.version</h2>
+
+            <p>Returns the current version of Stapes. Note that this property
+                is only available on the Stapes global variable, not on
+                individual modules.</p>
+        </article>
+
+        <h3 id="m-history">History</h3>
+        <article>
+            <h1 id="m-release">Release notes</h1>
+            <ul>
+                <li>0.2</li>
+                <ul>
+                    <li>First release!</li>
+                </ul>
+            </ul>
         </article>
     </section> <!-- #content -->
 
