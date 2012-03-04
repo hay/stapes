@@ -15,9 +15,15 @@
         <h1>Stapes.js</h1>
         <h2>A (really) tiny Javascript MVC microframework.</h2>
 
-        <h3>Essentials</h3>
+        <h3>Downloads</h3>
         <ul>
-            <li>
+            <li><a href="http://github.com/hay/stapes/stapes.min.js">
+                Download production version 0.2 (minified)</a></li>
+
+            <li><a href="http://github.com/hay/stapes/stapes.js">
+                Download development version 0.2 (full source)</a></li>
+
+            <li><a href="http://github.com/hay/stapes">Fork on Github</a></li>
         </ul>
 
         <h3 id="m-phil">Philosophy</h3>
@@ -58,7 +64,7 @@
 
         <p>That's the flexibility of Stapes: you're free to use any library you want. To see how that
         works in practice, try out the two <a href="#m-examples">todo examples</a>. The first one
-        uses global variables and jQuery, while the 'require' version uses require.js and vanilla DOM
+        uses global variables and jQuery, while the 'require' version uses require.js and vanilla HTML5 DOM
         scripting.</p>
 
         <p><em>Right, so this is your hobby project. Does this actually work in production?</em></p>
@@ -128,7 +134,10 @@
 
         <p>To avoid lots of global variables you can use a dependency loader like
         <a href="http://www.requirejs.org">Require.JS</a>. This also makes the
-        previous example easier to read.
+        previous example easier to read.</p>
+
+        <p>A dependency loader also makes it a lot easier to modularize your code and
+        (with the Require.js optimizer) easily minify and concat your app.</p>
 
         <pre><code>
         // 'module.js'
@@ -153,6 +162,16 @@
         });
         </code></pre>
 
+        <h3 id="m-examples">Examples</h3>
+        <p>There are three examples available to get a taste on how to write a
+            Stapes.js application.</p>
+
+        <ul>
+            <li><a href="http://github.com/stapes/examples/todos">A todo list</a></li>
+            <li><a href="http://github.com/stapes/examples/todos">A todo list using Require.JS modules</a></li>
+            <li><a href="http://github.com/stapes/examples/todos">A simple bouncing ball demo with HTML5 audio</a></li>
+        </ul>
+
         <h3 id="m-general">General methods</h3>
         <article id="m-create">
             <h1>create</h1>
@@ -163,7 +182,33 @@
             <p>Create a new instance of a Stapes object.</p>
 
             <p>Always returns <code>this</code>, so you can easily chain
-            <code>create</code> with <code>extend</code></p>
+            <code>create</code> with <code>extend</code>.</p>
+
+            <p>The <code>create()</code> function is comparable to creating a new
+                instance in Javascript with the <code>new</code> operator.
+                <code>create</code> also resets all event handlers and attributes
+                set on the object, so be careful not to initialize modules that
+                don't need to be initialized.</p>
+
+            <p>Calling <code>create</code> on an exisiting module can be used to
+                create child modules.</p>
+
+            <pre><code>
+                var Car = Stapes.create().extend({
+                    "type" : "normal car",
+
+                    "getCar" : function() {
+                        return 'this is a ' + this.type;
+                    }
+                });
+
+                var SportsCar = Car.create().extend({
+                    "type" : "sports car"
+                });
+
+                Car.getCar(); // 'this is a normal car'
+                SportsCar.getCar(); // 'this is a sports car'
+            </code></pre>
         </article>
 
         <article id="m-extend">
@@ -174,8 +219,8 @@
             <p>Extend your module  by giving an
             object. Keys with the same value will be overwritten. <code>this</code>
             will be set to the objects context. When setting no <code>context</code>
-            the properties will be inserted in the current object. However, if you want
-            to insert properties 'deeper' into the object, you can specificy that
+            the properties will be inserted on the called object. However, if you want
+            to insert properties 'deeper' into a object, you can specificy that
             as the first parameter.</p>
 
             <pre><code>
@@ -207,7 +252,9 @@
             <h1>on</h1>
 
             <h2>module.on(eventName, handler, context)</h2>
-            <h2>module.on(object, context);</h2>
+            <h2>module.on(object, context)</h2>
+            <h2>Stapes.on(object, context)</h2>
+            <h2>Stapes.on(eventName, handler, context)</h2>
 
             <p>Event listener. Events are only thrown on this object and won't
             be thrown in other Stapes objects. <code>handler</code> will be called
@@ -230,6 +277,36 @@
                 }
             })
             </code></pre>
+
+            <p>The <code>on</code> method on the global <code>Stapes</code>
+                object can be used to listen to events from all defined modules.
+            </p>
+
+            <p>Listening to the special <code>all</code> event on the <code>Stapes</code>
+                global will trigger on <strong>all</strong> events thrown in all
+                objects. Very useful for debugging, but be careful not to leave it in
+                your production code :)</p>
+
+            <pre><code>
+                var module1 = Stapes.create().extend({
+                    "name" : "module 1",
+
+                    "init" : function() {
+                        this.emit('ready');
+                    }
+                });
+
+                var module2 = module1.create().extend({
+                    "name" : "module 2"
+                });
+
+                Stapes.on('ready', function(data, e) {
+                    console.log('a ready event was triggered in: ' + e.scope.name);
+                });
+
+                module1.init(); // 'a ready event was triggered in module 1';
+                module2.init(); // 'a ready event was triggered in module 2';
+            </code></pre>
         </article>
 
         <article id="m-emit">
@@ -247,10 +324,99 @@
                     this.emit('sleeping', 'very deep');
                 }
             });
+
+            module.on('sleep', function(how) {
+                console.log("i'm sleeping " + how);
+            });
+
+            module.sleep(); // "i'm sleeping very deep"
             </code></pre>
         </article>
 
         <h3 id="m-data">Data methods</h3>
+        <article id="m-get">
+            <h1>get</h1>
+
+            <h2>module.get( key );</h2>
+            <h2>module.get( function );</h2>
+
+            <p>Gets an attribute by key. If the item is not available will return
+            <code>null</code></p>
+
+            <P>You can also use a function to get a specific key. This is
+                comparable to <code><a href="#m-filter">filter</a></code>,
+                however, <code>filter</code> always returns an array of results,
+                while <code>get</code> always returns a single result.</P>
+
+            <pre><code>
+                var module = Stapes.create();
+
+                module.set({
+                    'instrument', 'guitar',
+                    'name', 'Johnny'
+                });
+
+                module.get('instrument'); // 'guitar'
+
+                module.get(function(value) {
+                    return value === "guitar";
+                }); // 'instrument'
+            })
+            </code></pre>
+        </article>
+
+        <article id="m-set">
+            <h1>set</h1>
+
+            <h2>module.set(key, value);</h2>
+            <h2>module.set(object);</h2>
+
+            <p>Sets an attribute. Use <code><a href="#m-push">push</a></code> if you want to 'push' a value
+            with a random uuid, for collections.</p>
+
+            <p>To set multiple attributes in one go, use an object as an first argument.</p>
+
+            <p>Every attribute will trigger a <code>change</code> event. A key
+            that doesn't exist will trigger a <code>create</code> event, a key
+            that does exist will trigger an <code>update</code> event.</p>
+
+            <p>All events will have the key of the attribute as their event value.</p>
+
+            <p>Special namespaced events will also be triggered. These events have a value
+                of <code>eventType:key</code>. So for example, a <code>set</code> on
+                an attribute called 'name' will generate a <code>change:name</code>
+                event. These events will have the attribute value instead of the
+                key as a data argument in the event callback.</p>
+
+            <pre><code>
+                module.on({
+                    "change" : function(key) {
+                        console.log('Something happened with ' + key);
+                    },
+
+                    "change:name" : function(value) {
+                        console.log('name was changed to ' + value);
+                    },
+
+                    "create" : function(key) {
+                        console.log("New attribute " + key + " added!");
+                    },
+
+                    "update" : function(key) {
+                        console.log("Attribute " + key + " was updated!");
+                    }
+                });
+
+                module.set('name', 'Elvis'); // will trigger 'change' and 'create' events
+                module.set('name', 'Johnny'); // will trigger 'change' and 'update' events
+
+                module.set({
+                    "name" : "Elvis",
+                    "instrument" : "guitar"
+                });
+            </code></pre>
+        </article>
+
         <article id="m-remove">
             <h1>remove</h1>
 
@@ -270,15 +436,6 @@
             </code></pre>
         </article>
 
-        <article id="m-get">
-            <h1>get</h1>
-
-            <h2>module.get( key );</h2>
-
-            <p>Gets an attribute. If the item is not available will return
-            <code>null</code></p>
-        </article>
-
         <article id="m-getall">
             <h1>getAll</h1>
 
@@ -295,46 +452,18 @@
             <p>Returns all attributes as an array, so you can easily iterate.
             Note that the original key of the attribute is always available as a
             'id' key in the the value, provided your value is an object.</p>
-        </article>
 
-        <article id="m-set">
-            <h1>set</h1>
-
-            <h2>module.set(key, value);</h2>
-            <h2>module.set(object);</h2>
-
-            <p>Sets an attribute. Use <code>push</code> if you want to 'push' a value
-            with a random uuid, for collections</p>
-
-            <p>To set multiple attributes in one go, use an object as the first argument.</p>
-
-            <p>Every attribute will trigger a <code>change</code> event. A key
-            that doesn't exist will trigger a <code>create</code> event, a key
-            that does exist will trigger an <code>update</code> event.</p>
-
-            <p>All events will have the key of the attribute as their event value.</p>
+            <p>Can be used as an easy way to get the number of attributes in a
+                module by using the <code>length</code> property of the
+                array</p>
 
             <pre><code>
-                module.on({
-                    "change" : function(key) {
-                        console.log('Something happened with ' + key);
-                    },
-
-                    "create" : function(key) {
-                        console.log("New attribute " + key + " added!");
-                    },
-
-                    "update" : function(key) {
-                        console.log("Attribute " + key + " was updated!");
-                    }
-                });
-
-                module.set('name', 'Elvis'); // will trigger 'change' and 'create' events
-                module.set('name', 'Johnny'); // will trigger 'change' and 'update' events
-                module.set({
-                    "name" : "Elvis",
+                m.set({
+                    "name" : "Johnny",
                     "instrument" : "guitar"
                 });
+
+                m.getAllAsArray().length; // '2'
             </code></pre>
         </article>
 
@@ -344,11 +473,24 @@
             <h2>module.push( value );</h2>
             <h2>module.push( array );</h2>
 
-            <p>Sets a value, automatically generates an unique id</p>
+            <p>Sets a value, automatically generates an unique uuid as a key.</p>
 
             <p>You can also push an array of values.</p>
 
-            <p>Behaves exactly the same as <code>set</code>, but doesn't need a key.</p>
+            <p>For the rest of the behaviour of this method see <code>
+                <a href="#m-set">set</a></code>.</p>
+
+            <pre><code>
+                m.push("foo");
+
+                m.getAll(); // will look something like { "5323be61-afb8-4034-b408-51132756cd43" : "foo"}
+
+                m.push([
+                    "foo",
+                    "bar",
+                    "baz"
+                ]);
+            </code></pre>
         </article>
 
         <article id="m-filter">
@@ -356,7 +498,7 @@
 
             <h2>module.filter( function );</h2>
 
-            <p>Gets an attribute using a custom function.</p>
+            <p>Gets an array of attributes using a custom function.</p>
 
             <pre><code>
                 module.set('singer', {
@@ -366,7 +508,7 @@
 
                 var singer = module.filter(function(item) {
                     return item.name === "Elvis";
-                });
+                }); // ['singer']
             </code></pre>
         </article>
 
@@ -376,6 +518,13 @@
             <h2>module.has( key );</h2>
 
             <p>Checks if a key is available and returns true or false.</p>
+
+            <pre><code>
+                module.set('singer', 'Johnny');
+
+                module.has('singer'); // true
+                module.has('instrument'); // false
+            </code></pre>
         </article>
 
         <article id="m-update">
@@ -385,6 +534,9 @@
 
             <p>Updates an attribute with a new value, based on the return value
                 of a function</p>
+
+            <p>Just as with <code><a href="#m-set">set</a></code> <code>update</code>
+                will generate <code>change</code> and <code>update</code> events.</p>
 
             <pre><code>
                 module.set('singer', 'Elvis');
