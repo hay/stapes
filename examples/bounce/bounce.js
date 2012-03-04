@@ -25,6 +25,8 @@
         "el" : null,
 
         "init" : function() {
+            if (!("Audio" in window)) return;
+
             $("body").append(''.concat(
                 '<audio id="sound">',
                     '<source src="sound.mp3" type="audio/mpeg" />',
@@ -38,6 +40,9 @@
         "play" : function(index) {
             // Sigh.. iPhone doesn't work
             if (isiOS()) return;
+
+            // And IE < 9 too
+            if (!("Audio" in window)) return;
 
             var data = this.sprites[index],
                 self = this;

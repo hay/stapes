@@ -323,6 +323,6 @@ var Mustache = function() {
   });
 }();
 
-if (define && define.amd) {
+if (typeof define !== "undefined" && define.amd) {
   define(Mustache);
 }
