@@ -307,6 +307,24 @@
                 module1.init(); // 'a ready event was triggered in module 1';
                 module2.init(); // 'a ready event was triggered in module 2';
             </code></pre>
+
+            <p>The <code>all</code> event listener is also available on every module, so
+                you can listen to all events from a specific module.</p>
+
+            <pre><code>
+                module.extend({
+                    "go" : function() {
+                        this.emit('foo');
+                        this.emit('bar');
+                    }
+                });
+
+                module.on("all", function(data, e) {
+                    console.log(e.type);
+                });
+
+                module.go(); // first 'foo', then 'bar'
+            </code></pre>
         </article>
 
         <article id="m-emit">
