@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="css/application.css" />
+</head>
+<body>
+  <div id="views">
+    <div id="tasks">
+      <h1>Todos</h1>
+
+      <form>
+        <input type="text" placeholder="What needs to be done?">
+      </form>
+
+      <div class="items"></div>
+
+      <footer>
+        <a class="clear">Clear completed</a>
+        <div class="count"><span class="countVal">0</span> left</div>
+      </footer>
+    </div>
+  </div>
+
+  <script src="../lib/jquery.js"></script>
+  <script src="../lib/mustache.js"></script>
+  <script src="../../stapes.js"></script>
+  <script>
+    Stapes.extend({
+      "events" : function() {
+        console.log(eventHandlers);
+      }
+    });
+  </script>
+  <script src="app/todoController.js"></script>
+  <script src="app/todoModel.js"></script>
+  <script src="app/todoView.js"></script>
+  <script src="app/todoStore.js"></script>
+  <script>
+      TodoController.create({name : "app"}).init();
+  </script>
+</body>
+</html>
