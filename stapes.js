@@ -12,7 +12,7 @@
 // Version 0.2 - Released under the terms of the MIT license
 // < http://en.wikipedia.org/wiki/MIT_License >
 //
-// Stapes.js : http://projects.haykranen.nl/stapes
+// Stapes.js : http://hay.github.com/stapes
 
 (function() {
     var VERSION = "0.2";

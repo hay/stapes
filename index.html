@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>Stapes.js - a (really) tiny Javascript MVC microframework</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="web/style.css" />
 </head>
 <body>
     <nav>
@@ -17,13 +17,16 @@
 
         <h3>Downloads</h3>
         <ul>
-            <li><a href="http://github.com/hay/stapes/stapes.min.js">
-                Download production version 0.2 (minified, library only)</a></li>
+            <li><a href="stapes.min.js">
+                Download production version 0.2 (minified)</a>
+            </li>
 
-            <li><a href="http://github.com/hay/stapes/stapes.js">
-                Download development version 0.2 (full source with examples and docs)</a></li>
+            <li><a href="https://github.com/hay/stapes/zipball/master">
+                Download development version 0.2 (full source and annotated examples)</a>
+            </li>
 
-            <li><a href="http://github.com/hay/stapes">Fork it and report bugs on Github</a></li>
+            <li><a href="http://github.com/hay/stapes">Fork it and report bugs on Github</a>
+            </li>
         </ul>
 
         <h3 id="m-phil">Philosophy</h3>
@@ -171,9 +174,9 @@
             Stapes.js application.</p>
 
         <ul>
-            <li><a href="http://github.com/stapes/examples/todos">A todo list</a></li>
-            <li><a href="http://github.com/stapes/examples/todos">A todo list using Require.JS modules</a></li>
-            <li><a href="http://github.com/stapes/examples/todos">A simple bouncing ball demo with HTML5 audio</a></li>
+            <li><a href="examples/todos">A todo list</a></li>
+            <li><a href="examples/todos-require">A todo list using Require.JS modules</a></li>
+            <li><a href="examples/bounce">A simple bouncing ball demo with HTML5 audio</a></li>
         </ul>
 
         <h3 id="m-general">General methods</h3>
@@ -347,6 +350,24 @@
 
                 module1.init(); // 'a ready event was triggered in module 1';
                 module2.init(); // 'a ready event was triggered in module 2';
+            </code></pre>
+
+            <p>The <code>all</code> event listener is also available on every module, so
+                you can listen to all events from a specific module.</p>
+
+            <pre><code>
+                module.extend({
+                    "go" : function() {
+                        this.emit('foo');
+                        this.emit('bar');
+                    }
+                });
+
+                module.on("all", function(data, e) {
+                    console.log(e.type);
+                });
+
+                module.go(); // first 'foo', then 'bar'
             </code></pre>
         </article>
 
@@ -613,6 +634,6 @@
         </article>
     </section> <!-- #content -->
 
-    <script src="app.js"></script>
+    <script src="web/app.js"></script>
 </body>
 </html>
