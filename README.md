@@ -1,13 +1,7 @@
+# Stapes.js <sup>*</sup>
+### (*) a (really) tiny Javascript MVC microframework
 
-  ____  _                           _
- / ___|| |_ __ _ _ __   ___  ___   (_)___  (*)
- \___ \| __/ _` | '_ \ / _ \/ __|  | / __|
-  ___) | || (_| | |_) |  __/\__ \_ | \__ \
- |____/ \__\__,_| .__/ \___||___(_)/ |___/
-              |_|              |__/
+Full documentation available here:
 
-
-(*) a (really) tiny Javascript MVC microframework
-
-
+[http://hay.github.com/stapes/](http://hay.github.com/stapes/)
 
