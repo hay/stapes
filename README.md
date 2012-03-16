@@ -4,4 +4,3 @@
 Full documentation available here:
 
 [http://hay.github.com/stapes/](http://hay.github.com/stapes/)
-
