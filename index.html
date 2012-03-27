@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Stapes.js - a (really) tiny Javascript MVC microframework</title>
     <link rel="stylesheet" href="web/style.css" />
+    <link rel="stylesheet" href="web/code.css" />
 
     <script>
       var _gaq = _gaq || [];
@@ -99,53 +100,53 @@
         <p>Write your Stapes modules like this</p>
 
         <pre><code>
-        var Module = Stapes.create();
+    var Module = Stapes.create();
 
-        Module.extend({
-            "init" : function() {
-                this.emit('ready');
-            }
-        });
+    Module.extend({
+        "init" : function() {
+            this.emit('ready');
+        }
+    });
         </code></pre>
 
         <p>Then, use it like this.</p>
 
         <pre><code>
-        Module.on('ready', function() {
-            console.log('woot! ready!');
-        });
+    Module.on('ready', function() {
+        console.log('woot! ready!');
+    });
 
-        Module.init(); // 'woot! ready!'
+    Module.init(); // 'woot! ready!'
         </code></pre>
 
         <p><code>create()</code> returns <code>this</code>, so yo could write the
         previous example like this as well.</p>
 
         <pre><code>
-        var Module = Stapes.create().extend({
-            "init" : function() {
-                this.emit('ready');
-            }
-        });
+    var Module = Stapes.create().extend({
+        "init" : function() {
+            this.emit('ready');
+        }
+    });
         </code></pre>
 
         <p>If you want to use private variables and functions, use Stapes like this</p>
 
         <pre><code>
-        (function() {
-            var private;
+    (function() {
+        var private;
 
-            function showPrivate() {
-                console.log("You shouldn't be seeing this", private);
+        function showPrivate() {
+            console.log("You shouldn't be seeing this", private);
+        }
+
+        window.Module = Stapes.create().extend({
+            "show" : function(var) {
+                private = var;
+                showPrivate();
             }
-
-            window.Module = Stapes.create().extend({
-                "show" : function(var) {
-                    private = var;
-                    showPrivate();
-                }
-            });
-        })();
+        });
+    })();
         </code></pre>
 
         <h3 id="m-require">Using it together with RequireJS</h3>
@@ -158,26 +159,26 @@
         (with the Require.js optimizer) easily minify and concat your app.</p>
 
         <pre><code>
-        // 'module.js'
-        require(["path/to/Stapes"], function(Stapes) {
-            var private;
+    // 'module.js'
+    require(["path/to/Stapes"], function(Stapes) {
+        var private;
 
-            function showPrivate() {
-                console.log("This is private: " + private);s
+        function showPrivate() {
+            console.log("This is private: " + private);s
+        }
+
+        return Stapes.create().extend({
+            "show" : function(var) {
+                private = var;
+                showPrivate();
             }
-
-            return Stapes.create().extend({
-                "show" : function(var) {
-                    private = var;
-                    showPrivate();
-                }
-            });
         });
+    });
 
-        // somewhere else
-        require(['module'], function(Module) {
-            console.log( Module.show("Elvis") ); // 'This is private: Elvis',
-        });
+    // somewhere else
+    require(['module'], function(Module) {
+        console.log( Module.show("Elvis") ); // 'This is private: Elvis',
+    });
         </code></pre>
 
         <h3 id="m-examples">Examples</h3>
@@ -212,21 +213,21 @@
                 create child modules.</p>
 
             <pre><code>
-                var Car = Stapes.create().extend({
-                    "type" : "normal car",
+    var Car = Stapes.create().extend({
+        "type" : "normal car",
 
-                    "getCar" : function() {
-                        return 'this is a ' + this.type;
-                    }
-                });
+        "getCar" : function() {
+            return 'this is a ' + this.type;
+        }
+    });
 
-                var SportsCar = Car.create().extend({
-                    "type" : "sports car"
-                });
+    var SportsCar = Car.create().extend({
+        "type" : "sports car"
+    });
 
-                Car.getCar(); // 'this is a normal car'
-                SportsCar.getCar(); // 'this is a sports car'
-            </code></pre>
+    Car.getCar(); // 'this is a normal car'
+    SportsCar.getCar(); // 'this is a sports car'
+        </code></pre>
         </article>
 
         <article id="m-extend">
@@ -244,26 +245,26 @@
             as the first parameter.</p>
 
             <pre><code>
-            module.extend({
-                "names" : {
-                    "woman" : ['claire', 'alice']
-                },
+    module.extend({
+        "names" : {
+            "woman" : ['claire', 'alice']
+        },
 
-                "sayName" : function(i) {
-                    console.log( "Hello " + this.names.woman[i] + "!" );
-                }
-            });
+        "sayName" : function(i) {
+            console.log( "Hello " + this.names.woman[i] + "!" );
+        }
+    });
 
-            module.extend(module.names, {
-                "man" : ['clark', 'elvis']
-            });
+    module.extend(module.names, {
+        "man" : ['clark', 'elvis']
+    });
 
-            console.log(module.names);
-            // Gives:
-            // {
-            //   "woman" : ['claire', 'alice'],
-            //   "man" : ['clark', 'elvis']
-            // }
+    console.log(module.names);
+    // Gives:
+    // {
+    //   "woman" : ['claire', 'alice'],
+    //   "man" : ['clark', 'elvis']
+    // }
             </code></pre>
 
             <p id="m-plugins"><code>Stapes.extend()</code> can be used for writing extra methods
@@ -272,20 +273,20 @@
                 writing plugins for functionality that isn't in Stapes.</p>
 
             <pre><code>
-                Stapes.extend({
-                    // Sets an DOM element for views
-                    "setElement" : function(el) {
-                        this.el = el;
-                        this.$el = $(el); // jQuery or Zepto reference
-                    }
-                });
+    Stapes.extend({
+        // Sets an DOM element for views
+        "setElement" : function(el) {
+            this.el = el;
+            this.$el = $(el); // jQuery or Zepto reference
+        }
+    });
 
-                var module = Stapes.create();
+    var module = Stapes.create();
 
-                module.setElement( document.getElementById("app") );
+    module.setElement( document.getElementById("app") );
 
-                console.log( module.el ); // "#app" DOM element
-                console.log( module.$el ); // jQuery or Zepto element
+    console.log( module.el ); // "#app" DOM element
+    console.log( module.$el ); // jQuery or Zepto element
             </code></pre>
         </article>
 
@@ -312,26 +313,26 @@
                 custom function bind utility.</p>
 
             <pre><code>
-            module.on('ready', function() {
-                console.log('your module is ready!');
-            });
+    module.on('ready', function() {
+        console.log('your module is ready!');
+    });
 
-            module.on({
-                "talk" : function() {
-                    console.log('your module is talking!');
-                },
+    module.on({
+        "talk" : function() {
+            console.log('your module is talking!');
+        },
 
-                "walk" : function() {
-                    console.log('your module is walking!');
-                }
-            })
+        "walk" : function() {
+            console.log('your module is walking!');
+        }
+    })
 
-            // Set the scope for the event handler to 'this'
-            module.on({
-                "eat" : function( food ) {
-                    this.set('food', food);
-                }
-            }, this);
+    // Set the scope for the event handler to 'this'
+    module.on({
+        "eat" : function( food ) {
+            this.set('food', food);
+        }
+    }, this);
             </code></pre>
 
             <p>The <code>on</code> method on the global <code>Stapes</code>
@@ -344,42 +345,42 @@
                 your production code :)</p>
 
             <pre><code>
-                var module1 = Stapes.create().extend({
-                    "name" : "module 1",
+    var module1 = Stapes.create().extend({
+        "name" : "module 1",
 
-                    "init" : function() {
-                        this.emit('ready');
-                    }
-                });
+        "init" : function() {
+            this.emit('ready');
+        }
+    });
 
-                var module2 = module1.create().extend({
-                    "name" : "module 2"
-                });
+    var module2 = module1.create().extend({
+        "name" : "module 2"
+    });
 
-                Stapes.on('ready', function(data, e) {
-                    console.log('a ready event was triggered in: ' + e.scope.name);
-                });
+    Stapes.on('ready', function(data, e) {
+        console.log('a ready event was triggered in: ' + e.scope.name);
+    });
 
-                module1.init(); // 'a ready event was triggered in module 1';
-                module2.init(); // 'a ready event was triggered in module 2';
+    module1.init(); // 'a ready event was triggered in module 1';
+    module2.init(); // 'a ready event was triggered in module 2';
             </code></pre>
 
             <p>The <code>all</code> event listener is also available on every module, so
                 you can listen to all events from a specific module.</p>
 
             <pre><code>
-                module.extend({
-                    "go" : function() {
-                        this.emit('foo');
-                        this.emit('bar');
-                    }
-                });
+    module.extend({
+        "go" : function() {
+            this.emit('foo');
+            this.emit('bar');
+        }
+    });
 
-                module.on("all", function(data, e) {
-                    console.log(e.type);
-                });
+    module.on("all", function(data, e) {
+        console.log(e.type);
+    });
 
-                module.go(); // first 'foo', then 'bar'
+    module.go(); // first 'foo', then 'bar'
             </code></pre>
         </article>
 
@@ -393,17 +394,17 @@
             Javascript variable you want, and will be passed to any event listeners</p>
 
             <pre><code>
-            module.extend({
-                "sleep" : function() {
-                    this.emit('sleeping', 'very deep');
-                }
-            });
+    module.extend({
+        "sleep" : function() {
+            this.emit('sleeping', 'very deep');
+        }
+    });
 
-            module.on('sleep', function(how) {
-                console.log("i'm sleeping " + how);
-            });
+    module.on('sleep', function(how) {
+        console.log("i'm sleeping " + how);
+    });
 
-            module.sleep(); // "i'm sleeping very deep"
+    module.sleep(); // "i'm sleeping very deep"
             </code></pre>
         </article>
 
@@ -423,19 +424,18 @@
                 while <code>get</code> always returns a single result.</P>
 
             <pre><code>
-                var module = Stapes.create();
+    var module = Stapes.create();
 
-                module.set({
-                    'instrument', 'guitar',
-                    'name', 'Johnny'
-                });
+    module.set({
+        'instrument', 'guitar',
+        'name', 'Johnny'
+    });
 
-                module.get('instrument'); // 'guitar'
+    module.get('instrument'); // 'guitar'
 
-                module.get(function(value) {
-                    return value === "guitar";
-                }); // 'instrument'
-            })
+    module.get(function(value) {
+        return value === "guitar";
+    }); // 'instrument'
             </code></pre>
         </article>
 
@@ -463,31 +463,31 @@
                 key as a data argument in the event callback.</p>
 
             <pre><code>
-                module.on({
-                    "change" : function(key) {
-                        console.log('Something happened with ' + key);
-                    },
+    module.on({
+        "change" : function(key) {
+            console.log('Something happened with ' + key);
+        },
 
-                    "change:name" : function(value) {
-                        console.log('name was changed to ' + value);
-                    },
+        "change:name" : function(value) {
+            console.log('name was changed to ' + value);
+        },
 
-                    "create" : function(key) {
-                        console.log("New attribute " + key + " added!");
-                    },
+        "create" : function(key) {
+            console.log("New attribute " + key + " added!");
+        },
 
-                    "update" : function(key) {
-                        console.log("Attribute " + key + " was updated!");
-                    }
-                });
+        "update" : function(key) {
+            console.log("Attribute " + key + " was updated!");
+        }
+    });
 
-                module.set('name', 'Elvis'); // will trigger 'change' and 'create' events
-                module.set('name', 'Johnny'); // will trigger 'change' and 'update' events
+    module.set('name', 'Elvis'); // will trigger 'change' and 'create' events
+    module.set('name', 'Johnny'); // will trigger 'change' and 'update' events
 
-                module.set({
-                    "name" : "Elvis",
-                    "instrument" : "guitar"
-                });
+    module.set({
+        "name" : "Elvis",
+        "instrument" : "guitar"
+    });
             </code></pre>
         </article>
 
@@ -504,9 +504,9 @@
             <code>function</code></p>
 
             <pre><code>
-            module.remove(function(item) {
-                return item.done === true;
-            });
+    module.remove(function(item) {
+        return item.done === true;
+    });
             </code></pre>
         </article>
 
@@ -532,12 +532,12 @@
                 array</p>
 
             <pre><code>
-                m.set({
-                    "name" : "Johnny",
-                    "instrument" : "guitar"
-                });
+    m.set({
+        "name" : "Johnny",
+        "instrument" : "guitar"
+    });
 
-                m.getAllAsArray().length; // '2'
+    m.getAllAsArray().length; // '2'
             </code></pre>
         </article>
 
@@ -555,15 +555,15 @@
                 <a href="#m-set">set</a></code>.</p>
 
             <pre><code>
-                m.push("foo");
+    m.push("foo");
 
-                m.getAll(); // will look something like { "5323be61-afb8-4034-b408-51132756cd43" : "foo"}
+    m.getAll(); // will look something like { "5323be61-afb8-4034-b408-51132756cd43" : "foo"}
 
-                m.push([
-                    "foo",
-                    "bar",
-                    "baz"
-                ]);
+    m.push([
+        "foo",
+        "bar",
+        "baz"
+    ]);
             </code></pre>
         </article>
 
@@ -575,14 +575,14 @@
             <p>Gets an array of attributes using a custom function.</p>
 
             <pre><code>
-                module.set('singer', {
-                    'name' : 'Elvis',
-                    'instrument' : 'Guitar'
-                });
+    module.set('singer', {
+        'name' : 'Elvis',
+        'instrument' : 'Guitar'
+    });
 
-                var singer = module.filter(function(item) {
-                    return item.name === "Elvis";
-                }); // ['singer']
+    var singer = module.filter(function(item) {
+        return item.name === "Elvis";
+    }); // ['singer']
             </code></pre>
         </article>
 
@@ -594,10 +594,10 @@
             <p>Checks if a key is available and returns true or false.</p>
 
             <pre><code>
-                module.set('singer', 'Johnny');
+    module.set('singer', 'Johnny');
 
-                module.has('singer'); // true
-                module.has('instrument'); // false
+    module.has('singer'); // true
+    module.has('instrument'); // false
             </code></pre>
         </article>
 
@@ -613,13 +613,13 @@
                 will generate <code>change</code> and <code>update</code> events.</p>
 
             <pre><code>
-                module.set('singer', 'Elvis');
+    module.set('singer', 'Elvis');
 
-                module.update('singer', function(singer) {
-                    return 'Johnny';
-                });
+    module.update('singer', function(singer) {
+        return 'Johnny';
+    });
 
-                console.log( module.get('singer') ); // 'Johnny';
+    console.log( module.get('singer') ); // 'Johnny';
             </code></pre>
         </article>
 
@@ -647,5 +647,6 @@
     </section> <!-- #content -->
 
     <script src="web/app.js"></script>
+    <script src="web/rainbow.js"></script>
 </body>
 </html>
