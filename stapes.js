@@ -15,7 +15,7 @@
 // Stapes.js : http://hay.github.com/stapes
 
 (function() {
-    var VERSION = "0.2";
+    var VERSION = "0.2.1";
 
     /** Utility functions
      *
@@ -38,14 +38,16 @@
         },
 
         create : function(context) {
+            var instance;
+
             if (typeof Object.create === "function") {
                 // Native
-                var instance = Object.create(context);
+                instance = Object.create(context);
             } else {
                 // Non-native
                 var F = function(){};
                 F.prototype = context;
-                var instance = new F();
+                instance = new F();
             }
 
             instance._guid = guid++;
@@ -187,7 +189,7 @@
         this.emit(specificEvent + ':' + key, value);
     }
 
-    var guid = 0;
+    var guid = 1;
 
     var Module = {
         create : function() {
@@ -209,14 +211,16 @@
                     emitEvents.call(this, type, data, type, -1);
                 }
 
-                // 'all' event for this specific module?
-                if (Stapes._eventHandlers[this._guid]["all"]) {
-                    emitEvents.call(this, "all", data, type);
-                }
+                if (typeof this._guid == 'number') {
+                    // 'all' event for this specific module?
+                    if (Stapes._eventHandlers[this._guid]["all"]) {
+                        emitEvents.call(this, "all", data, type);
+                    }
 
-                // Finally, normal events :)
-                if (Stapes._eventHandlers[this._guid][type]) {
-                    emitEvents.call(this, type, data);
+                    // Finally, normal events :)
+                    if (Stapes._eventHandlers[this._guid][type]) {
+                        emitEvents.call(this, type, data);
+                    }
                 }
             }, this));
         },
