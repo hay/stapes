@@ -24,38 +24,37 @@
      *  such as Underscore.js, so that's why they're not usable outside
      *  the private scope.
      */
+     
+    /**
+     * Integrates object into Stapes
+     * @param {Object} instance
+     */
+    function _integrateStapes(instance) {
+        instance._guid = guid++;
+        Stapes._attributes[instance._guid] = {};
+        Stapes._eventHandlers[instance._guid] = {};
+
+        return instance;
+    }
+     
     var util = {
-        bind : function(fn, ctx) {
-            if (Function.prototype.bind) {
-                // Native
-                return fn.bind(ctx);
-            } else {
-                // Non-native
+        bind : Function.prototype.bind
+            ? function(fn, ctx) { return fn.bind(ctx) }
+            : function(fn, ctx) {
                 return function() {
-                    return fn.apply(ctx, arguments);
-                };
-            }
-        },
+                    return fn.apply(ctx, arguments)
+                }
+            },
 
-        create : function(context) {
-            var instance;
-
-            if (typeof Object.create === "function") {
-                // Native
-                instance = Object.create(context);
-            } else {
-                // Non-native
+        create : typeof Object.create === "function"
+            ? function(context) { return _integrateStapes(Object.create(context)) }
+            : function(context) {
                 var F = function(){};
+
                 F.prototype = context;
-                instance = new F();
-            }
 
-            instance._guid = guid++;
-            Stapes._attributes[instance._guid] = {};
-            Stapes._eventHandlers[instance._guid] = {};
-
-            return instance;
-        },
+                return _integrateStapes(new F());
+            },
 
         each : function(list, fn) {
             if (util.isArray(list)) {
