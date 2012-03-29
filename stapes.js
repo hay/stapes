@@ -171,6 +171,11 @@
         var itemExists = this.has(key),
             oldValue = Stapes._attributes[this._guid][key];
 
+        // Is the value different than the oldValue? If not, ignore this call
+        if (value === oldValue) {
+            return;
+        }
+
         // Actually add the item to the attributes
         Stapes._attributes[this._guid][key] = value;
 

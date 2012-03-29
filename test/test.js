@@ -48,4 +48,5 @@ test("change events", function() {
 
     module.set('name', 'Emmylou');
     module.set('instrument', 'guitar');
+    module.set('instrument', 'guitar'); // Change event should only be thrown once!
 });
