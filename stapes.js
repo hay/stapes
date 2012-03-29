@@ -37,6 +37,22 @@
             }
         },
 
+        clone : function(obj) {
+            if (util.isArray(obj)) {
+                return obj.slice();
+            } else if (util.isObject(obj)) {
+                var newObj = {};
+
+                util.each(obj, function(value, key) {
+                    newObj[key] = value;
+                });
+
+                return newObj;
+            } else {
+                return obj;
+            }
+        },
+
         create : function(context) {
             var instance;
 
@@ -351,8 +367,10 @@
         },
 
         update : function(key, fn) {
-            var item = this.get(key);
-            setAttribute.call(this, key, fn( item ));
+            var item = this.get(key),
+                newValue = fn( util.clone(item) );
+
+            setAttribute.call(this, key, newValue);
         }
     };
 
