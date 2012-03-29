@@ -15,7 +15,7 @@
 // Stapes.js : http://hay.github.com/stapes
 
 (function() {
-    var VERSION = "0.2.1";
+    var VERSION = "0.3pre";
 
     /** Utility functions
      *
@@ -168,7 +168,8 @@
 
     function setAttribute(key, value) {
         // We need to do this before we actually add the item :)
-        var itemExists = this.has(key);
+        var itemExists = this.has(key),
+            oldValue = Stapes._attributes[this._guid][key];
 
         // Actually add the item to the attributes
         Stapes._attributes[this._guid][key] = value;
@@ -179,6 +180,18 @@
         // And a namespaced event as well, NOTE that we pass value instead of
         // key here!
         this.emit('change:' + key, value);
+
+
+        // Throw namespaced and non-namespaced 'mutate' events as well with
+        // the old value data as well and some extra metadata such as the key
+        var mutateData = {
+            "key" : key,
+            "newValue" : value,
+            "oldValue" : oldValue || null
+        };
+
+        this.emit('mutate', mutateData);
+        this.emit('mutate:' + key, mutateData);
 
         // Also throw a specific event for this type of set
         var specificEvent = itemExists ? 'update' : 'create';
