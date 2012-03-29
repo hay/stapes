@@ -15,7 +15,7 @@
 // Stapes.js : http://hay.github.com/stapes
 
 (function() {
-    var VERSION = "0.2";
+    var VERSION = "0.3pre";
 
     /** Utility functions
      *
@@ -38,14 +38,16 @@
         },
 
         create : function(context) {
+            var instance;
+
             if (typeof Object.create === "function") {
                 // Native
-                var instance = Object.create(context);
+                instance = Object.create(context);
             } else {
                 // Non-native
                 var F = function(){};
                 F.prototype = context;
-                var instance = new F();
+                instance = new F();
             }
 
             instance._guid = guid++;
@@ -166,7 +168,13 @@
 
     function setAttribute(key, value) {
         // We need to do this before we actually add the item :)
-        var itemExists = this.has(key);
+        var itemExists = this.has(key),
+            oldValue = Stapes._attributes[this._guid][key];
+
+        // Is the value different than the oldValue? If not, ignore this call
+        if (value === oldValue) {
+            return;
+        }
 
         // Actually add the item to the attributes
         Stapes._attributes[this._guid][key] = value;
@@ -178,6 +186,18 @@
         // key here!
         this.emit('change:' + key, value);
 
+
+        // Throw namespaced and non-namespaced 'mutate' events as well with
+        // the old value data as well and some extra metadata such as the key
+        var mutateData = {
+            "key" : key,
+            "newValue" : value,
+            "oldValue" : oldValue || null
+        };
+
+        this.emit('mutate', mutateData);
+        this.emit('mutate:' + key, mutateData);
+
         // Also throw a specific event for this type of set
         var specificEvent = itemExists ? 'update' : 'create';
 
@@ -187,7 +207,7 @@
         this.emit(specificEvent + ':' + key, value);
     }
 
-    var guid = 0;
+    var guid = 1;
 
     var Module = {
         create : function() {
@@ -209,14 +229,16 @@
                     emitEvents.call(this, type, data, type, -1);
                 }
 
-                // 'all' event for this specific module?
-                if (Stapes._eventHandlers[this._guid]["all"]) {
-                    emitEvents.call(this, "all", data, type);
-                }
+                if (typeof this._guid == 'number') {
+                    // 'all' event for this specific module?
+                    if (Stapes._eventHandlers[this._guid]["all"]) {
+                        emitEvents.call(this, "all", data, type);
+                    }
 
-                // Finally, normal events :)
-                if (Stapes._eventHandlers[this._guid][type]) {
-                    emitEvents.call(this, type, data);
+                    // Finally, normal events :)
+                    if (Stapes._eventHandlers[this._guid][type]) {
+                        emitEvents.call(this, type, data);
+                    }
                 }
             }, this));
         },
