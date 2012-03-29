@@ -521,6 +521,23 @@
 
     module.set('name', 'Emmylou');
             </code></pre>
+
+            <p>Note that it's still perfectly fine to assign properties to the
+                Stapes module directly, as long as you don't overwrite existing
+                properties. All the data methods are useful if you want to do
+                model-like stuff, but for ordinary properties that don't need
+                change events setting attributes using  <code>get</code> and
+                <code>set</code> is probably fine.</p>
+
+            <pre><code>
+    module.on('change:name', function() {
+        // Obviously, this event hander will never trigger
+    });
+
+    module.name = "Elvis";
+
+    console.log(module.name); // "Elvis"
+            </code></pre>
         </article>
 
         <article id="m-remove">
