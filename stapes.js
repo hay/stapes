@@ -223,6 +223,14 @@
         this.emit(specificEvent + ':' + key, value);
     }
 
+    function updateAttribute(key, fn) {
+        console.log(key, fn);
+        var item = this.get(key),
+            newValue = fn( util.clone(item) );
+
+        setAttribute.call(this, key, newValue);
+    }
+
     var guid = 1;
 
     var Module = {
@@ -366,11 +374,14 @@
             }
         },
 
-        update : function(key, fn) {
-            var item = this.get(key),
-                newValue = fn( util.clone(item) );
-
-            setAttribute.call(this, key, newValue);
+        update : function(keyOrFn, fn) {
+            if (typeof keyOrFn === "string") {
+                updateAttribute.call(this, keyOrFn, fn);
+            } else if (typeof keyOrFn === "function") {
+                util.each(this.getAll(), util.bind(function(value, key) {
+                    updateAttribute.call(this, key, keyOrFn);
+                }, this));
+            }
         }
     };
 
