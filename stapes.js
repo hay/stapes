@@ -313,8 +313,6 @@
                 util.each(input, util.bind(function(value) {
                     setAttribute.call(this, util.makeUuid(), value);
                 }, this));
-
-                this.emit('changemany createmany', util.toArray(input).length);
             } else {
                 setAttribute.call(this, util.makeUuid(), input);
             }
@@ -347,8 +345,6 @@
                 util.each(objOrKey, util.bind(function(value, key) {
                     setAttribute.call(this, key, value);
                 }, this));
-
-                this.emit('changemany', objOrKey.length);
             } else {
                 setAttribute.call(this, objOrKey, value);
             }
