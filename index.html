@@ -489,6 +489,38 @@
         "instrument" : "guitar"
     });
             </code></pre>
+
+            <p id="m-mutate">To get the old or previous value of an attribute
+                use the <code>mutate</code> event instead of <code>change</code>.
+                There are both namespaced and general versions of this event, just like
+                <code>change</code>. Instead of the value of the attribute it
+                will return an object with <code>oldValue</code> and <code>newValue</code>
+                properties. For convenience it also returns the <code>key</code>
+                of the attribute.</p>
+
+            <pre><code>
+    module.set('name', 'Johnny');
+
+    module.on({
+        "mutate:name" : function(values) {
+            console.log(values.oldValue, values.newValue); // "Johnny, Emmylou"
+        },
+
+        "mutate" : function(values) {
+            // Returns 'Emmylou'
+            // Note that this is identical to writing:
+            // module.on(
+            //     'change',
+            //     function(key) {
+            //         console.log( module.get(key) );
+            //     }
+            // );
+            console.log(values.newValue);
+        }
+    });
+
+    module.set('name', 'Emmylou');
+            </code></pre>
         </article>
 
         <article id="m-remove">
@@ -636,6 +668,10 @@
 
         <h3 id="m-history">History</h3>
         <ul>
+            <li>0.3</li>
+                <ul>
+                    <li>Added the <code><a href="m-mutarte">mutate</a> event.</li>
+                </ul>
             <li>0.2.1</li>
                 <ul>
                     <li>Fixed a bug where global events didn't always work
