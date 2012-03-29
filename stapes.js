@@ -224,7 +224,6 @@
     }
 
     function updateAttribute(key, fn) {
-        console.log(key, fn);
         var item = this.get(key),
             newValue = fn( util.clone(item) );
 
