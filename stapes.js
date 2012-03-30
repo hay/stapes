@@ -37,6 +37,22 @@
             }
         },
 
+        clone : function(obj) {
+            if (util.isArray(obj)) {
+                return obj.slice();
+            } else if (util.isObject(obj)) {
+                var newObj = {};
+
+                util.each(obj, function(value, key) {
+                    newObj[key] = value;
+                });
+
+                return newObj;
+            } else {
+                return obj;
+            }
+        },
+
         create : function(context) {
             var instance;
 
@@ -207,6 +223,13 @@
         this.emit(specificEvent + ':' + key, value);
     }
 
+    function updateAttribute(key, fn) {
+        var item = this.get(key),
+            newValue = fn( util.clone(item) );
+
+        setAttribute.call(this, key, newValue);
+    }
+
     var guid = 1;
 
     var Module = {
@@ -313,8 +336,6 @@
                 util.each(input, util.bind(function(value) {
                     setAttribute.call(this, util.makeUuid(), value);
                 }, this));
-
-                this.emit('changemany createmany', util.toArray(input).length);
             } else {
                 setAttribute.call(this, util.makeUuid(), input);
             }
@@ -347,16 +368,19 @@
                 util.each(objOrKey, util.bind(function(value, key) {
                     setAttribute.call(this, key, value);
                 }, this));
-
-                this.emit('changemany', objOrKey.length);
             } else {
                 setAttribute.call(this, objOrKey, value);
             }
         },
 
-        update : function(key, fn) {
-            var item = this.get(key);
-            setAttribute.call(this, key, fn( item ));
+        update : function(keyOrFn, fn) {
+            if (typeof keyOrFn === "string") {
+                updateAttribute.call(this, keyOrFn, fn);
+            } else if (typeof keyOrFn === "function") {
+                util.each(this.getAll(), util.bind(function(value, key) {
+                    updateAttribute.call(this, key, keyOrFn);
+                }, this));
+            }
         }
     };
 

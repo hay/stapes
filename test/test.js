@@ -50,3 +50,34 @@ test("change events", function() {
     module.set('instrument', 'guitar');
     module.set('instrument', 'guitar'); // Change event should only be thrown once!
 });
+
+module("update");
+
+test("update", function() {
+    var module = Stapes.create();
+
+    module.set('name', 'Johnny');
+    module.set('instruments', {
+        "vocal" : true,
+        "guitar" : true
+    });
+
+    module.on('change:name', function(value) {
+        ok(value === "Emmylou", "update triggers change namespaced event");
+    });
+
+    module.on('change:instruments', function(value) {
+        console.log(value);
+    });
+
+    module.update('name', function(oldValue) {
+        return "Emmylou";
+    });
+
+    module.update('instruments', function(oldValue) {
+        return {
+            "vocal" : true,
+            "guitar" : true
+        };
+    });
+});

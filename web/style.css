@@ -102,3 +102,9 @@ p code {
 ul li {
     line-height: 150%;
 }
+
+small {
+    background: #ccc;
+    color: white;
+    padding: 3px;
+}
