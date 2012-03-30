@@ -299,7 +299,7 @@
         },
 
         getAll : function() {
-            return Stapes._attributes[this._guid];
+            return util.clone( Stapes._attributes[this._guid] );
         },
 
         getAllAsArray : function() {
@@ -313,8 +313,7 @@
                 arr.push(value);
             });
 
-            return arr;
-
+            return util.clone( arr );
         },
 
         has : function(key) {

@@ -566,7 +566,10 @@
 
             <h2>module.getAll();</h2>
 
-            <p>Returns all attributes as an object.</p>
+            <p>Returns all the attributes of an module as an object. Handy for JSON
+                serializing and persistence layers.</p>
+
+            <p>Note that this method returns a copy/clone instead of a reference.</p>
         </article>
 
         <article id="m-getallasarray">
@@ -577,6 +580,8 @@
             <p>Returns all attributes as an array, so you can easily iterate.
             Note that the original key of the attribute is always available as a
             'id' key in the the value, provided your value is an object.</p>
+
+            <p>Note that this method returns a copy/clone instead of a reference.</p>
 
             <p>Can be used as an easy way to get the number of attributes in a
                 module by using the <code>length</code> property of the
@@ -708,6 +713,7 @@
                     <li><small>Feature</small> Added the <code><a href="m-mutate">mutate</a></code> change event.</li>
                     <li><small>Feature</small> <code><a href="m-update">update</a></code> now accepts a single function as an argument too.</li>
                     <li><small>Bugfix</small> Setting an attribute with the same value as the old value doesn't trigger a change event anymore.</li>
+                    <li><code><a href="#m-getall">getAll()</a></code> and <code><a href="#m-getallasarray">getAllAsArray()</a></code> now return a clone of the attributes instead of a reference.</li>
                     <li>Removing the undocumented <code>changemany</code> and <code>createmany</code> events.</li>
                 </ul>
             <li>0.2.1</li>
