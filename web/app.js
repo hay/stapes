@@ -42,7 +42,7 @@
 
     // For Rainbow.js
     function addLanguage() {
-        $("code").forEach(function(node) {
+        $("pre code").forEach(function(node) {
             node.dataset.language = "javascript";
         });
     }

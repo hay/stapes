@@ -9,13 +9,13 @@
 // (*) a (really) tiny Javascript MVC microframework
 //
 // (c) Hay Kranen < hay@bykr.org >
-// Version 0.2 - Released under the terms of the MIT license
+// Released under the terms of the MIT license
 // < http://en.wikipedia.org/wiki/MIT_License >
 //
 // Stapes.js : http://hay.github.com/stapes
 
 (function() {
-    var VERSION = "0.2.1";
+    var VERSION = "0.3";
 
     /** Utility functions
      *
@@ -34,6 +34,22 @@
                 return function() {
                     return fn.apply(ctx, arguments);
                 };
+            }
+        },
+
+        clone : function(obj) {
+            if (util.isArray(obj)) {
+                return obj.slice();
+            } else if (util.isObject(obj)) {
+                var newObj = {};
+
+                util.each(obj, function(value, key) {
+                    newObj[key] = value;
+                });
+
+                return newObj;
+            } else {
+                return obj;
             }
         },
 
@@ -168,7 +184,13 @@
 
     function setAttribute(key, value) {
         // We need to do this before we actually add the item :)
-        var itemExists = this.has(key);
+        var itemExists = this.has(key),
+            oldValue = Stapes._attributes[this._guid][key];
+
+        // Is the value different than the oldValue? If not, ignore this call
+        if (value === oldValue) {
+            return;
+        }
 
         // Actually add the item to the attributes
         Stapes._attributes[this._guid][key] = value;
@@ -180,6 +202,18 @@
         // key here!
         this.emit('change:' + key, value);
 
+
+        // Throw namespaced and non-namespaced 'mutate' events as well with
+        // the old value data as well and some extra metadata such as the key
+        var mutateData = {
+            "key" : key,
+            "newValue" : value,
+            "oldValue" : oldValue || null
+        };
+
+        this.emit('mutate', mutateData);
+        this.emit('mutate:' + key, mutateData);
+
         // Also throw a specific event for this type of set
         var specificEvent = itemExists ? 'update' : 'create';
 
@@ -187,6 +221,13 @@
 
         // And a namespaced event as well, NOTE that we pass value instead of key
         this.emit(specificEvent + ':' + key, value);
+    }
+
+    function updateAttribute(key, fn) {
+        var item = this.get(key),
+            newValue = fn( util.clone(item) );
+
+        setAttribute.call(this, key, newValue);
     }
 
     var guid = 1;
@@ -211,9 +252,9 @@
                     emitEvents.call(this, type, data, type, -1);
                 }
 
-                if (typeof this._guid == 'number') {
+                if (typeof this._guid === 'number') {
                     // 'all' event for this specific module?
-                    if (Stapes._eventHandlers[this._guid]["all"]) {
+                    if (Stapes._eventHandlers[this._guid].all) {
                         emitEvents.call(this, "all", data, type);
                     }
 
@@ -258,7 +299,7 @@
         },
 
         getAll : function() {
-            return Stapes._attributes[this._guid];
+            return util.clone( Stapes._attributes[this._guid] );
         },
 
         getAllAsArray : function() {
@@ -272,8 +313,7 @@
                 arr.push(value);
             });
 
-            return arr;
-
+            return util.clone( arr );
         },
 
         has : function(key) {
@@ -295,8 +335,6 @@
                 util.each(input, util.bind(function(value) {
                     setAttribute.call(this, util.makeUuid(), value);
                 }, this));
-
-                this.emit('changemany createmany', util.toArray(input).length);
             } else {
                 setAttribute.call(this, util.makeUuid(), input);
             }
@@ -329,16 +367,19 @@
                 util.each(objOrKey, util.bind(function(value, key) {
                     setAttribute.call(this, key, value);
                 }, this));
-
-                this.emit('changemany', objOrKey.length);
             } else {
                 setAttribute.call(this, objOrKey, value);
             }
         },
 
-        update : function(key, fn) {
-            var item = this.get(key);
-            setAttribute.call(this, key, fn( item ));
+        update : function(keyOrFn, fn) {
+            if (typeof keyOrFn === "string") {
+                updateAttribute.call(this, keyOrFn, fn);
+            } else if (typeof keyOrFn === "function") {
+                util.each(this.getAll(), util.bind(function(value, key) {
+                    updateAttribute.call(this, key, keyOrFn);
+                }, this));
+            }
         }
     };
 

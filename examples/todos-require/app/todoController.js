@@ -1,5 +1,5 @@
 define(
-["stapes", "TodoModel", "TodoView", "TodoStore"],
+["stapes", "todoModel", "todoView", "todoStore"],
 function(Stapes, TodoModel, TodoView, TodoStore) {
     return Stapes.create().extend({
         "bindEventHandlers" : function() {

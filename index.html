@@ -28,14 +28,14 @@
         <h1>Stapes.js</h1>
         <h2>A (really) tiny Javascript MVC microframework.</h2>
 
-        <h3>Downloads</h3>
+        <h3 id="m-downloads">Downloads</h3>
         <ul>
             <li><a href="stapes.min.js">
-                Download production version 0.2.1 (minified)</a>
+                Download production version 0.3 (minified)</a>
             </li>
 
-            <li><a href="https://github.com/hay/stapes/zipball/v0.2.1">
-                Download development version 0.2.1 (full source and annotated examples)</a>
+            <li><a href="https://github.com/hay/stapes/zipball/v0.3">
+                Download development version 0.3 (full source and annotated examples)</a>
             </li>
 
             <li><a href="http://github.com/hay/stapes">Fork it and report bugs on Github</a>
@@ -46,7 +46,7 @@
         <p><em>Right. There's a zillion other Javascript MVC frameworks, why
         should i choose Stapes.js?</em></p>
 
-        <p>Here's why i think you should use it: it's really tiny (<strong>1.5kb</strong> minified and gzipped),
+        <p>Here's why i think you should use it: it's really tiny (<strong>1.7kb</strong> minified and gzipped),
         easy to fit in an existing codebase, and doesn't force you to
         write your code in a specific style. Because of its small size it's ideal
         for mobile development.</p>
@@ -67,10 +67,10 @@
         <p>Here's a list:</p>
         <ul>
             <li>A powerful yet simple event system using <a href="#m-on"><code>on</code></a> and
-            <a href="m-emit"><code>emit</code></a> methods.</li>
-            <li>Inheritance using <a href="m-create"><code>create</code></a> and
-            <a href="m-extend"><code>extend</code></a></li>
-            <li>Event-triggering attributes using <a href="m-get"><code>get</code></a> and <a href="m-set"><code>set</code></a></li>
+            <a href="#m-emit"><code>emit</code></a> methods.</li>
+            <li>Inheritance using <a href="#m-create"><code>create</code></a> and
+            <a href="#m-extend"><code>extend</code></a></li>
+            <li>Event-triggering attributes using <a href="#m-get"><code>get</code></a> and <a href="#m-set"><code>set</code></a></li>
             <li>Powerful <a href="#m-filter"><code>filter</code></a> and <a href="#m-remove"><code>remove</code></a> methods for attributes</li>
             <li>Usable in traditional Javascript, as an AMD module (for <a href="http://requirejs.org">Require.js</a>)
             or on the server with <a href="http://www.nodejs.org">Node.js</a></li>
@@ -190,6 +190,8 @@
             <li><a href="examples/todos-require">A todo list using Require.JS modules</a></li>
             <li><a href="examples/bounce">A simple bouncing ball demo with HTML5 audio</a></li>
         </ul>
+
+        <p>Code for these examples is available in the <a href="#m-downloads">development download</a>.</p>
 
         <h3 id="m-general">General methods</h3>
         <article id="m-create">
@@ -489,6 +491,55 @@
         "instrument" : "guitar"
     });
             </code></pre>
+
+            <p id="m-mutate">To get the old or previous value of an attribute
+                use the <code>mutate</code> event instead of <code>change</code>.
+                There are both namespaced and general versions of this event, just like
+                <code>change</code>. Instead of the value of the attribute it
+                will return an object with <code>oldValue</code> and <code>newValue</code>
+                properties. For convenience it also returns the <code>key</code>
+                of the attribute.</p>
+
+            <pre><code>
+    module.set('name', 'Johnny');
+
+    module.on({
+        "mutate:name" : function(values) {
+            console.log(values.oldValue, values.newValue); // "Johnny, Emmylou"
+        },
+
+        "mutate" : function(values) {
+            // Returns 'Emmylou'
+            // Note that this is identical to writing:
+            // module.on(
+            //     'change',
+            //     function(key) {
+            //         console.log( module.get(key) );
+            //     }
+            // );
+            console.log(values.newValue);
+        }
+    });
+
+    module.set('name', 'Emmylou');
+            </code></pre>
+
+            <p>Note that it's still perfectly fine to assign properties to the
+                Stapes module directly, as long as you don't overwrite existing
+                properties. All the data methods are useful if you want to do
+                model-like stuff, but for ordinary properties that don't need
+                change events setting attributes using  <code>get</code> and
+                <code>set</code> is fine.</p>
+
+            <pre><code>
+    module.on('change:name', function() {
+        // Obviously, this event hander will never trigger
+    });
+
+    module.name = "Elvis";
+
+    console.log(module.name); // "Elvis"
+            </code></pre>
         </article>
 
         <article id="m-remove">
@@ -497,7 +548,7 @@
             <h2>module.remove( key );</h2>
             <h2>module.remove( function );</h2>
 
-            <p>Deletes an attribute. Triggers <code>delete</code> and
+            <p>Deletes an attribute. Triggers <code>remove</code> and
             <code>change</code> events.</p>
 
             <p>You can either use a <code>key</code> as an argument or a
@@ -515,7 +566,10 @@
 
             <h2>module.getAll();</h2>
 
-            <p>Returns all attributes as an object.</p>
+            <p>Returns all the attributes of an module as an object. Handy for JSON
+                serializing and persistence layers.</p>
+
+            <p>Note that this method returns a copy/clone instead of a reference.</p>
         </article>
 
         <article id="m-getallasarray">
@@ -526,6 +580,8 @@
             <p>Returns all attributes as an array, so you can easily iterate.
             Note that the original key of the attribute is always available as a
             'id' key in the the value, provided your value is an object.</p>
+
+            <p>Note that this method returns a copy/clone instead of a reference.</p>
 
             <p>Can be used as an easy way to get the number of attributes in a
                 module by using the <code>length</code> property of the
@@ -605,9 +661,10 @@
             <h1>update</h1>
 
             <h2>module.update( key, fn );</h2>
+            <h2>module.update( fn );</h2>
 
             <p>Updates an attribute with a new value, based on the return value
-                of a function</p>
+                of a function.</p>
 
             <p>Just as with <code><a href="#m-set">set</a></code> <code>update</code>
                 will generate <code>change</code> and <code>update</code> events.</p>
@@ -620,6 +677,21 @@
     });
 
     console.log( module.get('singer') ); // 'Johnny';
+            </code></pre>
+
+            <p>You can also pass a single function as an argument. In that case,
+                <code>update</code> will run on all attributes in the module.</p>
+
+            <pre><code>
+    module.push([
+        { "name" : "Johnny", "singer" : false},
+        { "name" : "Emmylou", "singer" : false}
+    ]);
+
+    module.update(function(item) {
+        item.singer = true;
+        return item;
+    });
             </code></pre>
         </article>
 
@@ -636,6 +708,14 @@
 
         <h3 id="m-history">History</h3>
         <ul>
+            <li>0.3</li>
+                <ul>
+                    <li><small>Feature</small> Added the <code><a href="#m-mutate">mutate</a></code> change event.</li>
+                    <li><small>Feature</small> <code><a href="#m-update">update</a></code> now accepts a single function as an argument too.</li>
+                    <li><small>Bugfix</small> Setting an attribute with the same value as the old value doesn't trigger a change event anymore.</li>
+                    <li><code><a href="#m-getall">getAll()</a></code> and <code><a href="#m-getallasarray">getAllAsArray()</a></code> now return a clone of the attributes instead of a reference.</li>
+                    <li>Removing the undocumented <code>changemany</code> and <code>createmany</code> events.</li>
+                </ul>
             <li>0.2.1</li>
                 <ul>
                     <li>Fixed a bug where global events didn't always work
