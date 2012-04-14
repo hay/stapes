@@ -277,10 +277,14 @@
             return this;
         },
 
+        each : function(fn) {
+            util.each(Stapes._attributes[this._guid], fn);
+        },
+
         filter : function(fn) {
             var items = [];
 
-            util.each(Stapes._attributes[this._guid], function(item) {
+            this.each(function(item) {
                 if (fn(item)) {
                     items.push(item);
                 }

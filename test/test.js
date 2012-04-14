@@ -82,9 +82,42 @@ test("update", function() {
     });
 });
 
-module("filter");
+module("iterators");
 
-test("get items", function() {
+test("each with a single object", function() {
+    module = Stapes.create();
+    module.set({
+        'key1': 'value1',
+        'key2': 'value2',
+        'key3': 'value3'
+    });
+
+    var values = [];
+    var keys = [];
+    module.each(function(value, key) {
+        values.push(value);
+        keys.push(key);
+    });
+    deepEqual(values, ['value1', 'value2', 'value3'], "iterates over values");
+    deepEqual(keys, ['key1', 'key2', 'key3'], "and keys");
+});
+
+test("each with an array", function() {
+    module = Stapes.create();
+    module.push([
+       'value1',
+       'value2',
+       'value3'
+    ]);
+
+    var values = [];
+    module.each(function(value, key) {
+        values.push(value);
+    });
+    deepEqual(values, ['value1', 'value2', 'value3'], "iterates over values");
+});
+
+test("filter", function() {
     module = Stapes.create();
     module.set({
         'key1': 'value1',
