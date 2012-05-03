@@ -237,8 +237,8 @@
             return util.create(this);
         },
 
-        each : function(fn) {
-            util.each(Stapes._attributes[this._guid], util.bind(fn, this));
+        each : function(fn, ctx) {
+            util.each(Stapes._attributes[this._guid], util.bind(fn, ctx || this));
         },
 
         emit : function(types, data) {

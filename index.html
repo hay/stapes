@@ -647,20 +647,34 @@
         <article id="m-each">
             <h1>each</h1>
 
-            <h2>module.each( function );</h2>
+            <h2>module.each( function, [context] );</h2>
 
             <p>Iterate over all attributes of a module.</p>
 
-            <p>The <code>this</code> variable in the iterator <code>function</code> will automatically be set to the current module</p>
+            <p>When giving a <code>context</code> parameter this will be set as
+                the <code>this</code> value in the iterator function. If <code>context</code>
+                is not set it will be set to the module itself.</p>
 
             <pre><code>
+    var module = Stapes.create(),
+        singers = ['Johnny', 'Emmylou', 'Gram', 'June'];
+
     module.msg = "I'll be your ";
 
-    module.push(['Johnny', 'Emmylou', 'Gram', 'June']);
+    module.push(singers);
 
     module.each(function(singer) {
         console.log(this.msg + singer);
     });
+
+
+    // Using the second context parameter of each()
+    module.singers = Stapes.create();
+    module.singers.push( singers );
+
+    module.singers.each(function(singer) {
+        console.log(this.msg + singer);
+    }, module);
             </code></pre>
         </article>
 
