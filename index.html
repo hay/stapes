@@ -644,6 +644,26 @@
             </code></pre>
         </article>
 
+        <article id="m-each">
+            <h1>each</h1>
+
+            <h2>module.each( function );</h2>
+
+            <p>Iterate over all attributes of a module.</p>
+
+            <p>The <code>this</code> variable in the iterator <code>function</code> will automatically be set to the current module</p>
+
+            <pre><code>
+    module.msg = "I'll be your ";
+
+    module.push(['Johnny', 'Emmylou', 'Gram', 'June']);
+
+    module.each(function(singer) {
+        console.log(this.msg + singer);
+    });
+            </code></pre>
+        </article>
+
         <article id="m-has">
             <h1>has</h1>
 
@@ -712,6 +732,7 @@
         <ul>
             <li>0.4</li>
                 <ul>
+                    <li><small>Feature</small> Added an <code><a href="#m-each">each</a></code> method for easy iteration over attributes</li>
                     <li><small>Bugfix</small> Data in event handlers was silently changed to <code>null</code> if it was falsy,
                         so passing <code>false</code> as a data argument would result in handlers getting <code>null</code> instead of
                         the expected data argument.</li>

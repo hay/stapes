@@ -237,6 +237,10 @@
             return util.create(this);
         },
 
+        each : function(fn) {
+            util.each(Stapes._attributes[this._guid], util.bind(fn, this));
+        },
+
         emit : function(types, data) {
             data = (typeof data === "undefined") ? null : data;
 
@@ -275,10 +279,6 @@
             });
 
             return this;
-        },
-
-        each : function(fn) {
-            util.each(Stapes._attributes[this._guid], fn);
         },
 
         filter : function(fn) {

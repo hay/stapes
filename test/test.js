@@ -85,7 +85,7 @@ test("update", function() {
 module("iterators");
 
 test("each with a single object", function() {
-    module = Stapes.create();
+    var module = Stapes.create();
     module.set({
         'key1': 'value1',
         'key2': 'value2',
@@ -102,8 +102,17 @@ test("each with a single object", function() {
     deepEqual(keys, ['key1', 'key2', 'key3'], "and keys");
 });
 
+test("context of each() is set to current module", function() {
+    var module = Stapes.create();
+    module.set('val', true);
+    module.push([1,2,3]);
+    module.each(function(nr) {
+        ok(this === module);
+    });
+});
+
 test("each with an array", function() {
-    module = Stapes.create();
+    var module = Stapes.create();
     module.push([
        'value1',
        'value2',
@@ -118,7 +127,7 @@ test("each with an array", function() {
 });
 
 test("filter", function() {
-    module = Stapes.create();
+    var module = Stapes.create();
     module.set({
         'key1': 'value1',
         'key2': 'value2',
