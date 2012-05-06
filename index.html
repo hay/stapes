@@ -742,6 +742,19 @@
                 individual modules.</p>
         </article>
 
+        <h3 id="m-bugs">Bugs and known limitations</h3>
+        <ul>
+            <li><p>Attributes are stored in an object internally. According to the Javascript spec
+                objects don't guarantee that properties are returned in order. However, all browsers
+                do return object properties in order except for <a href="http://stackoverflow.com/a/280861/152809">Chrome</a>
+                where numbered keys won't return in order. </p>
+                <p>In the future this will be fixed, but it requires a big rewrite. For now the best way to
+                    prevent this problem is to simply avoid using numbered attributes. So don't write something like
+                    <code>module.set('1', 'one');</code>
+                </p>
+            </li>
+        </ul>
+
         <h3 id="m-history">History</h3>
         <ul>
             <li>0.4</li>
