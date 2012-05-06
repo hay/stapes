@@ -19,10 +19,10 @@
 
     /** Utility functions
      *
-     *  Note that these functions are only used inside Stapes, and therefore
-     *  aren't that failsafe as the options in libraries
-     *  such as Underscore.js, so that's why they're not usable outside
-     *  the private scope.
+     *  These are more or less modelled on the ones used in Underscore.js,
+     *  but might not be as extensive or failproof.
+     *  However, they are pretty damn useful and can be accessed by using
+     *  the Stapes.util global
      */
     var util = {
         bind : function(fn, ctx) {
@@ -66,26 +66,22 @@
                 instance = new F();
             }
 
-            instance._guid = guid++;
-            Stapes._attributes[instance._guid] = {};
-            Stapes._eventHandlers[instance._guid] = {};
-
             return instance;
         },
 
-        each : function(list, fn) {
+        each : function(list, fn, context) {
             if (util.isArray(list)) {
                 if (Array.prototype.forEach) {
                     // Native forEach
-                    list.forEach( fn );
+                    list.forEach( fn, context );
                 } else {
                     for (var i = 0, l = list.length; i < l; i++) {
-                        fn( list[i], i);
+                        fn.call(context, list[i], i);
                     }
                 }
             } else {
                 for (var key in list) {
-                    fn( list[key], key );
+                    fn.call(context, list[key], key);
                 }
             }
         },
@@ -98,12 +94,32 @@
             return (typeof val === "object") && (!util.isArray(val) && val !== null);
         },
 
+        keys : function(list) {
+            return util.map(list, function(value, key) {
+                return key;
+            });
+        },
+
         // from http://stackoverflow.com/a/2117523/152809
         makeUuid : function() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
                 return v.toString(16);
             });
+        },
+
+        map : function(list, fn, context) {
+            var results = [];
+
+            if (util.isArray(list) && Array.prototype.map) {
+                return list.map(fn, context);
+            }
+
+            util.each(list, function(value, index) {
+                results.push( fn.call(context, value, index) );
+            });
+
+            return results;
         },
 
         toArray : function(val) {
@@ -114,14 +130,10 @@
             }
         },
 
-        values : function(obj) {
-            var values = [];
-
-            util.each(obj, function(value, key) {
-                values.push(value);
+        values : function(list) {
+            return util.map(list, function(value, key) {
+                return value;
             });
-
-            return values;
         }
     };
 
@@ -154,38 +166,55 @@
             eventMap = argTypeOrMap;
         }
 
-        util.each(eventMap, util.bind(function(handler, eventString) {
+        util.each(eventMap, function(handler, eventString) {
             var events = eventString.split(" ");
 
-            util.each(events, util.bind(function(eventType) {
+            util.each(events, function(eventType) {
                 addEvent.call(this, {
                     "guid" : this._guid,
                     "handler" : handler,
                     "scope" : scope,
                     "type" : eventType
                 });
-            }, this));
-        }, this));
+            }, this);
+        }, this);
+    }
+
+    // This is a really small utility function to save typing and producing
+    // better optimized code
+    function attr(guid, key) {
+        return (key) ? Stapes._attributes[guid][key] : Stapes._attributes[guid];
+    }
+
+    // Stapes objects have some extra properties that are set on creation
+    function createModule( context ) {
+        var instance = util.create( context );
+
+        instance._guid = guid++;
+        Stapes._attributes[instance._guid] = {};
+        Stapes._eventHandlers[instance._guid] = {};
+
+        return instance;
     }
 
     function emitEvents(type, data, explicitType, explicitGuid) {
         explicitType = explicitType || false;
         explicitGuid = explicitGuid || this._guid;
 
-        util.each(Stapes._eventHandlers[explicitGuid][type], util.bind(function(event) {
+        util.each(Stapes._eventHandlers[explicitGuid][type], function(event) {
             var scope = (event.scope) ? event.scope : this;
             if (explicitType) {
                 event.type = explicitType;
             }
             event.scope = scope;
             event.handler.call(event.scope, data, event);
-        }, this));
+        }, this);
     }
 
     function setAttribute(key, value) {
         // We need to do this before we actually add the item :)
         var itemExists = this.has(key),
-            oldValue = Stapes._attributes[this._guid][key];
+            oldValue = attr(this._guid, key);
 
         // Is the value different than the oldValue? If not, ignore this call
         if (value === oldValue) {
@@ -193,7 +222,7 @@
         }
 
         // Actually add the item to the attributes
-        Stapes._attributes[this._guid][key] = value;
+        attr(this._guid)[key] = value;
 
         // Throw a generic event
         this.emit('change', key);
@@ -234,17 +263,17 @@
 
     var Module = {
         create : function() {
-            return util.create(this);
+            return createModule( this );
         },
 
         each : function(fn, ctx) {
-            util.each(Stapes._attributes[this._guid], util.bind(fn, ctx || this));
+            util.each(attr(this._guid), fn, ctx || this);
         },
 
         emit : function(types, data) {
             data = (typeof data === "undefined") ? null : data;
 
-            util.each(types.split(" "), util.bind(function(type) {
+            util.each(types.split(" "), function(type) {
                 // First 'all' type events: is there an 'all' handler in the
                 // global stack?
                 if (Stapes._eventHandlers[-1].all) {
@@ -267,7 +296,7 @@
                         emitEvents.call(this, type, data);
                     }
                 }
-            }, this));
+            }, this);
         },
 
         extend : function(objectOrValues, valuesIfObject) {
@@ -295,7 +324,7 @@
 
         get : function(input) {
             if (typeof input === "string") {
-                return this.has(input) ? Stapes._attributes[this._guid][input] : null;
+                return this.has(input) ? attr(this._guid, input) : null;
             } else if (typeof input === "function") {
                 var items = this.filter(input);
                 return (items.length) ? items[0] : false;
@@ -303,30 +332,23 @@
         },
 
         getAll : function() {
-            return util.clone( Stapes._attributes[this._guid] );
+            return util.clone( attr(this._guid) );
         },
 
         getAllAsArray : function() {
-            var arr = [];
-
-            util.each(Stapes._attributes[this._guid], function(value, key) {
+            var arr = util.map(attr(this._guid), function(value, key) {
                 if (util.isObject(value)) {
                     value.id = key;
                 }
 
-                arr.push(value);
+                return value;
             });
 
             return util.clone( arr );
         },
 
         has : function(key) {
-            return (typeof Stapes._attributes[this._guid][key] !== "undefined");
-        },
-
-        init : function() {
-            this.emit('ready');
-            return this;
+            return (typeof attr(this._guid, key) !== "undefined");
         },
 
         on : function() {
@@ -336,9 +358,9 @@
         // Akin to set(), but makes a unique id
         push : function(input) {
             if (util.isArray(input)) {
-                util.each(input, util.bind(function(value) {
+                util.each(input, function(value) {
                     setAttribute.call(this, util.makeUuid(), value);
-                }, this));
+                }, this);
             } else {
                 setAttribute.call(this, util.makeUuid(), input);
             }
@@ -346,31 +368,31 @@
 
         remove : function(input) {
             if (typeof input === "function") {
-                util.each(Stapes._attributes[this._guid], util.bind(function(item, key) {
+                util.each(attr(this._guid), function(item, key) {
                     if (input(item)) {
-                        delete Stapes._attributes[this._guid][key];
+                        delete attr(this._guid, key);
                         this.emit('remove change');
                     }
-                }, this));
+                }, this);
             } else {
                 if (typeof input === "string") {
                     input = [input];
                 }
 
-                util.each(util.toArray(input), util.bind(function(id) {
+                util.each(util.toArray(input), function(id) {
                     if (this.has(id)) {
-                        delete Stapes._attributes[this._guid][id];
+                        delete attr(this._guid, id);
                         this.emit('remove change');
                     }
-                }, this));
+                }, this);
             }
         },
 
         set : function(objOrKey, value) {
             if (util.isObject(objOrKey)) {
-                util.each(objOrKey, util.bind(function(value, key) {
+                util.each(objOrKey, function(value, key) {
                     setAttribute.call(this, key, value);
-                }, this));
+                }, this);
             } else {
                 setAttribute.call(this, objOrKey, value);
             }
@@ -380,9 +402,9 @@
             if (typeof keyOrFn === "string") {
                 updateAttribute.call(this, keyOrFn, fn);
             } else if (typeof keyOrFn === "function") {
-                util.each(this.getAll(), util.bind(function(value, key) {
+                util.each(this.getAll(), function(value, key) {
                     updateAttribute.call(this, key, keyOrFn);
-                }, this));
+                }, this);
             }
         }
     };
@@ -397,7 +419,7 @@
         "_guid" : -1,
 
         "create" : function() {
-            return util.create(Module);
+            return createModule( Module );
         },
 
         "extend" : function(obj) {
@@ -409,6 +431,8 @@
         "on" : function() {
             addEventHandler.apply(this, arguments);
         },
+
+        "util" : util,
 
         "version" : VERSION
     };

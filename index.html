@@ -731,7 +731,34 @@
             </code></pre>
         </article>
 
-        <h3 id="m-util">Utility</h3>
+        <h3 id="m-util">Util</h3>
+        <article id="m-util-intro">
+            <h1>Introduction</h1>
+            <p><code>Stapes.util</code> contains a selection of commonly used
+                utilities that are internally used by Stapes. However, you can use
+                them as well and save you the overhead of including a library
+                such as Underscore.js</p>
+
+            <p>These utilities might not have all of the features you expect from
+                Underscore, but they are good enough for 90% of all use cases. Most of
+                them are from the Ecmascript 5 spec (such as <code>bind</code> and
+                <code>map</code>) and use the native functions if those are available
+                in the browser.</p>
+        </article>
+
+        <article id="m-util-bind">
+            <h1>bind</h1>
+
+            <h2>Stapes.util.bind( function, context )</h2>
+
+            <p>Binds the <code>this</code> variable inside <code>function</code>
+                to <code>context</code>.</p>
+
+            <p>Uses the native Ecmascript 5
+                <code><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind">bind</a></code> if available.</p>
+        </article>
+
+        <h3 id="m-misc">Miscellaneous</h3>
         <article id="m-version">
             <h1>version</h1>
 
@@ -763,6 +790,9 @@
                     <li><small>Bugfix</small> Data in event handlers was silently changed to <code>null</code> if it was falsy,
                         so passing <code>false</code> as a data argument would result in handlers getting <code>null</code> instead of
                         the expected data argument.</li>
+                    <li>Removed the undocumented <code>init</code> method that was part of every Stapes module</li>
+                    <li>Rewrote the util functions for cleaner code (including a <code>map</code> and an <code>each</code>
+                        with a context parameter).</li>
                 </ul>
             <li>0.3 - April 5th 2012</li>
                 <ul>
