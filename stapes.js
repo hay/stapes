@@ -86,6 +86,22 @@
             }
         },
 
+        filter : function(list, fn, context) {
+            var results = [];
+
+            if (util.isArray(list) && Array.prototype.filter) {
+                return list.filter(fn, context);
+            }
+
+            util.each(list, function(value) {
+                if (fn.call(context, value)) {
+                    results.push(value);
+                }
+            });
+
+            return results;
+        },
+
         isArray : function(val) {
             return Object.prototype.toString.call( val ) === "[object Array]";
         },
@@ -182,8 +198,8 @@
 
     // This is a really small utility function to save typing and producing
     // better optimized code
-    function attr(guid, key) {
-        return (key) ? Stapes._attributes[guid][key] : Stapes._attributes[guid];
+    function attr(guid) {
+        return Stapes._attributes[guid];
     }
 
     // Stapes objects have some extra properties that are set on creation
@@ -214,7 +230,7 @@
     function setAttribute(key, value) {
         // We need to do this before we actually add the item :)
         var itemExists = this.has(key),
-            oldValue = attr(this._guid, key);
+            oldValue = attr(this._guid)[key];
 
         // Is the value different than the oldValue? If not, ignore this call
         if (value === oldValue) {
@@ -230,7 +246,6 @@
         // And a namespaced event as well, NOTE that we pass value instead of
         // key here!
         this.emit('change:' + key, value);
-
 
         // Throw namespaced and non-namespaced 'mutate' events as well with
         // the old value data as well and some extra metadata such as the key
@@ -311,23 +326,15 @@
         },
 
         filter : function(fn) {
-            var items = [];
-
-            this.each(function(item) {
-                if (fn(item)) {
-                    items.push(item);
-                }
-            });
-
-            return items;
+            return util.filter(attr(this._guid), fn);
         },
 
         get : function(input) {
             if (typeof input === "string") {
-                return this.has(input) ? attr(this._guid, input) : null;
+                return this.has(input) ? attr(this._guid)[input] : null;
             } else if (typeof input === "function") {
                 var items = this.filter(input);
-                return (items.length) ? items[0] : false;
+                return (items.length) ? items[0] : null;
             }
         },
 
@@ -348,7 +355,7 @@
         },
 
         has : function(key) {
-            return (typeof attr(this._guid, key) !== "undefined");
+            return (typeof attr(this._guid)[key] !== "undefined");
         },
 
         on : function() {
@@ -368,23 +375,17 @@
 
         remove : function(input) {
             if (typeof input === "function") {
-                util.each(attr(this._guid), function(item, key) {
+                this.each(function(item, key) {
                     if (input(item)) {
-                        delete attr(this._guid, key);
+                        delete attr(this._guid)[key];
                         this.emit('remove change');
                     }
-                }, this);
+                });
             } else {
-                if (typeof input === "string") {
-                    input = [input];
+                if (this.has(input)) {
+                    delete attr(this._guid)[input];
+                    this.emit('remove change');
                 }
-
-                util.each(util.toArray(input), function(id) {
-                    if (this.has(id)) {
-                        delete attr(this._guid, id);
-                        this.emit('remove change');
-                    }
-                }, this);
             }
         },
 
@@ -402,9 +403,9 @@
             if (typeof keyOrFn === "string") {
                 updateAttribute.call(this, keyOrFn, fn);
             } else if (typeof keyOrFn === "function") {
-                util.each(this.getAll(), function(value, key) {
+                this.each(function(value, key) {
                     updateAttribute.call(this, key, keyOrFn);
-                }, this);
+                });
             }
         }
     };
