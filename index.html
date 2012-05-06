@@ -740,10 +740,13 @@
                 such as Underscore.js</p>
 
             <p>These utilities might not have all of the features you expect from
-                Underscore, but they are good enough for 90% of all use cases. Most of
+                Underscore, but they are good enough for 95% of all use cases. Most of
                 them are from the Ecmascript 5 spec (such as <code>bind</code> and
                 <code>map</code>) and use the native functions if those are available
                 in the browser.</p>
+
+            <p>Documentation here is a little spartan, but all of these utilities are
+                very comparable to the ones in Underscore and the ES5 spec.</p>
         </article>
 
         <article id="m-util-bind">
@@ -761,9 +764,140 @@
         <article id="m-util-clone">
             <h1>clone</h1>
 
-            <h2>Stapes.util.clone( </h2>
+            <h2>Stapes.util.clone( object )</h2>
+
+            <p>Returns a shallow copy of an object or array with copies
+                of the items instead of references.</p>
         </article>
 
+        <article id="m-util-create">
+            <h1>create</h1>
+
+            <h2>Stapes.util.create( context )</h2>
+
+            <p>Creates a new Object using the 'real prototypal inheritance pattern' <a href="http://javascript.crockford.com/prototypal.html">made famous by Douglas Crockford</a>. Uses <code>Object.create</code> if available.</p>
+        </article>
+
+        <article id="m-util-each">
+            <h1>each</h1>
+
+            <h2>Stapes.util.each( list, function [,context] )</h2>
+
+            <p>Runs <code>function</code> on all items in <code>list</code> (which can be an array or an object). By using the optional third <code>context</code> parameter you can set the value of <code>this</code> inside of the function.</p>
+
+            <p><code>each</code> doesn't return any values.</p>
+
+    <pre><code>
+        var singers = ['Johnny', 'June', 'Emmylou'];
+
+        Stapes.util.each(singers, function(singer) {
+            console.log(singer);
+        });
+    </code></pre>
+        </article>
+
+        <article id="m-util-filter">
+            <h1>filter</h1>
+
+            <h2>Stapes.util.filter( list, function [, context]</h2>
+
+            <p>Comparable to <a href="#m-util-each"><code>Stapes.util.each</code></a>. Runs over all items in the <code>list</code> and returns an array of all the items that pass the test defined in <code>function.</code></p>
+
+    <pre><code>
+        var singers  = ['Johnny', 'June', 'Emmylou'];
+
+        var girls = Stapes.util.filter(singers, function(singer) {
+            return singer !== "Johnny";
+        });
+
+        console.log(girls); // ['June', 'Emmylou']
+    </code></pre>
+        </article>
+
+        <article id="m-util-inarray">
+            <h1>isArray</h1>
+
+            <h2>Stapes.util.isArray( value )</h2>
+
+            <p>Unfortunately Javascript's native <code>typeof</code> doesn't return the correct type of an Array (it returns 'object' instead). This util fixes that.</p>
+
+    <pre><code>
+        var ar = [],
+            obj = {};
+
+        console.log( Stapes.util.isArray( ar ) ); // 'true'
+        console.log( Stapes.util.isArray( obj ) ); // 'false'
+    </code></pre>
+        </article>
+
+        <article id="m-util-isobject">
+            <h1>isObject</h1>
+
+            <h2>Stapes.util.isObject( value )</h2>
+
+            <p>Comparable to <code><a href="#m-util-inarray">Stapes.util.inArray</a></code>, but returns <code>true</code> if a value is an object.</p>
+        </article>
+
+        <article id="m-util-keys">
+            <h1>keys</h1>
+
+            <h2>Stapes.util.keys( object )</h2>
+
+            <p>Returns all keys of an object as an array.</p>
+
+    <pre><code>
+        var obj = {"one" : 1, "two" : 2, "three" : 3};
+        console.log( Stapes.util.keys( obj ) ); // ["one", "two", "three"]
+    </code></pre>
+        </article>
+
+        <article id="m-util-makeuuid">
+            <h1>makeUuid</h1>
+
+            <h2>Stapes.util.makeUuid()</h2>
+
+            <p>Returns a random uniqe 128-bit id of the version 4 (random) type.</p>
+        </article>
+
+        <article id="m-util-map">
+            <h1>map</h1>
+
+            <h2>Stapes.util.map( list, function [, context] )</h2>
+
+            <p>
+                Comparable to <code><a href="#m-util-each">Stapes.util.each</a></code> but returns an array of transformed items.
+            </p>
+
+    <pre><code>
+        var values = ["Johnny", "Emmylou", "June"];
+
+        var newValues = util.map(values, function(value) {
+            return "Hi " + value + "!";
+        });
+
+        console.log(newValues); ["Hi Johnny!", "Hi Emmylou!", "Hi June!"];
+    </code></pre>
+        </article>
+
+        <article id="m-util-toarray">
+            <h1>toArray</h1>
+
+            <h2>Stapes.util.toArray( value )</h2>
+
+            <p>Converts Array-like values (like the arguments variable in a function or a DOM Node collection) to real arrays. Calling this function with an object as the argument is the same as calling <code><a href="#m-util-values">Stapes.util.values</a></code>.</p>
+        </article>
+
+        <article id="m-util-values">
+            <h1>values</h1>
+
+            <h2>Stapes.util.values( object )</h2>
+
+            <p>Returns all values of an object as an array.</p>
+
+    <pre><code>
+        var obj = {"one" : 1, "two" : 2, "three" : 3};
+        console.log( Stapes.util.values( obj ) ); // [1, 2, 3]
+    </code></pre>
         </article>
 
         <h3 id="m-misc">Miscellaneous</h3>
@@ -794,7 +928,8 @@
         <ul>
             <li>0.4</li>
                 <ul>
-                    <li><small>Feature</small> Added an <code><a href="#m-each">each</a></code> method for easy iteration over attributes</li>
+                    <li><small>Feature</small> Added the whole bunch of <a href="m-util">utility methods</a>.</li>
+                    <li><small>Feature</small> Added an <code><a href="#m-each">each</a></code> method to Modules for easy iteration over attributes</li>
                     <li><small>Bugfix</small> Data in event handlers was silently changed to <code>null</code> if it was falsy,
                         so passing <code>false</code> as a data argument would result in handlers getting <code>null</code> instead of
                         the expected data argument.</li>
