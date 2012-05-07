@@ -25,7 +25,7 @@
      *  the Stapes.util global
      */
     var util = {
-        bind : function(fn, ctx) {
+        "bind" : function(fn, ctx) {
             if (Function.prototype.bind) {
                 // Native
                 return fn.bind(ctx);
@@ -37,7 +37,7 @@
             }
         },
 
-        clone : function(obj) {
+        "clone" : function(obj) {
             if (util.isArray(obj)) {
                 return obj.slice();
             } else if (util.isObject(obj)) {
@@ -53,7 +53,7 @@
             }
         },
 
-        create : function(context) {
+        "create" : function(context) {
             var instance;
 
             if (typeof Object.create === "function") {
@@ -69,7 +69,7 @@
             return instance;
         },
 
-        each : function(list, fn, context) {
+        "each" : function(list, fn, context) {
             if (util.isArray(list)) {
                 if (Array.prototype.forEach) {
                     // Native forEach
@@ -86,7 +86,7 @@
             }
         },
 
-        filter : function(list, fn, context) {
+        "filter" : function(list, fn, context) {
             var results = [];
 
             if (util.isArray(list) && Array.prototype.filter) {
@@ -102,29 +102,29 @@
             return results;
         },
 
-        isArray : function(val) {
-            return Object.prototype.toString.call( val ) === "[object Array]";
+        "isArray" : function(val) {
+            return util.typeof(val) === "array";
         },
 
-        isObject : function(val) {
-            return (typeof val === "object") && (!util.isArray(val) && val !== null);
+        "isObject" : function(val) {
+            return util.typeof(val) === "object";
         },
 
-        keys : function(list) {
+        "keys" : function(list) {
             return util.map(list, function(value, key) {
                 return key;
             });
         },
 
         // from http://stackoverflow.com/a/2117523/152809
-        makeUuid : function() {
+        "makeUuid" : function() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
                 return v.toString(16);
             });
         },
 
-        map : function(list, fn, context) {
+        "map" : function(list, fn, context) {
             var results = [];
 
             if (util.isArray(list) && Array.prototype.map) {
@@ -138,7 +138,11 @@
             return results;
         },
 
-        toArray : function(val) {
+        "size" : function(list) {
+            return (util.isArray(list)) ? list.length : util.keys(list).length;
+        },
+
+        "toArray" : function(val) {
             if (util.isObject(val)) {
                 return util.values(val);
             } else {
@@ -146,7 +150,11 @@
             }
         },
 
-        values : function(list) {
+        "typeof" : function(val) {
+            return Object.prototype.toString.call(val).replace(/\[object |\]/g, '').toLowerCase();
+        },
+
+        "values" : function(list) {
             return util.map(list, function(value, key) {
                 return value;
             });
@@ -397,6 +405,10 @@
             } else {
                 setAttribute.call(this, objOrKey, value);
             }
+        },
+
+        size : function() {
+            return util.size( Stapes._attributes[this._guid] );
         },
 
         update : function(keyOrFn, fn) {

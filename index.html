@@ -585,18 +585,28 @@
 
             <p>Note that this method returns a copy/clone instead of a reference.</p>
 
-            <p>Can be used as an easy way to get the number of attributes in a
-                module by using the <code>length</code> property of the
-                array</p>
-
             <pre><code>
-    m.set({
+    module.set({
         "name" : "Johnny",
         "instrument" : "guitar"
     });
 
-    m.getAllAsArray().length; // '2'
+    module.getAllAsArray().length; // '2'
             </code></pre>
+        </article>
+
+        <article id="m-size">
+            <h1>size</h1>
+
+            <h2>module.size();</h2>
+
+            <p>Returns the number of attributes in a module.</p>
+
+    <pre><code>
+    module.push(['Johnny', 'Emmylou', 'June', 'Gram']);
+
+    console.log( module.size() ); // '4'
+    </code></pre>
         </article>
 
         <article id="m-push">
@@ -930,6 +940,7 @@
                 <ul>
                     <li><small>Feature</small> Added the whole bunch of <a href="m-util">utility methods</a>.</li>
                     <li><small>Feature</small> Added an <code><a href="#m-each">each</a></code> method to Modules for easy iteration over attributes</li>
+                    <li><small>Feature</small> Added a <code><a href="#m-size">size</a></code> method to get the number of attributes in a module.</li>
                     <li><small>Bugfix</small> Data in event handlers was silently changed to <code>null</code> if it was falsy,
                         so passing <code>false</code> as a data argument would result in handlers getting <code>null</code> instead of
                         the expected data argument.</li>
