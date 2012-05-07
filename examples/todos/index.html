@@ -1,42 +1,65 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-  <link rel="stylesheet" href="css/application.css" />
+	<meta charset="utf-8">
+	<title>Stapes.js • TodoMVC</title>
+	<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div id="views">
-    <div id="tasks">
-      <h1>Todos</h1>
+	<section id="todoapp">
+		<header id="header">
+			<h1>todos</h1>
+			<input id="new-todo" placeholder="What needs to be done?" autofocus>
+		</header>
+		<section id="main">
+			<input id="toggle-all" type="checkbox">
+			<label for="toggle-all">Mark all as complete</label>
+			<ul id="todo-list"></ul>
+		</section>
+		<footer id="footer">
+			<span id="todo-count"><strong>0</strong> item left</span>
+			<ul id="filters">
+				<li>
+					<a class="selected" href="#/">All</a>
+				</li>
+				<li>
+					<a href="#/active">Active</a>
+				</li>
+				<li>
+					<a href="#/completed">Completed</a>
+				</li>
+			</ul>
+			<button id="clear-completed">Clear completed (1)</button>
+		</footer>
+	</section>
+	<footer id="info">
+		<p>Double-click to edit a todo</p>
+		<p>Created by <a href="http://github.com/hay/stapes/">Hay Kranen</a>.</p>
+		<p>Based on <a href="http://addyosmani.github.com/todomvc/">TodoMVC</a></p>
+	</footer>
 
-      <form>
-        <input type="text" placeholder="What needs to be done?">
-      </form>
+	<script id="todo-template" type="text/x-handlebars-template">
+		{{#todos}}
+		<li class="{{#completed}}completed{{/completed}}" data-id="{{id}}">
+			<div class="view">
+				<input class="toggle" type="checkbox" {{#completed}}checked="checked"{{/completed}}>
+				<label>{{title}}</label>
+				<button class="destroy"></button>
+			</div>
+			<input class="edit" value="{{title}}">
+		</li>
+		{{/todos}}
+	</script>
 
-      <div class="items"></div>
-
-      <footer>
-        <a class="clear">Clear completed</a>
-        <div class="count"><span class="countVal">0</span> left</div>
-      </footer>
-    </div>
-  </div>
-
-  <script src="../lib/jquery.js"></script>
-  <script src="../lib/mustache.js"></script>
-  <script src="../../stapes.js"></script>
-  <script>
-    Stapes.extend({
-      "events" : function() {
-        console.log(eventHandlers);
-      }
-    });
-  </script>
-  <script src="app/todoController.js"></script>
-  <script src="app/todoModel.js"></script>
-  <script src="app/todoView.js"></script>
-  <script src="app/todoStore.js"></script>
-  <script>
-      TodoController.create({name : "app"}).init();
-  </script>
+	<script src="../lib/jquery.js"></script>
+	<script src="../lib/handlebars.js"></script>
+	<script src="../../stapes.js"></script>
+	<script src="js/todoController.js"></script>
+	<script src="js/todoModel.js"></script>
+	<script src="js/todoView.js"></script>
+	<script src="js/todoStore.js"></script>
+	<script>
+	TodoController.init();
+	</script>
 </body>
 </html>
