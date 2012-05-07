@@ -155,3 +155,12 @@ test("filter", function() {
     });
     deepEqual(filtered, [], "when does not matches anything returns an empty array");
 });
+
+test("util.typeof", function() {
+    ok(Stapes.util.typeof( {} ) === "object", "typeof {} = object");
+    ok(Stapes.util.typeof( [] ) === "array", "typeof [] = array");
+    ok(Stapes.util.typeof( 1 ) === "number", "typeof 1 = number");
+    ok(Stapes.util.typeof( '' ) === "string", "typeof '' = string");
+    ok(Stapes.util.typeof( null ) === "null", "typeof null = null");
+    ok(Stapes.util.typeof( undefined ) === "undefined", "typeof undefined = undefined");
+});
