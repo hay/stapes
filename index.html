@@ -51,7 +51,8 @@
         <p>Here's why i think you should use it: it's really tiny (<strong>1.5kb</strong> minified and gzipped),
         easy to fit in an existing codebase, and doesn't force you to
         write your code in a specific style. Because of its small size it's ideal
-        for mobile development.</p>
+        for mobile development. In that 1.5kb you'll also get a bunch of the most popular
+        functional utility methods like <b>each</b> and <b>map</b>.
 
         <p><em>So, Stapes.js isn't a traditional MVC framework?</em></p>
 
@@ -71,9 +72,10 @@
             <li>A powerful yet simple event system using <a href="#m-on"><code>on</code></a> and
             <a href="#m-emit"><code>emit</code></a> methods.</li>
             <li>Inheritance using <a href="#m-create"><code>create</code></a> and
-            <a href="#m-extend"><code>extend</code></a></li>
-            <li>Event-triggering attributes using <a href="#m-get"><code>get</code></a> and <a href="#m-set"><code>set</code></a></li>
-            <li>Powerful <a href="#m-filter"><code>filter</code></a> and <a href="#m-remove"><code>remove</code></a> methods for attributes</li>
+            <a href="#m-extend"><code>extend</code></a>.</li>
+            <li>Event-triggering attributes using <a href="#m-get"><code>get</code></a> and <a href="#m-set"><code>set</code></a>.</li>
+            <li>Powerful <a href="#m-filter"><code>filter</code></a> and <a href="#m-remove"><code>remove</code></a> methods for attributes.</li>
+            <li>Some of the most popular functional utility methods like <a href="#m-util-each"><code>each</code></a>, <a href="#m-util-map"><code>map</code></a> and <a href="#m-util-bind"><code>bind</code></a>.
             <li>Usable in traditional Javascript, as an AMD module (for <a href="http://requirejs.org">Require.js</a>)
             or on the server with <a href="http://www.nodejs.org">Node.js</a></li>
             <li><a href="#m-plugins">A simple mechanism</a> for writing plugins and extensions to extend the functionality of Stapes.</li>
@@ -313,8 +315,7 @@
                 (when defining multipe listeners using an object) parameter you can set what the value of
                 <code>this</code> should be in the scope of the event handler.
                 This is handy to prevent having to temporary save the scope
-                to a <code>self</code> or <code>that</code> variable or with a
-                custom function bind utility.</p>
+                to a <code>self</code> or <code>that</code> variable.</p>
 
             <pre><code>
     module.on('ready', function() {
@@ -889,12 +890,43 @@
     </code></pre>
         </article>
 
+        <article id="m-util-size">
+            <h1>size</h1>
+
+            <h2>Stapes.util.size( list )</h2>
+
+            <p>Returns the number of items in an object or array.</p>
+
+    <pre><code>
+        var values = { "one" : 1, "two" : 2, "three" : 3"};
+        console.log( Stapes.util.size( values ) ); // '3'
+    </code></pre>
+        </article>
+
         <article id="m-util-toarray">
             <h1>toArray</h1>
 
             <h2>Stapes.util.toArray( value )</h2>
 
             <p>Converts Array-like values (like the arguments variable in a function or a DOM Node collection) to real arrays. Calling this function with an object as the argument is the same as calling <code><a href="#m-util-values">Stapes.util.values</a></code>.</p>
+        </article>
+
+        <article id="m-util-typeof">
+            <h1>typeof</h1>
+
+            <h2>Stapes.util.typeof( value )</h2>
+
+            <p>A better <code>typeof</code> operator that returns the correct type of a value.</p>
+
+    <pre><code>
+        console.log( Stapes.util.typeof( {} ) ); // 'object'
+        console.log( Stapes.util.typeof( [] ) ); // 'array'
+        console.log( Stapes.util.typeof( 1 ) ); // 'number'
+        console.log( Stapes.util.typeof( '' ) ); // 'string'
+        console.log( Stapes.util.typeof( null ) ); // 'null'
+        console.log( Stapes.util.typeof( undefined ) ); // 'undefined'
+    </code></pre>
+
         </article>
 
         <article id="m-util-values">
