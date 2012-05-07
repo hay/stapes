@@ -98,12 +98,26 @@
             return (typeof val === "object") && (!util.isArray(val) && val !== null);
         },
 
+        keys : function(obj) {
+            var keys = [];
+
+            util.each(obj, function(value, key) {
+                keys.push(key);
+            });
+
+            return keys;
+        },
+
         // from http://stackoverflow.com/a/2117523/152809
         makeUuid : function() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
                 return v.toString(16);
             });
+        },
+
+        size : function(list) {
+            return (util.isArray(list)) ? list.length : util.keys(list).length;
         },
 
         toArray : function(val) {
@@ -374,6 +388,10 @@
             } else {
                 setAttribute.call(this, objOrKey, value);
             }
+        },
+
+        size : function() {
+            return util.size( Stapes._attributes[this._guid] );
         },
 
         update : function(keyOrFn, fn) {
