@@ -15,6 +15,8 @@
 // Stapes.js : http://hay.github.com/stapes
 
 (function() {
+    'use strict';
+
     var VERSION = "0.4pre";
 
     /** Utility functions
