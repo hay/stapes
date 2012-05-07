@@ -157,10 +157,12 @@ test("filter", function() {
 });
 
 test("util.typeof", function() {
-    ok(Stapes.util.typeof( {} ) === "object", "typeof {} = object");
-    ok(Stapes.util.typeof( [] ) === "array", "typeof [] = array");
-    ok(Stapes.util.typeof( 1 ) === "number", "typeof 1 = number");
-    ok(Stapes.util.typeof( '' ) === "string", "typeof '' = string");
-    ok(Stapes.util.typeof( null ) === "null", "typeof null = null");
-    ok(Stapes.util.typeof( undefined ) === "undefined", "typeof undefined = undefined");
+    ok(Stapes.util.typeOf( {} ) === "object", "typeof {} = object");
+    ok(Stapes.util.typeOf( [] ) === "array", "typeof [] = array");
+    ok(Stapes.util.typeOf( function(){} ) === "function", "typeof function(){} = function");
+    ok(Stapes.util.typeOf( true ) === "boolean", "typeof true = boolean");
+    ok(Stapes.util.typeOf( 1 ) === "number", "typeof 1 = number");
+    ok(Stapes.util.typeOf( '' ) === "string", "typeof '' = string");
+    ok(Stapes.util.typeOf( null ) === "null", "typeof null = null");
+    ok(Stapes.util.typeOf( undefined ) === "undefined", "typeof undefined = undefined");
 });

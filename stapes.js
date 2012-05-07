@@ -105,11 +105,11 @@
         },
 
         "isArray" : function(val) {
-            return util.typeof(val) === "array";
+            return util.typeOf(val) === "array";
         },
 
         "isObject" : function(val) {
-            return util.typeof(val) === "object";
+            return util.typeOf(val) === "object";
         },
 
         "keys" : function(list) {
@@ -152,7 +152,7 @@
             }
         },
 
-        "typeof" : function(val) {
+        "typeOf" : function(val) {
             return Object.prototype.toString.call(val).replace(/\[object |\]/g, '').toLowerCase();
         },
 
