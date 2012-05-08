@@ -93,7 +93,6 @@ function(Stapes, TodoModel, TodoView, TodoStore) {
 
 			this.bindEventHandlers();
 
-			this.model.init();
 			this.view.init();
 			this.store.init();
 
