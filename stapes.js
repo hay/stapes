@@ -17,7 +17,7 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.4pre";
+    var VERSION = "0.4";
 
     /** Utility functions
      *
