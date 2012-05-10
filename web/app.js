@@ -1,6 +1,6 @@
 (function() {
     function $(selector) {
-        return [].slice.call( document.querySelectorAll( selector ), 0);
+        return Array.prototype.slice.call( document.querySelectorAll( selector ), 0);
     }
 
     function createToc() {
@@ -9,7 +9,7 @@
             openH3 = false,
             html = '';
 
-        nodes = [].slice.call(nodes, 0);
+        nodes = Array.prototype.slice.call(nodes, 0);
 
         nodes.forEach(function(node) {
             if (node.tagName === "H3") {

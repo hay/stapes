@@ -1,0 +1,14 @@
+{
+    "name": "stapes",
+    "author" : "Hay Kranen <hay@bykr.org>",
+    "homepage" : "http://hay.github.com/stapes",
+    "description": "A (really) tiny Javascript MVC microframework.",
+    "keywords": ["mvc", "framework", "lightweight"],
+    "version": "0.4.0",
+    "repository" : {
+        "type" : "git",
+        "url" : "http://github.com/hay/stapes.git"
+    },
+    "engine" : "node >= 0.5.1",
+    "main": "./stapes"
+}
