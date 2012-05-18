@@ -398,8 +398,6 @@
                     setAttribute.call(this, util.makeUuid(), value);
                 }, this);
                 if(!isEmpty(updatedAttributes)) {
-                    this.emit('change:multiple', updatedAttributes);
-
                     for(var key in updatedAttributes) {
                         emitAttributeEvents.call(this, key);
                     }
@@ -436,8 +434,6 @@
                     setAttribute.call(this, key, value);
                 }, this);
                 if(!isEmpty(updatedAttributes)) {
-                    this.emit('change:multiple', updatedAttributes);
-
                     for(var key in updatedAttributes) {
                         emitAttributeEvents.call(this, key);
                     }
