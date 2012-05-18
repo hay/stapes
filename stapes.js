@@ -397,8 +397,20 @@
                 util.each(input, function(value) {
                     setAttribute.call(this, util.makeUuid(), value);
                 }, this);
+                if(!isEmpty(updatedAttributes)) {
+                    this.emit('change:multiple', updatedAttributes);
+
+                    for(var key in updatedAttributes) {
+                        emitAttributeEvents.call(this, key);
+                    }
+                    updatedAttributes = {};
+                }
             } else {
                 setAttribute.call(this, util.makeUuid(), input);
+                if(!isEmpty(updatedAttributes)) {
+                    emitAttributeEvents.call(this, objOrKey);
+                    updatedAttributes = {};
+                }
             }
         },
 
