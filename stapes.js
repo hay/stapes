@@ -4,7 +4,7 @@
 // \___ \| __/ _` | '_ \ / _ \/ __|  | / __|
 //  ___) | || (_| | |_) |  __/\__ \_ | \__ \
 // |____/ \__\__,_| .__/ \___||___(_)/ |___/
-//              |_|              |__/
+//                |_|              |__/
 //
 // (*) a (really) tiny Javascript MVC microframework
 //
@@ -237,25 +237,23 @@
         }, this);
     }
 
-    function setAttribute(key, value) {
-        // We need to do this before we actually add the item :)
-        var itemExists = this.has(key),
-            oldValue = attr(this._guid)[key];
-
-        // Is the value different than the oldValue? If not, ignore this call
-        if (value === oldValue) {
-            return;
-        }
-
-        // Actually add the item to the attributes
-        attr(this._guid)[key] = value;
-
+    function emitAttributeEvents(key) {
+        var value = updatedAttributes[key].new;
+        var oldValue = updatedAttributes[key].old;
+        var updated = updatedAttributes[key].updated;
         // Throw a generic event
         this.emit('change', key);
 
         // And a namespaced event as well, NOTE that we pass value instead of
         // key here!
         this.emit('change:' + key, value);
+        // Also throw a specific event for this type of set
+        var specificEvent = updated ? 'update' : 'create';
+
+        this.emit(specificEvent, key);
+
+        // And a namespaced event as well, NOTE that we pass value instead of key
+        this.emit(specificEvent + ':' + key, value);
 
         // Throw namespaced and non-namespaced 'mutate' events as well with
         // the old value data as well and some extra metadata such as the key
@@ -268,13 +266,34 @@
         this.emit('mutate', mutateData);
         this.emit('mutate:' + key, mutateData);
 
-        // Also throw a specific event for this type of set
-        var specificEvent = itemExists ? 'update' : 'create';
+    }
 
-        this.emit(specificEvent, key);
+    function isEmpty(obj) {
+        for(var key in obj) {
+            if(obj.hasOwnProperty(key)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-        // And a namespaced event as well, NOTE that we pass value instead of key
-        this.emit(specificEvent + ':' + key, value);
+    var updatedAttributes = {};
+
+    function setAttribute(key, value) {
+        // We need to do this before we actually add the item :)
+        var oldValue = attr(this._guid)[key];
+
+        var itemExists = this.has(key);
+
+        // Is the value different than the oldValue? If not, ignore this call
+        if (value === oldValue) {
+            return;
+        }
+
+        // Actually add the item to the attributes
+        attr(this._guid)[key] = value;
+
+        updatedAttributes[key] = {new: value, old: oldValue, updated: itemExists};
     }
 
     function updateAttribute(key, fn) {
@@ -378,8 +397,18 @@
                 util.each(input, function(value) {
                     setAttribute.call(this, util.makeUuid(), value);
                 }, this);
+                if(!isEmpty(updatedAttributes)) {
+                    for(var key in updatedAttributes) {
+                        emitAttributeEvents.call(this, key);
+                    }
+                    updatedAttributes = {};
+                }
             } else {
                 setAttribute.call(this, util.makeUuid(), input);
+                if(!isEmpty(updatedAttributes)) {
+                    emitAttributeEvents.call(this, objOrKey);
+                    updatedAttributes = {};
+                }
             }
         },
 
@@ -404,8 +433,18 @@
                 util.each(objOrKey, function(value, key) {
                     setAttribute.call(this, key, value);
                 }, this);
+                if(!isEmpty(updatedAttributes)) {
+                    for(var key in updatedAttributes) {
+                        emitAttributeEvents.call(this, key);
+                    }
+                    updatedAttributes = {};
+                }
             } else {
                 setAttribute.call(this, objOrKey, value);
+                if(!isEmpty(updatedAttributes)) {
+                    emitAttributeEvents.call(this, objOrKey);
+                    updatedAttributes = {};
+                }
             }
         },
 
