@@ -19,6 +19,9 @@
 
     var VERSION = "0.4";
 
+    // Global counter for all events in all modules (including mixed in objects)
+    var guid = 1;
+
     /** Utility functions
      *
      *  These are more or less modelled on the ones used in Underscore.js,
@@ -206,7 +209,14 @@
         }, this);
     }
 
-    // This is a really small utility function to save typing and producing
+    function addGuid(object) {
+        if (!object._guid) object._guid = guid++;
+
+        Stapes._attributes[object._guid] = {};
+        Stapes._eventHandlers[object._guid] = {};
+    }
+
+    // This is a really small utility function to save typing and produce
     // better optimized code
     function attr(guid) {
         return Stapes._attributes[guid];
@@ -216,9 +226,7 @@
     function createModule( context ) {
         var instance = util.create( context );
 
-        instance._guid = guid++;
-        Stapes._attributes[instance._guid] = {};
-        Stapes._eventHandlers[instance._guid] = {};
+        addGuid( instance );
 
         return instance;
     }
@@ -284,17 +292,7 @@
         setAttribute.call(this, key, newValue);
     }
 
-    var guid = 1;
-
-    var Module = {
-        create : function() {
-            return createModule( this );
-        },
-
-        each : function(fn, ctx) {
-            util.each(attr(this._guid), fn, ctx || this);
-        },
-
+    var Events = {
         emit : function(types, data) {
             data = (typeof data === "undefined") ? null : data;
 
@@ -322,6 +320,30 @@
                     }
                 }
             }, this);
+        },
+
+        on : function() {
+            addEventHandler.apply(this, arguments);
+        },
+
+        set : function(objOrKey, value) {
+            if (util.isObject(objOrKey)) {
+                util.each(objOrKey, function(value, key) {
+                    setAttribute.call(this, key, value);
+                }, this);
+            } else {
+                setAttribute.call(this, objOrKey, value);
+            }
+        }
+    };
+
+    var Module = {
+        create : function() {
+            return createModule( this );
+        },
+
+        each : function(fn, ctx) {
+            util.each(attr(this._guid), fn, ctx || this);
         },
 
         extend : function(objectOrValues, valuesIfObject) {
@@ -368,10 +390,6 @@
             return (typeof attr(this._guid)[key] !== "undefined");
         },
 
-        on : function() {
-            addEventHandler.apply(this, arguments);
-        },
-
         // Akin to set(), but makes a unique id
         push : function(input) {
             if (util.isArray(input)) {
@@ -399,16 +417,6 @@
             }
         },
 
-        set : function(objOrKey, value) {
-            if (util.isObject(objOrKey)) {
-                util.each(objOrKey, function(value, key) {
-                    setAttribute.call(this, key, value);
-                }, this);
-            } else {
-                setAttribute.call(this, objOrKey, value);
-            }
-        },
-
         size : function() {
             return util.size( Stapes._attributes[this._guid] );
         },
@@ -425,6 +433,8 @@
     };
 
     var Stapes = {
+        "Events" : Events,
+
         "_attributes" : {},
 
         "_eventHandlers" : {
@@ -440,6 +450,14 @@
         "extend" : function(obj) {
             util.each(obj, function(value, key) {
                 Module[key] = value;
+            });
+        },
+
+        "mixin" : function(obj, mixin) {
+            addGuid(obj);
+
+            util.each(mixin, function(value, key) {
+                obj[key] = value;
             });
         },
 
