@@ -17,7 +17,7 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.4";
+    var VERSION = "0.5-pre";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
@@ -210,7 +210,9 @@
     }
 
     function addGuid(object) {
-        if (!object._guid) object._guid = guid++;
+        if (object._guid) return;
+
+        object._guid = guid++;
 
         Stapes._attributes[object._guid] = {};
         Stapes._eventHandlers[object._guid] = {};
@@ -227,6 +229,9 @@
         var instance = util.create( context );
 
         addGuid( instance );
+
+        // Mixin events
+        Stapes.mixin( instance, Stapes.Events );
 
         return instance;
     }
