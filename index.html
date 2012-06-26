@@ -70,7 +70,7 @@
         <p>Here's a list:</p>
         <ul>
             <li>A powerful yet simple event system using <a href="#m-on"><code>on</code></a> and
-            <a href="#m-emit"><code>emit</code></a> methods.</li>
+            <a href="#m-emit"><code>emit</code></a> methods. Usable on non-Stapes objects as well.</li>
             <li>Inheritance using <a href="#m-create"><code>create</code></a> and
             <a href="#m-extend"><code>extend</code></a>.</li>
             <li>Event-triggering attributes using <a href="#m-get"><code>get</code></a> and <a href="#m-set"><code>set</code></a>.</li>
@@ -152,6 +152,12 @@
         });
     })();
         </code></pre>
+
+        <h3 id="m-mixinevents-h3">Using event methods with any non-Stapes object or function</h3>
+
+        <p>It's possible to add the <a href="#m-events">event methods</a> to any
+            regular Javascript object or function. See <a href="#m-mixinEvents">
+            <code>Stapes.mixinEvents</code></a> for more information.</p>
 
         <h3 id="m-require">Using it together with RequireJS</h3>
 
@@ -305,7 +311,8 @@
             <h2>Stapes.on(object, context)</h2>
             <h2>Stapes.on(eventName, handler, context)</h2>
 
-            <p>Add an event listener to a Stapes module. When an event is
+            <p>Add an event listener to a Stapes module or <a href="#m-mixinEvents">object
+                with mixed-in events</a>. When an event is
                 <a href="#m-emit">triggered</a> the <code>handler</code> will be called
             with two arguments: <code>data</code>, which may contain any data, and an
             <code>eventObject</code> that contains some useful information about the
@@ -411,6 +418,97 @@
 
     module.sleep(); // "i'm sleeping very deep"
             </code></pre>
+        </article>
+
+        <article id="m-mixinEvents">
+            <h1>mixinEvents</h1>
+
+            <h2>Stapes.mixinEvents([object])</h2>
+
+            <p>
+                It's possible to add Stapes' <a href="#m-events">event handling
+                methods</a> to any Javascript object or function. This can be very
+                handy if you want to create an object that only uses event handlers, or
+                for an object or function that already exists and you don't want
+                to convert to a Stapes module.
+            </p>
+
+            <p>Here's how to add event methods to an object:</p>
+
+            <pre><code>
+    var module = {};
+    Stapes.mixinEvents(module);
+
+    module.on('sing', function() {
+        console.log("i'm singing!");
+    });
+
+    module.sing = function() {
+        this.emit('sing');
+    }
+
+    module.sing(); // i'm singing!
+            </code></pre>
+
+            <p>
+                <code>Stapes.mixinEvents</code> returns the <code>object</code>, so
+                you could write the first two lines from the previous example even shorter:
+            </p>
+
+            <pre><code>
+    var module = Stapes.mixinEvents( {} );
+            </code></pre>
+
+            <p>
+                No, wait! It can be even shorter! Without any arguments <code>Stapes.mixinEvents</code>
+                returns a new object with mixed-in events.
+            </p>
+
+            <pre><code>
+    var module = Stapes.mixinEvents();
+            </code></pre>
+
+            <p>You can also add event methods to a function:</p>
+
+            <pre><code>
+    function Module(what) {
+        this.what = what;
+        Stapes.mixinEvents(this);
+    }
+
+    Module.prototype.sing = function() {
+        this.emit('sing', this.what);
+    }
+
+    var m = new Module("Happy Birthday");
+
+    m.on('sing', function(what) {
+        console.log("i'm singing " + what + "!");
+    });
+
+    m.sing(); // i'm singing Happy Birthday!
+            </code></pre>
+
+            <p>Note that these events are also triggered on the main Stapes
+                object, so you can use <code>Stapes.on</code> to catch events
+                from these mixed-in objects as well.</p>
+
+        <pre><code>
+    Stapes.on('sing', function(data, e) {
+        console.log("Singing from " + e.scope.name);
+    });
+
+    var module = Stapes.mixinEvents( {} );
+
+    module.name = "a cool module!";
+
+    module.sing = function() {
+        this.emit('sing');
+    }
+
+    module.sing(); // 'Singing from a cool module!'
+        </code></pre>
+
         </article>
 
         <h3 id="m-data">Data methods</h3>

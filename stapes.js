@@ -231,7 +231,7 @@
         addGuid( instance );
 
         // Mixin events
-        Stapes.mixin( instance, Stapes.Events );
+        Stapes.mixinEvents( instance );
 
         return instance;
     }
@@ -297,6 +297,7 @@
         setAttribute.call(this, key, newValue);
     }
 
+    // Can be mixed in later using Stapes.mixin(object, Stapes.Events);
     var Events = {
         emit : function(types, data) {
             data = (typeof data === "undefined") ? null : data;
@@ -329,16 +330,6 @@
 
         on : function() {
             addEventHandler.apply(this, arguments);
-        },
-
-        set : function(objOrKey, value) {
-            if (util.isObject(objOrKey)) {
-                util.each(objOrKey, function(value, key) {
-                    setAttribute.call(this, key, value);
-                }, this);
-            } else {
-                setAttribute.call(this, objOrKey, value);
-            }
         }
     };
 
@@ -422,6 +413,16 @@
             }
         },
 
+        set : function(objOrKey, value) {
+            if (util.isObject(objOrKey)) {
+                util.each(objOrKey, function(value, key) {
+                    setAttribute.call(this, key, value);
+                }, this);
+            } else {
+                setAttribute.call(this, objOrKey, value);
+            }
+        },
+
         size : function() {
             return util.size( Stapes._attributes[this._guid] );
         },
@@ -438,8 +439,6 @@
     };
 
     var Stapes = {
-        "Events" : Events,
-
         "_attributes" : {},
 
         "_eventHandlers" : {
@@ -458,12 +457,16 @@
             });
         },
 
-        "mixin" : function(obj, mixin) {
+        "mixinEvents" : function(obj) {
+            obj = obj || {};
+
             addGuid(obj);
 
-            util.each(mixin, function(value, key) {
+            util.each(Events, function(value, key) {
                 obj[key] = value;
             });
+
+            return obj;
         },
 
         "on" : function() {
