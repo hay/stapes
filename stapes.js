@@ -297,7 +297,7 @@
         setAttribute.call(this, key, newValue);
     }
 
-    // Can be mixed in later using Stapes.mixin(object, Stapes.Events);
+    // Can be mixed in later using Stapes.mixinEvents(object);
     var Events = {
         emit : function(types, data) {
             data = (typeof data === "undefined") ? null : data;
