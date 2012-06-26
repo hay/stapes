@@ -250,6 +250,25 @@
         }, this);
     }
 
+    function removeEventHandler(type, handler) {
+        var handlers = Stapes._eventHandlers[this._guid];
+
+        if (type && handler) {
+            // Remove a specific handler
+            util.each(handlers[type], function(eventObject, index) {
+                if (eventObject.handler === handler) {
+                    handlers[type].splice(index--, 1);
+                }
+            }, this);
+        } else if (type) {
+            // Remove all handlers for a specific type
+            delete handlers[type];
+        } else {
+            // Remove all handlers for this module
+            Stapes._eventHandlers[this._guid] = {};
+        }
+    }
+
     function setAttribute(key, value) {
         // We need to do this before we actually add the item :)
         var itemExists = this.has(key),
@@ -326,6 +345,10 @@
                     }
                 }
             }, this);
+        },
+
+        off : function() {
+            removeEventHandler.apply(this, arguments);
         },
 
         on : function() {
