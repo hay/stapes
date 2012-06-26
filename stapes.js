@@ -17,7 +17,10 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.4";
+    var VERSION = "0.5-pre";
+
+    // Global counter for all events in all modules (including mixed in objects)
+    var guid = 1;
 
     /** Utility functions
      *
@@ -206,7 +209,16 @@
         }, this);
     }
 
-    // This is a really small utility function to save typing and producing
+    function addGuid(object) {
+        if (object._guid) return;
+
+        object._guid = guid++;
+
+        Stapes._attributes[object._guid] = {};
+        Stapes._eventHandlers[object._guid] = {};
+    }
+
+    // This is a really small utility function to save typing and produce
     // better optimized code
     function attr(guid) {
         return Stapes._attributes[guid];
@@ -216,9 +228,10 @@
     function createModule( context ) {
         var instance = util.create( context );
 
-        instance._guid = guid++;
-        Stapes._attributes[instance._guid] = {};
-        Stapes._eventHandlers[instance._guid] = {};
+        addGuid( instance );
+
+        // Mixin events
+        Stapes.mixinEvents( instance );
 
         return instance;
     }
@@ -284,17 +297,8 @@
         setAttribute.call(this, key, newValue);
     }
 
-    var guid = 1;
-
-    var Module = {
-        create : function() {
-            return createModule( this );
-        },
-
-        each : function(fn, ctx) {
-            util.each(attr(this._guid), fn, ctx || this);
-        },
-
+    // Can be mixed in later using Stapes.mixin(object, Stapes.Events);
+    var Events = {
         emit : function(types, data) {
             data = (typeof data === "undefined") ? null : data;
 
@@ -322,6 +326,20 @@
                     }
                 }
             }, this);
+        },
+
+        on : function() {
+            addEventHandler.apply(this, arguments);
+        }
+    };
+
+    var Module = {
+        create : function() {
+            return createModule( this );
+        },
+
+        each : function(fn, ctx) {
+            util.each(attr(this._guid), fn, ctx || this);
         },
 
         extend : function(objectOrValues, valuesIfObject) {
@@ -366,10 +384,6 @@
 
         has : function(key) {
             return (typeof attr(this._guid)[key] !== "undefined");
-        },
-
-        on : function() {
-            addEventHandler.apply(this, arguments);
         },
 
         // Akin to set(), but makes a unique id
@@ -441,6 +455,18 @@
             util.each(obj, function(value, key) {
                 Module[key] = value;
             });
+        },
+
+        "mixinEvents" : function(obj) {
+            obj = obj || {};
+
+            addGuid(obj);
+
+            util.each(Events, function(value, key) {
+                obj[key] = value;
+            });
+
+            return obj;
         },
 
         "on" : function() {
