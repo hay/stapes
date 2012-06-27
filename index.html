@@ -396,6 +396,40 @@
             </code></pre>
         </article>
 
+        <article id="m-off">
+            <h1>off</h1>
+
+            <h2>module.off(eventType, handler)</h2>
+            <h2>module.off(eventType)</h2>
+            <h2>module.off()</h2>
+
+            <p>Removes eventhandlers from an object. Giving in both an eventType
+                and a handler will remove that specific handler from a module.
+                Giving only an eventType will remove all handlers binded to
+                that event type.</p>
+
+            <p>With no arguments at all <code>off()</code>
+                will remove <i>all</i> event handlers from a module.</p>
+
+            <pre><code>
+    var module = Stapes.create();
+
+    var handler = function(){};
+
+    module.on({
+        "foo" : handler,
+        "bar" : function(){}
+    });
+
+    module.off("foo", handler); // Removes only the specific handler for foo
+
+    module.off("bar"); // Removes all 'bar' handlers
+
+    module.off(); // Removes all handlers
+            </code></pre>
+
+        </article>
+
         <article id="m-emit">
             <h1>emit</h1>
 
@@ -1066,6 +1100,14 @@
 
         <h3 id="m-history">History</h3>
         <ul>
+            <li>0.5</li>
+                <ul>
+                    <li><small>Feature</small> Add event to any method using the <a href="#m-mixinEvents"><code>mixinEvents</code></a>
+                        method</li>
+                    <li><small>Feature</small> Added the <a href="#m-off"><code>off</code></a> event method to remove event handlers</li>
+                    <li>The two <a href="#m-examples">todos examples</a> are updated to the latest version from
+                        <a href="http://todomvc.com">TodoMVC</a></li>
+                </ul>
             <li>0.4 - May 10th 2012</li>
                 <ul>
                     <li><small>Feature</small> Added the whole bunch of <a href="#m-util">utility methods</a>.</li>

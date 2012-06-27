@@ -1,5 +1,5 @@
 'use strict';
-define(['../../../stapes'], function(Stapes) {
+define(['stapes'], function(Stapes) {
 	return Stapes.create().extend({
 		'addTodo': function(title) {
 			this.push({
