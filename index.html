@@ -896,7 +896,7 @@
             <h1>bind</h1>
 
             <h2>Stapes.util.bind( function, context )</h2>
-            <h2>Stapes.util.bind( object )</h2>
+            <h2>Stapes.util.bind( object[, context] )</h2>
 
             <p>Binds the <code>this</code> variable inside <code>function</code>
                 to <code>context</code>.</p>
@@ -906,7 +906,11 @@
 
             <p>When giving an <code>object</code> as the first argument all
                 methods (functions in the object) are binded to that object, akin
-                to the <code>_.bindAll</code> method of Underscore.js</p>
+                to the <code>_.bindAll</code> method of Underscore.js. </p>
+
+            <p>It's also possible to bind multiple methods to another context, simply
+                specify the <code>context</code> parameter, just as you would with
+                normal use of <code>bind</code>.</p>
         </article>
 
         <article id="m-util-clone">

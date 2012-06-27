@@ -35,7 +35,7 @@
                 // Bind all functions in this object to this object
                 util.each(fn, function(fun, name) {
                     if (util.typeOf(fun) === "function") {
-                        fn[name] = util.bind(fun, fn);
+                        fn[name] = util.bind(fun, ctx || fn);
                     }
                 });
 
