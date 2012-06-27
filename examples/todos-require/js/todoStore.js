@@ -1,10 +1,10 @@
 'use strict';
-define(['../../../stapes'], function(Stapes) {
+define(['stapes'], function(Stapes) {
 	return Stapes.create().extend({
 		'init': function() {
-			if (!'localStorage' in window) return;
-
-			this.emit('ready');
+			if (!'localStorage' in window) {
+				alert("Saving is not supported in your browser :(")
+			}
 		},
 
 		'load': function() {
