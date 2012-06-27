@@ -31,14 +31,25 @@
      */
     var util = {
         "bind" : function(fn, ctx) {
-            if (Function.prototype.bind) {
-                // Native
-                return fn.bind(ctx);
+            if (util.isObject(fn)) {
+                // Bind all functions in this object to this object
+                util.each(fn, function(fun, name) {
+                    if (util.typeOf(fun) === "function") {
+                        fn[name] = util.bind(fun, fn);
+                    }
+                });
+
+                return fn;
             } else {
-                // Non-native
-                return function() {
-                    return fn.apply(ctx, arguments);
-                };
+                if (Function.prototype.bind) {
+                    // Native
+                    return fn.bind(ctx);
+                } else {
+                    // Non-native
+                    return function() {
+                        return fn.apply(ctx, arguments);
+                    };
+                }
             }
         },
 

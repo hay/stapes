@@ -896,12 +896,17 @@
             <h1>bind</h1>
 
             <h2>Stapes.util.bind( function, context )</h2>
+            <h2>Stapes.util.bind( object )</h2>
 
             <p>Binds the <code>this</code> variable inside <code>function</code>
                 to <code>context</code>.</p>
 
             <p>Uses the native Ecmascript 5
                 <code><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind">bind</a></code> if available.</p>
+
+            <p>When giving an <code>object</code> as the first argument all
+                methods (functions in the object) are binded to that object, akin
+                to the <code>_.bindAll</code> method of Underscore.js</p>
         </article>
 
         <article id="m-util-clone">
