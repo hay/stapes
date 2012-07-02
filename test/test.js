@@ -1,4 +1,5 @@
 var undef;
+var util = Stapes.util;
 
 module("set");
 
@@ -64,10 +65,6 @@ test("update", function() {
 
     module.on('change:name', function(value) {
         ok(value === "Emmylou", "update triggers change namespaced event");
-    });
-
-    module.on('change:instruments', function(value) {
-        console.log(value);
     });
 
     module.update('name', function(oldValue) {
@@ -165,4 +162,31 @@ test("util.typeof", function() {
     ok(Stapes.util.typeOf( '' ) === "string", "typeof '' = string");
     ok(Stapes.util.typeOf( null ) === "null", "typeof null = null");
     ok(Stapes.util.typeOf( undefined ) === "undefined", "typeof undefined = undefined");
+});
+
+test("off", function() {
+    var module = Stapes.create();
+
+    var handler = function(){};
+
+    module.on({
+        "foo" : handler,
+        "bar" : function(){}
+    });
+
+    var events = Stapes._eventHandlers[module._guid];
+
+    ok(util.size(events) === 2, "Event handlers are set");
+
+    module.off("foo", handler);
+
+    ok(!events.foo.length, "foo handler removed");
+
+    module.off("bar");
+
+    ok(!events.bar, "bar handler removed");
+
+    module.off();
+
+    ok(util.size(Stapes._eventHandlers[module._guid]) === 0, "no handlers for module");
 });

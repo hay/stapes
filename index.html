@@ -31,11 +31,11 @@
         <h3 id="m-downloads">Downloads</h3>
         <ul>
             <li><a href="stapes.min.js">
-                Download production version 0.4 (minified)</a>
+                Download production version 0.5 (minified)</a>
             </li>
 
-            <li><a href="https://github.com/hay/stapes/zipball/v0.4">
-                Download development version 0.4 (full source and annotated examples)</a>
+            <li><a href="https://github.com/hay/stapes/zipball/v0.5">
+                Download development version 0.5 (full source and annotated examples)</a>
             </li>
 
             <li><a href="http://github.com/hay/stapes">Fork it and report bugs on Github</a>
@@ -70,7 +70,8 @@
         <p>Here's a list:</p>
         <ul>
             <li>A powerful yet simple event system using <a href="#m-on"><code>on</code></a> and
-            <a href="#m-emit"><code>emit</code></a> methods.</li>
+            <a href="#m-emit"><code>emit</code></a> methods. Usable on non-Stapes objects as well using
+            <a href="#m-mixinEvents">event mixins</a>.</li>
             <li>Inheritance using <a href="#m-create"><code>create</code></a> and
             <a href="#m-extend"><code>extend</code></a>.</li>
             <li>Event-triggering attributes using <a href="#m-get"><code>get</code></a> and <a href="#m-set"><code>set</code></a>.</li>
@@ -153,6 +154,12 @@
     })();
         </code></pre>
 
+        <h3 id="m-mixinevents-h3">Using event methods with any non-Stapes object or function</h3>
+
+        <p>It's possible to add the <a href="#m-events">event methods</a> to any
+            regular Javascript object or function. See <a href="#m-mixinEvents">
+            <code>Stapes.mixinEvents</code></a> for more information.</p>
+
         <h3 id="m-require">Using it together with RequireJS</h3>
 
         <p>To avoid lots of global variables you can use a dependency loader like
@@ -196,6 +203,9 @@
         </ul>
 
         <p>Code for these examples is available in the <a href="#m-downloads">development download</a>.</p>
+
+        <p>Note that the two todo examples are also available from
+            <a href="http://addyosmani.github.com/todomvc/labs/">TodoMVC</a>.</p>
 
         <h3 id="m-general">General methods</h3>
         <article id="m-create">
@@ -305,7 +315,8 @@
             <h2>Stapes.on(object, context)</h2>
             <h2>Stapes.on(eventName, handler, context)</h2>
 
-            <p>Add an event listener to a Stapes module. When an event is
+            <p>Add an event listener to a Stapes module or <a href="#m-mixinEvents">object
+                with mixed-in events</a>. When an event is
                 <a href="#m-emit">triggered</a> the <code>handler</code> will be called
             with two arguments: <code>data</code>, which may contain any data, and an
             <code>eventObject</code> that contains some useful information about the
@@ -389,6 +400,40 @@
             </code></pre>
         </article>
 
+        <article id="m-off">
+            <h1>off</h1>
+
+            <h2>module.off(eventType, handler)</h2>
+            <h2>module.off(eventType)</h2>
+            <h2>module.off()</h2>
+
+            <p>Removes eventhandlers from an object. Giving in both an eventType
+                and a handler will remove that specific handler from a module.
+                Giving only an eventType will remove all handlers binded to
+                that event type.</p>
+
+            <p>With no arguments at all <code>off()</code>
+                will remove <i>all</i> event handlers from a module.</p>
+
+            <pre><code>
+    var module = Stapes.create();
+
+    var handler = function(){};
+
+    module.on({
+        "foo" : handler,
+        "bar" : function(){}
+    });
+
+    module.off("foo", handler); // Removes only the specific handler for foo
+
+    module.off("bar"); // Removes all 'bar' handlers
+
+    module.off(); // Removes all handlers
+            </code></pre>
+
+        </article>
+
         <article id="m-emit">
             <h1>emit</h1>
 
@@ -411,6 +456,97 @@
 
     module.sleep(); // "i'm sleeping very deep"
             </code></pre>
+        </article>
+
+        <article id="m-mixinEvents">
+            <h1>mixinEvents</h1>
+
+            <h2>Stapes.mixinEvents([object])</h2>
+
+            <p>
+                It's possible to add Stapes' <a href="#m-events">event handling
+                methods</a> to any Javascript object or function. This can be very
+                handy if you want to create an object that only uses event handlers, or
+                for an object or function that already exists and you don't want
+                to convert to a Stapes module.
+            </p>
+
+            <p>Here's how to add event methods to an object:</p>
+
+            <pre><code>
+    var module = {};
+    Stapes.mixinEvents(module);
+
+    module.on('sing', function() {
+        console.log("i'm singing!");
+    });
+
+    module.sing = function() {
+        this.emit('sing');
+    }
+
+    module.sing(); // i'm singing!
+            </code></pre>
+
+            <p>
+                <code>Stapes.mixinEvents</code> returns the <code>object</code>, so
+                you could write the first two lines from the previous example even shorter:
+            </p>
+
+            <pre><code>
+    var module = Stapes.mixinEvents( {} );
+            </code></pre>
+
+            <p>
+                No, wait! It can be even shorter! Without any arguments <code>Stapes.mixinEvents</code>
+                returns a new object with mixed-in events.
+            </p>
+
+            <pre><code>
+    var module = Stapes.mixinEvents();
+            </code></pre>
+
+            <p>You can also add event methods to a function:</p>
+
+            <pre><code>
+    function Module(what) {
+        this.what = what;
+        Stapes.mixinEvents(this);
+    }
+
+    Module.prototype.sing = function() {
+        this.emit('sing', this.what);
+    }
+
+    var m = new Module("Happy Birthday");
+
+    m.on('sing', function(what) {
+        console.log("i'm singing " + what + "!");
+    });
+
+    m.sing(); // i'm singing Happy Birthday!
+            </code></pre>
+
+            <p>Note that these events are also triggered on the main Stapes
+                object, so you can use <code>Stapes.on</code> to catch events
+                from these mixed-in objects as well.</p>
+
+        <pre><code>
+    Stapes.on('sing', function(data, e) {
+        console.log("Singing from " + e.scope.name);
+    });
+
+    var module = Stapes.mixinEvents( {} );
+
+    module.name = "a cool module!";
+
+    module.sing = function() {
+        this.emit('sing');
+    }
+
+    module.sing(); // 'Singing from a cool module!'
+        </code></pre>
+
         </article>
 
         <h3 id="m-data">Data methods</h3>
@@ -764,12 +900,17 @@
             <h1>bind</h1>
 
             <h2>Stapes.util.bind( function, context )</h2>
+            <h2>Stapes.util.bind( object )</h2>
 
             <p>Binds the <code>this</code> variable inside <code>function</code>
                 to <code>context</code>.</p>
 
             <p>Uses the native Ecmascript 5
                 <code><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind">bind</a></code> if available.</p>
+
+            <p>When giving an <code>object</code> as the first argument all
+                methods (functions in the object) are binded to that object, akin
+                to the <code>_.bindAll</code> method of Underscore.js</p>
         </article>
 
         <article id="m-util-clone">
@@ -968,9 +1109,17 @@
 
         <h3 id="m-history">History</h3>
         <ul>
-            <li>0.4</li>
+            <li>0.5 - July 2nd 2012</li>
                 <ul>
-                    <li><small>Feature</small> Added the whole bunch of <a href="m-util">utility methods</a>.</li>
+                    <li><small>Feature</small> Add event to any method using the <a href="#m-mixinEvents"><code>mixinEvents</code></a>
+                        method</li>
+                    <li><small>Feature</small> Added the <a href="#m-off"><code>off</code></a> event method to remove event handlers</li>
+                    <li>The two <a href="#m-examples">todos examples</a> are updated to the latest version from
+                        <a href="http://todomvc.com">TodoMVC</a></li>
+                </ul>
+            <li>0.4 - May 10th 2012</li>
+                <ul>
+                    <li><small>Feature</small> Added the whole bunch of <a href="#m-util">utility methods</a>.</li>
                     <li><small>Feature</small> Added an <code><a href="#m-each">each</a></code> method to Modules for easy iteration over attributes</li>
                     <li><small>Feature</small> Added a <code><a href="#m-size">size</a></code> method to get the number of attributes in a module.</li>
                     <li><small>Bugfix</small> Data in event handlers was silently changed to <code>null</code> if it was falsy,
@@ -1008,6 +1157,8 @@
             <li><a href="https://github.com/frenkie">Frank Bosma</a></li>
             <li><a href="https://github.com/adie">Anton Dieterle</a></li>
             <li><a href="https://github.com/hogart">Hogart</a></li>
+            <li><a href="https://github.com/addyosmani">Addy Osmani</a></li>
+            <li><a href="https://github.com/sindresorhus/">Sindre Sorhus</a></li>
             <li>Jarrod Overson</li>
         </ul>
     </section> <!-- #content -->
