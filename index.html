@@ -304,6 +304,12 @@
     console.log( module.el ); // "#app" DOM element
     console.log( module.$el ); // jQuery or Zepto element
             </code></pre>
+
+            <p>All internal methods are available as the
+                <code>Stapes._</code> object, so if you want you can overwrite
+                and hack virtually all Stapes behaviour. Note that these
+                methods aren't documented, so you should take a look at the
+                source.</p>
         </article>
 
         <h3 id="m-events">Events</h3>
@@ -1109,6 +1115,11 @@
 
         <h3 id="m-history">History</h3>
         <ul>
+            <li>0.6</li>
+            <ul>
+                <li><small>Feature</small> All private methods are now part of the <code>Stapes._</code> which means
+                    plugin authors can overwrite and redefine every part of Stapes.</li>
+            </ul>
             <li>0.5 - July 2nd 2012</li>
                 <ul>
                     <li><small>Feature</small> Add event to any method using the <a href="#m-mixinEvents"><code>mixinEvents</code></a>
