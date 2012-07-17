@@ -380,7 +380,7 @@
         }
     };
 
-    var Module = {
+    _.Module = {
         create : function() {
             return _.createModule( this );
         },
@@ -489,12 +489,12 @@
         "_" : _, // private helper functions and properties
 
         "create" : function() {
-            return _.createModule( Module );
+            return _.createModule( _.Module );
         },
 
         "extend" : function(obj) {
             util.each(obj, function(value, key) {
-                Module[key] = value;
+                _.Module[key] = value;
             });
         },
 
