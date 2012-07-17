@@ -232,8 +232,8 @@
             }, this);
         },
 
-        addGuid : function(object) {
-            if (object._guid) return;
+        addGuid : function(object, forceGuid) {
+            if (object._guid && !forceGuid) return;
 
             object._guid = guid++;
 
@@ -251,7 +251,7 @@
         createModule : function( context ) {
             var instance = util.create( context );
 
-            _.addGuid( instance );
+            _.addGuid( instance, true );
 
             // Mixin events
             Stapes.mixinEvents( instance );
