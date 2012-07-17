@@ -210,3 +210,10 @@ test("Stapes.mixinEvents", function() {
 
     ok(f._guid !== g._guid, "_guid of two newly created objects should not be the same");
 });
+
+test("guid", function() {
+    var module1 = Stapes.create();
+    var module2 = module1.create();
+
+    ok(module2._guid === (module1._guid + 1), "A new module should increase its guid by 1");
+});
