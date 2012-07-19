@@ -250,7 +250,8 @@
         // Stapes objects have some extra properties that are set on creation
         createModule : function( context ) {
             var instance = util.create( context );
-
+            
+            instance._guid = null;
             _.addGuid( instance, true );
 
             // Mixin events
