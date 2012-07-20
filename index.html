@@ -31,11 +31,11 @@
         <h3 id="m-downloads">Downloads</h3>
         <ul>
             <li><a href="stapes.min.js">
-                Download production version 0.5 (minified)</a>
+                Download production version 0.5.1 (minified)</a>
             </li>
 
-            <li><a href="https://github.com/hay/stapes/zipball/v0.5">
-                Download development version 0.5 (full source and annotated examples)</a>
+            <li><a href="https://github.com/hay/stapes/zipball/v0.5.1">
+                Download development version 0.5.1 (full source and annotated examples)</a>
             </li>
 
             <li><a href="http://github.com/hay/stapes">Fork it and report bugs on Github</a>
@@ -48,10 +48,10 @@
         <p><em>Right. There's a zillion other Javascript MVC frameworks, why
         should i choose Stapes.js?</em></p>
 
-        <p>Here's why i think you should use it: it's really tiny (<strong>1.5kb</strong> minified and gzipped),
+        <p>Here's why i think you should use it: it's really tiny (<strong>1.8kb</strong> minified and gzipped),
         easy to fit in an existing codebase, and doesn't force you to
         write your code in a specific style. Because of its small size it's <b>ideal
-        for mobile development</b>. In that 1.5kb you'll also get a bunch of the most popular
+        for mobile development</b>. In that 1.8kb you'll also get a bunch of the most popular
         functional utility methods like <b>each</b> and <b>map</b>.
 
         <p><em>So, Stapes.js isn't a traditional MVC framework?</em></p>
@@ -88,8 +88,8 @@
 
         <p>That's the flexibility of Stapes: you're free to use any library you want. To see how that
         works in practice, try out the two <a href="#m-examples">todo examples</a>. The first one
-        uses global variables and jQuery, while the 'require' version uses require.js and vanilla HTML5 DOM
-        scripting.</p>
+        uses global variables and jQuery, while the 'require' version uses require.js and the
+        <a href="http://zeptojs.com">Zepto</a> library.</p>
 
         <p><em>Right, so this is your hobby project. Does this actually work in production?</em></p>
 
@@ -101,6 +101,10 @@
         <p>Read on...</p>
 
         <h3 id="m-intro">Introduction</h3>
+
+        <p><b>If you're new to writing MVC apps you probably want to read this
+        <a href="http://www.haykranen.nl/2012/07/19/learn-mvc-create-a-javascript-todo-list-using-stapes-js-in-less-than-100-lines-code/">
+            beginner's tutorial</a>, and write a todo app in less than 100 lines of code using Stapes</b>.</p>
 
         <p>Write your Stapes modules like this</p>
 
@@ -304,6 +308,12 @@
     console.log( module.el ); // "#app" DOM element
     console.log( module.$el ); // jQuery or Zepto element
             </code></pre>
+
+            <p>All internal methods are available as the
+                <code>Stapes._</code> object, so if you want you can overwrite
+                and hack virtually all Stapes behaviour. Note that these
+                methods aren't documented, so you should take a look at the
+                source.</p>
         </article>
 
         <h3 id="m-events">Events</h3>
@@ -1109,6 +1119,14 @@
 
         <h3 id="m-history">History</h3>
         <ul>
+            <li>0.5.1 - July 20th 2012</li>
+            <ul>
+                <li><small>Feature</small> All private methods are now part of the <code>Stapes._</code> which means
+                    plugin authors can overwrite and redefine every part of Stapes.</li>
+                <li><small>Bugfix</small> Fixed a bug where calling create() on a module wouldn't increase the guid
+                    (issue <a href="https://github.com/hay/stapes/issues/8">#8</a>). Thanks
+                    <a href="https://github.com/wellcaffeinated">@wellcaffeinated</a>!</li>
+            </ul>
             <li>0.5 - July 2nd 2012</li>
                 <ul>
                     <li><small>Feature</small> Add event to any method using the <a href="#m-mixinEvents"><code>mixinEvents</code></a>
@@ -1159,6 +1177,7 @@
             <li><a href="https://github.com/hogart">Hogart</a></li>
             <li><a href="https://github.com/addyosmani">Addy Osmani</a></li>
             <li><a href="https://github.com/sindresorhus/">Sindre Sorhus</a></li>
+            <li><a href="https://github.com/wellcaffeinated">wellcaffeinated (Jasper)</a></li>
             <li>Jarrod Overson</li>
         </ul>
     </section> <!-- #content -->

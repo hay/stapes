@@ -153,6 +153,8 @@ test("filter", function() {
     deepEqual(filtered, [], "when does not matches anything returns an empty array");
 });
 
+module("util");
+
 test("util.typeof", function() {
     ok(Stapes.util.typeOf( {} ) === "object", "typeof {} = object");
     ok(Stapes.util.typeOf( [] ) === "array", "typeof [] = array");
@@ -164,6 +166,8 @@ test("util.typeof", function() {
     ok(Stapes.util.typeOf( undefined ) === "undefined", "typeof undefined = undefined");
 });
 
+module("events");
+
 test("off", function() {
     var module = Stapes.create();
 
@@ -174,7 +178,7 @@ test("off", function() {
         "bar" : function(){}
     });
 
-    var events = Stapes._eventHandlers[module._guid];
+    var events = Stapes._.eventHandlers[module._guid];
 
     ok(util.size(events) === 2, "Event handlers are set");
 
@@ -188,5 +192,28 @@ test("off", function() {
 
     module.off();
 
-    ok(util.size(Stapes._eventHandlers[module._guid]) === 0, "no handlers for module");
+    ok(util.size(Stapes._.eventHandlers[module._guid]) === 0, "no handlers for module");
+});
+
+test("Stapes.mixinEvents", function() {
+    ok(typeof Stapes.mixinEvents() === "object", "Stapes.mixinEvents() without any arguments should return an object");
+
+    var F = function() {
+        Stapes.mixinEvents(this);
+    }
+
+    var f = new F();
+
+    ok(typeof f.on === "function", "mixinEvents should add 'on' to a newly created class");
+
+    var g = new F();
+
+    ok(f._guid !== g._guid, "_guid of two newly created objects should not be the same");
+});
+
+test("guid", function() {
+    var module1 = Stapes.create();
+    var module2 = module1.create();
+
+    ok(module2._guid === (module1._guid + 1), "A new module should increase its guid by 1");
 });
