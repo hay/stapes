@@ -292,18 +292,26 @@
             }
         },
 
-        setAttribute : function(key, value) {
+        setAttribute : function(key, value, remove) {
             // We need to do this before we actually add the item :)
             var itemExists = this.has(key),
-                oldValue = _.attr(this._guid)[key];
+                oldValue = _.attr(this._guid)[key],
+                specificEvent = itemExists ? 'update' : 'create';
 
             // Is the value different than the oldValue? If not, ignore this call
             if (value === oldValue) {
                 return;
             }
 
-            // Actually add the item to the attributes
-            _.attr(this._guid)[key] = value;
+            // are we removing this item?
+            if (itemExists && remove){
+                value = undefined;
+                specificEvent = 'remove';
+                delete _.attr(this._guid)[key];
+            } else {
+                // Actually add the item to the attributes
+                _.attr(this._guid)[key] = value;
+            }
 
             // Throw a generic event
             this.emit('change', key);
@@ -324,8 +332,6 @@
             this.emit('mutate:' + key, mutateData);
 
             // Also throw a specific event for this type of set
-            var specificEvent = itemExists ? 'update' : 'create';
-
             this.emit(specificEvent, key);
 
             // And a namespaced event as well, NOTE that we pass value instead of key
@@ -448,14 +454,12 @@
             if (typeof input === "function") {
                 this.each(function(item, key) {
                     if (input(item)) {
-                        delete _.attr(this._guid)[key];
-                        this.emit('remove change');
+                        _.setAttribute.call(this, key, undefined, true);
                     }
                 });
             } else {
                 if (this.has(input)) {
-                    delete _.attr(this._guid)[input];
-                    this.emit('remove change');
+                    _.setAttribute.call(this, input, undefined, true);
                 }
             }
         },
