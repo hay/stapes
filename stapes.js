@@ -332,6 +332,41 @@
             this.emit(specificEvent + ':' + key, value);
         },
 
+        removeAttribute : function(key) {
+            // Check that the item exists before emitting events
+            var itemExists = this.has(key),
+            	oldValue = _.attr(this._guid)[key];
+
+            if (!itemExists) {
+            	return;
+            }
+
+        	// Actually delete the item
+        	delete _.attr(this._guid)[key];
+            
+        	// Throw a generic event
+            this.emit('change', key);
+
+            // And a namespaced event as well, NOTE that we pass value instead of
+            // key here!
+            this.emit('change:' + key);
+
+            // Throw namespaced and non-namespaced 'mutate' events as well with
+            // the old value data as well and some extra metadata such as the key
+            var mutateData = {
+                "key" : key,
+                "newValue" : null,
+                "oldValue" : oldValue || null
+            };
+
+            this.emit('mutate', mutateData);
+            this.emit('mutate:' + key, mutateData);
+
+        	// Throw remove event and namespaced remove event.
+			this.emit('remove', key);
+            this.emit('remove:' + key);        	
+        },
+
         updateAttribute : function(key, fn) {
             var item = this.get(key),
                 newValue = fn( util.clone(item) );
@@ -448,15 +483,12 @@
             if (typeof input === "function") {
                 this.each(function(item, key) {
                     if (input(item)) {
-                        delete _.attr(this._guid)[key];
-                        this.emit('remove change');
+                        _.removeAttribute.call(this, key);
                     }
                 });
             } else {
-                if (this.has(input)) {
-                    delete _.attr(this._guid)[input];
-                    this.emit('remove change');
-                }
+            	// nb: checking for exists happens in removeAttribute
+                _.removeAttribute.call(this, input);
             }
         },
 
