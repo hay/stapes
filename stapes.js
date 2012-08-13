@@ -17,7 +17,7 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.5";
+    var VERSION = "0.5.1";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
@@ -292,26 +292,18 @@
             }
         },
 
-        setAttribute : function(key, value, remove) {
+        setAttribute : function(key, value) {
             // We need to do this before we actually add the item :)
             var itemExists = this.has(key),
-                oldValue = _.attr(this._guid)[key],
-                specificEvent = itemExists ? 'update' : 'create';
+                oldValue = _.attr(this._guid)[key];
 
             // Is the value different than the oldValue? If not, ignore this call
             if (value === oldValue) {
                 return;
             }
 
-            // are we removing this item?
-            if (itemExists && remove){
-                value = undefined;
-                specificEvent = 'remove';
-                delete _.attr(this._guid)[key];
-            } else {
-                // Actually add the item to the attributes
-                _.attr(this._guid)[key] = value;
-            }
+            // Actually add the item to the attributes
+            _.attr(this._guid)[key] = value;
 
             // Throw a generic event
             this.emit('change', key);
@@ -332,10 +324,47 @@
             this.emit('mutate:' + key, mutateData);
 
             // Also throw a specific event for this type of set
+            var specificEvent = itemExists ? 'update' : 'create';
+
             this.emit(specificEvent, key);
 
             // And a namespaced event as well, NOTE that we pass value instead of key
             this.emit(specificEvent + ':' + key, value);
+        },
+
+        removeAttribute : function(key) {
+            // Check that the item exists before emitting events
+            var itemExists = this.has(key),
+            	oldValue = _.attr(this._guid)[key];
+
+            if (!itemExists) {
+            	return;
+            }
+
+        	// Actually delete the item
+        	delete _.attr(this._guid)[key];
+            
+        	// Throw a generic event
+            this.emit('change', key);
+
+            // And a namespaced event as well, NOTE that we pass value instead of
+            // key here!
+            this.emit('change:' + key);
+
+            // Throw namespaced and non-namespaced 'mutate' events as well with
+            // the old value data as well and some extra metadata such as the key
+            var mutateData = {
+                "key" : key,
+                "newValue" : null,
+                "oldValue" : oldValue || null
+            };
+
+            this.emit('mutate', mutateData);
+            this.emit('mutate:' + key, mutateData);
+
+        	// Throw remove event and namespaced remove event.
+			this.emit('remove', key);
+            this.emit('remove:' + key);        	
         },
 
         updateAttribute : function(key, fn) {
@@ -454,13 +483,12 @@
             if (typeof input === "function") {
                 this.each(function(item, key) {
                     if (input(item)) {
-                        _.setAttribute.call(this, key, undefined, true);
+                        _.removeAttribute.call(this, key);
                     }
                 });
             } else {
-                if (this.has(input)) {
-                    _.setAttribute.call(this, input, undefined, true);
-                }
+            	// nb: checking for exists happens in removeAttribute
+                _.removeAttribute.call(this, input);
             }
         },
 
