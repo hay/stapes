@@ -700,6 +700,10 @@
             <p>Deletes an attribute. Triggers <code>remove</code> and
             <code>change</code> events.</p>
 
+            <p><code>remove</code> also triggers namespaced <code>change</code> and
+                <code>remove</code> events (e.g. <code>change:foo</code> and
+                <code>remove:foo</code>).</p>
+
             <p>You can either use a <code>key</code> as an argument or a
             <code>function</code></p>
 
@@ -1125,6 +1129,8 @@
         <ul>
             <li>0.5.2</li>
             <ul>
+                <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> now also triggers namespaced events
+                    (<a href="https://github.com/hay/stapes/issues/13">issue #13</a>).</li>
                 <li><small>Bugfix</small> Events didn't bubble up to the global <code>Stapes</code> object
                     (<a href="https://github.com/hay/stapes/issues/12">issue #12</a>)</li>
             </ul>

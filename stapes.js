@@ -273,6 +273,16 @@
             }, this);
         },
 
+        removeAttribute : function(key) {
+            // Actually delete the item
+            delete _.attr(this._guid)[key];
+
+            this.emit('change', key);
+            this.emit('change:' + key);
+            this.emit('remove', key);
+            this.emit('remove:' + key);
+        },
+
         removeEventHandler : function(type, handler) {
             var handlers = _.eventHandlers[this._guid];
 
@@ -294,8 +304,8 @@
 
         setAttribute : function(key, value) {
             // We need to do this before we actually add the item :)
-            var itemExists = this.has(key),
-                oldValue = _.attr(this._guid)[key];
+            var itemExists = this.has(key);
+            var oldValue = _.attr(this._guid)[key];
 
             // Is the value different than the oldValue? If not, ignore this call
             if (value === oldValue) {
@@ -330,30 +340,6 @@
 
             // And a namespaced event as well, NOTE that we pass value instead of key
             this.emit(specificEvent + ':' + key, value);
-        },
-
-        removeAttribute : function(key) {
-            // Check that the item exists before emitting events
-            var itemExists = this.has(key);
-            var oldValue = _.attr(this._guid)[key];
-
-            if (!itemExists) {
-            	return;
-            }
-
-        	// Actually delete the item
-        	delete _.attr(this._guid)[key];
-
-        	// Throw a generic event
-            this.emit('change', key);
-
-            // And a namespaced event as well, NOTE that we pass value instead of
-            // key here!
-            this.emit('change:' + key);
-
-        	// Throw remove event and namespaced remove event.
-			this.emit('remove', key);
-            this.emit('remove:' + key);
         },
 
         updateAttribute : function(key, fn) {
