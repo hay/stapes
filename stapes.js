@@ -334,8 +334,8 @@
 
         removeAttribute : function(key) {
             // Check that the item exists before emitting events
-            var itemExists = this.has(key),
-            	oldValue = _.attr(this._guid)[key];
+            var itemExists = this.has(key);
+            var oldValue = _.attr(this._guid)[key];
 
             if (!itemExists) {
             	return;
@@ -350,17 +350,6 @@
             // And a namespaced event as well, NOTE that we pass value instead of
             // key here!
             this.emit('change:' + key);
-
-            // Throw namespaced and non-namespaced 'mutate' events as well with
-            // the old value data as well and some extra metadata such as the key
-            var mutateData = {
-                "key" : key,
-                "newValue" : null,
-                "oldValue" : oldValue || null
-            };
-
-            this.emit('mutate', mutateData);
-            this.emit('mutate:' + key, mutateData);
 
         	// Throw remove event and namespaced remove event.
 			this.emit('remove', key);

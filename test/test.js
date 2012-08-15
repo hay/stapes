@@ -79,6 +79,31 @@ test("update", function() {
     });
 });
 
+module("remove");
+
+test("remove", function() {
+    var module = Stapes.create();
+    module.set('foo', 'bar');
+
+    module.on({
+        'change': function( key ){
+            ok(key === 'foo', 'change event with key of attribute');
+        },
+
+        'change:foo': function(key, e){
+            ok(e.type === 'change:foo', 'change:key event');
+        },
+        'remove': function( key ){
+            ok(key === 'foo', 'remove event with key of attribute');
+        },
+        'remove:foo': function(key, e){
+            ok(e.type === 'remove:foo', 'change:key event');
+        }
+    });
+
+    module.remove('foo');
+})
+
 module("iterators");
 
 test("each with a single object", function() {
