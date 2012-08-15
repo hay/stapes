@@ -17,7 +17,7 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.5.1";
+    var VERSION = "0.5.2";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
@@ -223,7 +223,7 @@
 
                 util.each(events, function(eventType) {
                     _.addEvent.call(this, {
-                        "guid" : this._guid,
+                        "guid" : this._guid || this._.guid,
                         "handler" : handler,
                         "scope" : scope,
                         "type" : eventType
@@ -343,7 +343,7 @@
 
         	// Actually delete the item
         	delete _.attr(this._guid)[key];
-            
+
         	// Throw a generic event
             this.emit('change', key);
 
@@ -364,7 +364,7 @@
 
         	// Throw remove event and namespaced remove event.
 			this.emit('remove', key);
-            this.emit('remove:' + key);        	
+            this.emit('remove:' + key);
         },
 
         updateAttribute : function(key, fn) {

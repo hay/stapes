@@ -209,6 +209,12 @@ test("Stapes.mixinEvents", function() {
     var g = new F();
 
     ok(f._guid !== g._guid, "_guid of two newly created objects should not be the same");
+
+    Stapes.on('foo', function(data, e) {
+        ok(e.type === "foo", "Check if local events bubble through the Stapes object");
+    });
+
+    g.emit('foo');
 });
 
 test("guid", function() {
