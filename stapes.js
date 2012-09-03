@@ -167,7 +167,11 @@
         },
 
         "typeOf" : function(val) {
-            return Object.prototype.toString.call(val).replace(/\[object |\]/g, '').toLowerCase();
+            // Note we're not doing === here. That's because undefined === null
+            // gives false, where undefined == null gives true
+            return (val == null) ?
+                String(val) :
+                Object.prototype.toString.call(val).replace(/\[object |\]/g, '').toLowerCase();
         },
 
         "values" : function(list) {
