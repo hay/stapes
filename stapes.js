@@ -22,165 +22,6 @@
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
 
-    /** Utility functions
-     *
-     *  These are more or less modelled on the ones used in Underscore.js,
-     *  but might not be as extensive or failproof.
-     *  However, they are pretty damn useful and can be accessed by using
-     *  the Stapes.util global
-     */
-    var util = {
-        "bind" : function(fn, ctx) {
-            if (util.isObject(fn)) {
-                // Bind all functions in this object to this object
-                util.each(fn, function(fun, name) {
-                    if (util.typeOf(fun) === "function") {
-                        fn[name] = util.bind(fun, ctx || fn);
-                    }
-                });
-
-                return fn;
-            } else {
-                if (Function.prototype.bind) {
-                    // Native
-                    return fn.bind(ctx);
-                } else {
-                    // Non-native
-                    return function() {
-                        return fn.apply(ctx, arguments);
-                    };
-                }
-            }
-        },
-
-        "clone" : function(obj) {
-            if (util.isArray(obj)) {
-                return obj.slice();
-            } else if (util.isObject(obj)) {
-                var newObj = {};
-
-                util.each(obj, function(value, key) {
-                    newObj[key] = value;
-                });
-
-                return newObj;
-            } else {
-                return obj;
-            }
-        },
-
-        "create" : function(context) {
-            var instance;
-
-            if (typeof Object.create === "function") {
-                // Native
-                instance = Object.create(context);
-            } else {
-                // Non-native
-                var F = function(){};
-                F.prototype = context;
-                instance = new F();
-            }
-
-            return instance;
-        },
-
-        "each" : function(list, fn, context) {
-            if (util.isArray(list)) {
-                if (Array.prototype.forEach) {
-                    // Native forEach
-                    list.forEach( fn, context );
-                } else {
-                    for (var i = 0, l = list.length; i < l; i++) {
-                        fn.call(context, list[i], i);
-                    }
-                }
-            } else {
-                for (var key in list) {
-                    fn.call(context, list[key], key);
-                }
-            }
-        },
-
-        "filter" : function(list, fn, context) {
-            var results = [];
-
-            if (util.isArray(list) && Array.prototype.filter) {
-                return list.filter(fn, context);
-            }
-
-            util.each(list, function(value) {
-                if (fn.call(context, value)) {
-                    results.push(value);
-                }
-            });
-
-            return results;
-        },
-
-        "isArray" : function(val) {
-            return util.typeOf(val) === "array";
-        },
-
-        "isObject" : function(val) {
-            return util.typeOf(val) === "object";
-        },
-
-        "keys" : function(list) {
-            return util.map(list, function(value, key) {
-                return key;
-            });
-        },
-
-        // from http://stackoverflow.com/a/2117523/152809
-        "makeUuid" : function() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-                return v.toString(16);
-            });
-        },
-
-        "map" : function(list, fn, context) {
-            var results = [];
-
-            if (util.isArray(list) && Array.prototype.map) {
-                return list.map(fn, context);
-            }
-
-            util.each(list, function(value, index) {
-                results.push( fn.call(context, value, index) );
-            });
-
-            return results;
-        },
-
-        "size" : function(list) {
-            return (util.isArray(list)) ? list.length : util.keys(list).length;
-        },
-
-        "toArray" : function(val) {
-            if (util.isObject(val)) {
-                return util.values(val);
-            } else {
-                return Array.prototype.slice.call(val, 0);
-            }
-        },
-
-        "typeOf" : function(val) {
-            // Note we're not doing === here. That's because undefined === null
-            // gives false, where undefined == null gives true
-            return (val == null) ?
-                String(val) :
-                Object.prototype.toString.call(val).replace(/\[object |\]/g, '').toLowerCase();
-        },
-
-        "values" : function(list) {
-            return util.map(list, function(value, key) {
-                return value;
-            });
-        }
-    };
-
     // Private attributes and helper functions, stored in an object so they
     // are overwritable by plugins
     var _ = {
@@ -222,10 +63,11 @@
                 eventMap = argTypeOrMap;
             }
 
-            util.each(eventMap, function(handler, eventString) {
+            for (var eventString in eventMap) {
+                var handler = eventMap[eventString];
                 var events = eventString.split(" ");
 
-                util.each(events, function(eventType) {
+                events.forEach(function(eventType) {
                     _.addEvent.call(this, {
                         "guid" : this._guid || this._.guid,
                         "handler" : handler,
@@ -233,7 +75,7 @@
                         "type" : eventType
                     });
                 }, this);
-            }, this);
+            }
         },
 
         addGuid : function(object, forceGuid) {
@@ -251,9 +93,26 @@
             return _.attributes[guid];
         },
 
+        clone : function(obj) {
+            if (_.typeOf(obj) === "array") {
+                return obj.slice();
+            } else if (_.typeOf(obj) === "object") {
+                var newObj = {};
+
+                for (var key in obj) {
+                    var value = obj[key];
+                    newObj[key] = value;
+                }
+
+                return newObj;
+            } else {
+                return obj;
+            }
+        },
+
         // Stapes objects have some extra properties that are set on creation
         createModule : function( context ) {
-            var instance = util.create( context );
+            var instance = Object.create( context );
 
             _.addGuid( instance, true );
 
@@ -275,6 +134,14 @@
                 event.scope = scope;
                 event.handler.call(event.scope, data, event);
             }, this);
+        },
+
+        // from http://stackoverflow.com/a/2117523/152809
+        "makeUuid" : function() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                return v.toString(16);
+            });
         },
 
         removeAttribute : function(key, silent) {
@@ -364,6 +231,10 @@
             this.emit(specificEvent + ':' + key, value);
         },
 
+        "typeOf" : function(val) {
+            return Object.prototype.toString.call(val).replace(/\[object |\]/g, '').toLowerCase();
+        },
+
         updateAttribute : function(key, fn) {
             var item = this.get(key),
                 newValue = fn( util.clone(item) );
@@ -377,7 +248,7 @@
         emit : function(types, data) {
             data = (typeof data === "undefined") ? null : data;
 
-            util.each(types.split(" "), function(type) {
+            types.split(" ").forEach(function(type) {
                 // First 'all' type events: is there an 'all' handler in the
                 // global stack?
                 if (_.eventHandlers[-1].all) {
@@ -418,16 +289,21 @@
         },
 
         each : function(fn, ctx) {
-            util.each(_.attr(this._guid), fn, ctx || this);
+            var attr = _.attr(this._guid);
+            for (var key in attr) {
+                var value = attr[key];
+                fn.call(ctx || this, value, key);
+            }
         },
 
         extend : function(objectOrValues, valuesIfObject) {
             var object = (valuesIfObject) ? objectOrValues : this,
                 values = (valuesIfObject) ? valuesIfObject : objectOrValues;
 
-            util.each(values, function(value, key) {
+            for (var key in values) {
+                var value = values[key];
                 object[key] = value;
-            });
+            }
 
             return this;
         },
