@@ -248,3 +248,24 @@ test("guid", function() {
 
     ok(module2._guid === (module1._guid + 1), "A new module should increase its guid by 1");
 });
+
+test("event scope", function() {
+    var module1 = Stapes.create();
+
+    module1.on('eventscope', function(data, e) {
+        ok(e.scope === module1, "Scope of event should be the emitting model");
+    });
+
+    Stapes.on('eventscope', function(data, e) {
+        ok(e.scope === module1, "Scope of event from global Stapes object should be the emitting model");
+    });
+
+    Stapes.on('all', function(data, e) {
+        if (e.type === "eventscope") {
+            // Prevent other events from other tests getting here
+            ok(e.scope === module1, "Scope event from on 'all' handler on Stapes.on should be emitting model");
+        }
+    });
+
+    module1.emit('eventscope');
+});
