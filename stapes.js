@@ -279,6 +279,7 @@
             if (type && handler) {
                 // Remove a specific handler
                 handlers = handlers[type];
+		if (!handlers) return;
                 for (var i = 0, l = handlers.length, h; i < l; i++) {
                     h = handlers[i].handler;
                     if (h && h === handler) {
