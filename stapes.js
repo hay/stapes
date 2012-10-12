@@ -22,6 +22,9 @@
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
 
+    // Makes _.create() faster
+    var cachedFunction = function(){};
+
     // Private attributes and helper functions, stored in an object so they
     // are overwritable by plugins
     var _ = {
@@ -67,14 +70,15 @@
                 var handler = eventMap[eventString];
                 var events = eventString.split(" ");
 
-                events.forEach(function(eventType) {
+                for (var i = 0, l = events.length; i < l; i++) {
+                    var eventType = events[i];
                     _.addEvent.call(this, {
                         "guid" : this._guid || this._.guid,
                         "handler" : handler,
                         "scope" : scope,
                         "type" : eventType
                     });
-                }, this);
+                }
             }
         },
 
@@ -104,9 +108,14 @@
             return newObj;
         },
 
+        create : function(obj) {
+            cachedFunction.prototype = obj;
+            return new cachedFunction();
+        },
+
         // Stapes objects have some extra properties that are set on creation
         createModule : function( context ) {
-            var instance = Object.create( context );
+            var instance = _.create( context );
 
             _.addGuid( instance, true );
 
@@ -120,14 +129,19 @@
             explicitType = explicitType || false;
             explicitGuid = explicitGuid || this._guid;
 
-            _.eventHandlers[explicitGuid][type].forEach(function(event) {
+            var handlers = _.eventHandlers[explicitGuid][type];
+
+            for (var i = 0, l = handlers.length; i < l; i++) {
+                var event = handlers[i];
                 var scope = (event.scope) ? event.scope : this;
+
                 if (explicitType) {
                     event.type = explicitType;
                 }
+
                 event.scope = scope;
                 event.handler.call(event.scope, data, event);
-            }, this);
+            }
         },
 
         // from http://stackoverflow.com/a/2117523/152809
@@ -161,7 +175,8 @@
             if (type && handler) {
                 // Remove a specific handler
                 handlers = handlers[type];
-		if (!handlers) return;
+                if (!handlers) return;
+
                 for (var i = 0, l = handlers.length, h; i < l; i++) {
                     h = handlers[i].handler;
                     if (h && h === handler) {
@@ -242,7 +257,11 @@
         emit : function(types, data) {
             data = (typeof data === "undefined") ? null : data;
 
-            types.split(" ").forEach(function(type) {
+            var splittedTypes = types.split(" ");
+
+            for (var i = 0, l = splittedTypes.length; i < l; i++) {
+                var type = splittedTypes[i];
+
                 // First 'all' type events: is there an 'all' handler in the
                 // global stack?
                 if (_.eventHandlers[-1].all) {
@@ -265,7 +284,7 @@
                         _.emitEvents.call(this, type, data);
                     }
                 }
-            }, this);
+            }
         },
 
         off : function() {
@@ -352,9 +371,9 @@
         // Akin to set(), but makes a unique id
         push : function(input, silent) {
             if (_.typeOf(input) === "array") {
-                input.forEach(function(value) {
-                    _.setAttribute.call(this, _.makeUuid(), value);
-                }, this);
+                for (var i = 0, l = input.length; i < l; i++) {
+                    _.setAttribute.call(this, _.makeUuid(), input[i]);
+                }
             } else {
                 _.setAttribute.call(this, _.makeUuid(), input, silent || false);
             }
