@@ -309,8 +309,16 @@
         },
 
         filter : function(fn) {
-            debugger
-            return util.filter(_.attr(this._guid), fn);
+            var filtered = [];
+            var attributes = _.attr(this._guid);
+
+            for (var key in attributes) {
+                if ( fn.call(this, attributes[key], key)) {
+                    filtered.push( key );
+                }
+            }
+
+            return filtered;
         },
 
         get : function(input) {
