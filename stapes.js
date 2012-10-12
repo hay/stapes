@@ -292,8 +292,6 @@
             this.emit('change:' + key);
             this.emit('remove', key);
             this.emit('remove:' + key);
-
-            return this;
         },
 
         removeEventHandler : function(type, handler) {
@@ -332,7 +330,7 @@
 
             // If 'silent' flag is set, do not throw any events
             if (silent) {
-                return this;
+                return;
             }
 
             // Throw a generic event
@@ -360,8 +358,6 @@
 
             // And a namespaced event as well, NOTE that we pass value instead of key
             this.emit(specificEvent + ':' + key, value);
-
-            return this;
         },
 
         updateAttribute : function(key, fn) {
@@ -495,7 +491,7 @@
                     _.setAttribute.call(this, key, value);
                 }, this);
             } else {
-                _.setAttribute.call(this, objOrKey, value, silent || false);
+                return _.setAttribute.call(this, objOrKey, value, silent || false);
             }
         },
 
