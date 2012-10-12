@@ -94,20 +94,14 @@
         },
 
         clone : function(obj) {
-            if (_.typeOf(obj) === "array") {
-                return obj.slice();
-            } else if (_.typeOf(obj) === "object") {
-                var newObj = {};
+            var newObj = {};
 
-                for (var key in obj) {
-                    var value = obj[key];
-                    newObj[key] = value;
-                }
-
-                return newObj;
-            } else {
-                return obj;
+            for (var key in obj) {
+                var value = obj[key];
+                newObj[key] = value;
             }
+
+            return newObj;
         },
 
         // Stapes objects have some extra properties that are set on creation
@@ -237,7 +231,7 @@
 
         updateAttribute : function(key, fn) {
             var item = this.get(key),
-                newValue = fn( util.clone(item) );
+                newValue = fn( _.clone(item) );
 
             _.setAttribute.call(this, key, newValue);
         }
@@ -331,19 +325,24 @@
         },
 
         getAll : function() {
-            return util.clone( _.attr(this._guid) );
+            return _.clone( _.attr(this._guid) );
         },
 
         getAllAsArray : function() {
-            var arr = util.map(_.attr(this._guid), function(value, key) {
-                if (util.isObject(value)) {
+            var arr = [];
+            var attributes = _.attr(this._guid);
+
+            for (var key in attributes) {
+                var value = attributes[key];
+
+                if (_.typeOf(value) === "object") {
                     value.id = key;
                 }
 
                 return value;
-            });
+            }
 
-            return util.clone( arr );
+            return arr;
         },
 
         has : function(key) {

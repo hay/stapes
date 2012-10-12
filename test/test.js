@@ -218,9 +218,7 @@ test("off", function() {
 
     var events = Stapes._.eventHandlers[module._guid];
 
-    console.log(events);
-
-    ok(util.size(events) === 2, "Event handlers are set");
+    ok(Object.keys(events).length === 2, "Event handlers are set");
 
     module.off("foo", handler);
 
@@ -232,7 +230,7 @@ test("off", function() {
 
     module.off();
 
-    ok(util.size(Stapes._.eventHandlers[module._guid]) === 0, "no handlers for module");
+    ok(Object.keys(Stapes._.eventHandlers[module._guid]).length === 0, "no handlers for module");
 });
 
 test("Stapes.mixinEvents", function() {
@@ -277,7 +275,6 @@ test("event scope", function() {
     });
 
     Stapes.on('eventscope', function(data, e) {
-        console.log(e);
         ok(e.scope === module1, "Scope of event from global Stapes object should be the emitting model");
     });
 
