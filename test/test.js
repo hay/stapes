@@ -13,6 +13,13 @@ test("change events", function() {
     module.on({
         'change' : function(key) {
             ok(key === 'name' || key === 'instrument', 'change event when name is set');
+            if (key === "silent") {
+                ok(false, "Silent event should not trigger");
+            }
+        },
+
+        'change:silent' : function(key) {
+            ok(false, "Silent event should not trigger");
         },
 
         'change:name' : function(value) {
@@ -50,6 +57,7 @@ test("change events", function() {
     module.set('name', 'Emmylou');
     module.set('instrument', 'guitar');
     module.set('instrument', 'guitar'); // Change event should only be thrown once!
+    module.set('silent', 'silent', true); // silent events should not trigger anything
 });
 
 module("update");
@@ -84,6 +92,7 @@ module("remove");
 test("remove", function() {
     var module = Stapes.create();
     module.set('foo', 'bar');
+    module.set('silent', 'silent');
 
     module.on({
         'change': function( key ){
@@ -93,15 +102,22 @@ test("remove", function() {
         'change:foo': function(key, e){
             ok(e.type === 'change:foo', 'change:key event');
         },
+
         'remove': function( key ){
             ok(key === 'foo', 'remove event with key of attribute');
         },
+
         'remove:foo': function(key, e){
             ok(e.type === 'remove:foo', 'change:key event');
+        },
+
+        'remove:silent' : function() {
+            ok(false, 'silent event should not trigger');
         }
     });
 
     module.remove('foo');
+    module.remove('silent', true); // should not trigger because of silent flag
 })
 
 module("iterators");

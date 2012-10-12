@@ -277,14 +277,23 @@
             }, this);
         },
 
-        removeAttribute : function(key) {
+        removeAttribute : function(key, silent) {
+            silent = silent || false;
+
             // Actually delete the item
             delete _.attr(this._guid)[key];
+
+            // If 'silent' is set, do not throw any events
+            if (silent) {
+                return this;
+            }
 
             this.emit('change', key);
             this.emit('change:' + key);
             this.emit('remove', key);
             this.emit('remove:' + key);
+
+            return this;
         },
 
         removeEventHandler : function(type, handler) {
@@ -306,7 +315,9 @@
             }
         },
 
-        setAttribute : function(key, value) {
+        setAttribute : function(key, value, silent) {
+            silent = silent || false;
+
             // We need to do this before we actually add the item :)
             var itemExists = this.has(key);
             var oldValue = _.attr(this._guid)[key];
@@ -318,6 +329,11 @@
 
             // Actually add the item to the attributes
             _.attr(this._guid)[key] = value;
+
+            // If 'silent' flag is set, do not throw any events
+            if (silent) {
+                return this;
+            }
 
             // Throw a generic event
             this.emit('change', key);
@@ -344,6 +360,8 @@
 
             // And a namespaced event as well, NOTE that we pass value instead of key
             this.emit(specificEvent + ':' + key, value);
+
+            return this;
         },
 
         updateAttribute : function(key, fn) {
@@ -448,36 +466,36 @@
         },
 
         // Akin to set(), but makes a unique id
-        push : function(input) {
+        push : function(input, silent) {
             if (util.isArray(input)) {
                 util.each(input, function(value) {
                     _.setAttribute.call(this, util.makeUuid(), value);
                 }, this);
             } else {
-                _.setAttribute.call(this, util.makeUuid(), input);
+                _.setAttribute.call(this, util.makeUuid(), input, silent || false);
             }
         },
 
-        remove : function(input) {
+        remove : function(input, silent) {
             if (typeof input === "function") {
                 this.each(function(item, key) {
                     if (input(item)) {
-                        _.removeAttribute.call(this, key);
+                        _.removeAttribute.call(this, key, silent);
                     }
                 });
             } else {
             	// nb: checking for exists happens in removeAttribute
-                _.removeAttribute.call(this, input);
+                _.removeAttribute.call(this, input, silent || false);
             }
         },
 
-        set : function(objOrKey, value) {
+        set : function(objOrKey, value, silent) {
             if (util.isObject(objOrKey)) {
                 util.each(objOrKey, function(value, key) {
                     _.setAttribute.call(this, key, value);
                 }, this);
             } else {
-                _.setAttribute.call(this, objOrKey, value);
+                _.setAttribute.call(this, objOrKey, value, silent || false);
             }
         },
 
