@@ -1,5 +1,4 @@
 var undef;
-var util = Stapes.util;
 
 module("set");
 
@@ -194,17 +193,15 @@ test("filter", function() {
     deepEqual(filtered, [], "when does not matches anything returns an empty array");
 });
 
-module("util");
-
-test("util.typeof", function() {
-    ok(Stapes.util.typeOf( {} ) === "object", "typeof {} = object");
-    ok(Stapes.util.typeOf( [] ) === "array", "typeof [] = array");
-    ok(Stapes.util.typeOf( function(){} ) === "function", "typeof function(){} = function");
-    ok(Stapes.util.typeOf( true ) === "boolean", "typeof true = boolean");
-    ok(Stapes.util.typeOf( 1 ) === "number", "typeof 1 = number");
-    ok(Stapes.util.typeOf( '' ) === "string", "typeof '' = string");
-    ok(Stapes.util.typeOf( null ) === "null", "typeof null = null");
-    ok(Stapes.util.typeOf( undefined ) === "undefined", "typeof undefined = undefined");
+test("_.typeof", function() {
+    ok(Stapes._.typeOf( {} ) === "object", "typeof {} = object");
+    ok(Stapes._.typeOf( [] ) === "array", "typeof [] = array");
+    ok(Stapes._.typeOf( function(){} ) === "function", "typeof function(){} = function");
+    ok(Stapes._.typeOf( true ) === "boolean", "typeof true = boolean");
+    ok(Stapes._.typeOf( 1 ) === "number", "typeof 1 = number");
+    ok(Stapes._.typeOf( '' ) === "string", "typeof '' = string");
+    ok(Stapes._.typeOf( null ) === "null", "typeof null = null");
+    ok(Stapes._.typeOf( undefined ) === "undefined", "typeof undefined = undefined");
 });
 
 module("events");
@@ -220,6 +217,8 @@ test("off", function() {
     });
 
     var events = Stapes._.eventHandlers[module._guid];
+
+    console.log(events);
 
     ok(util.size(events) === 2, "Event handlers are set");
 

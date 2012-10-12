@@ -126,7 +126,7 @@
             explicitType = explicitType || false;
             explicitGuid = explicitGuid || this._guid;
 
-            util.each(_.eventHandlers[explicitGuid][type], function(event) {
+            _.eventHandlers[explicitGuid][type].forEach(function(event) {
                 var scope = (event.scope) ? event.scope : this;
                 if (explicitType) {
                     event.type = explicitType;
@@ -309,6 +309,7 @@
         },
 
         filter : function(fn) {
+            debugger
             return util.filter(_.attr(this._guid), fn);
         },
 
@@ -366,10 +367,10 @@
         },
 
         set : function(objOrKey, value, silent) {
-            if (util.isObject(objOrKey)) {
-                util.each(objOrKey, function(value, key) {
-                    _.setAttribute.call(this, key, value);
-                }, this);
+            if (typeof objOrKey === "object") {
+                for (var key in objOrKey) {
+                    _.setAttribute.call(this, key, objOrKey[key]);
+                }
             } else {
                 return _.setAttribute.call(this, objOrKey, value, silent || false);
             }
@@ -408,9 +409,9 @@
 
             _.addGuid(obj);
 
-            util.each(Events, function(value, key) {
-                obj[key] = value;
-            });
+            for (var method in Events) {
+                obj[method] = Events[method];
+            }
 
             return obj;
         },
@@ -418,8 +419,6 @@
         "on" : function() {
             _.addEventHandler.apply(this, arguments);
         },
-
-        "util" : util,
 
         "version" : VERSION
     };
