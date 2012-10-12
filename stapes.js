@@ -308,7 +308,7 @@
 
             for (var key in attributes) {
                 if ( fn.call(this, attributes[key], key)) {
-                    filtered.push( key );
+                    filtered.push( attributes[key] );
                 }
             }
 
