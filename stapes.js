@@ -292,11 +292,15 @@
 
             if (type && handler) {
                 // Remove a specific handler
-                util.each(handlers[type], function(eventObject, index) {
-                    if (eventObject.handler === handler) {
-                        handlers[type].splice(index--, 1);
+                handlers = handlers[type];
+		if (!handlers) return;
+                for (var i = 0, l = handlers.length, h; i < l; i++) {
+                    h = handlers[i].handler;
+                    if (h && h === handler) {
+                        handlers.splice(i--, 1);
+                        l--;
                     }
-                }, this);
+                }
             } else if (type) {
                 // Remove all handlers for a specific type
                 delete handlers[type];
