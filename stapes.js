@@ -351,12 +351,12 @@
 
         // Akin to set(), but makes a unique id
         push : function(input, silent) {
-            if (util.isArray(input)) {
-                util.each(input, function(value) {
-                    _.setAttribute.call(this, util.makeUuid(), value);
+            if (_.typeOf(input) === "array") {
+                input.forEach(function(value) {
+                    _.setAttribute.call(this, _.makeUuid(), value);
                 }, this);
             } else {
-                _.setAttribute.call(this, util.makeUuid(), input, silent || false);
+                _.setAttribute.call(this, _.makeUuid(), input, silent || false);
             }
         },
 
@@ -384,7 +384,7 @@
         },
 
         size : function() {
-            return util.size( _.attributes[this._guid] );
+            return Object.keys(_.attributes[this._guid]).length;
         },
 
         update : function(keyOrFn, fn) {
@@ -406,9 +406,9 @@
         },
 
         "extend" : function(obj) {
-            util.each(obj, function(value, key) {
-                _.Module[key] = value;
-            });
+            for (var key in obj) {
+                _.Module[key] = obj[key];
+            }
         },
 
         "mixinEvents" : function(obj) {
