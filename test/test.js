@@ -250,13 +250,19 @@ test("guid", function() {
 });
 
 test("event scope", function() {
-    var module1 = Stapes.create();
+    var module1 = Stapes.create().extend({ name : "module1" });
+    var module2 = Stapes.create().extend({ name : "module2" });
 
     module1.on('eventscope', function(data, e) {
         ok(e.scope === module1, "Scope of event should be the emitting model");
     });
 
+    module2.on('eventscope', function(data, e) {
+        ok(e.scope === module2, "Scope of event in other model should be emitting model");
+    });
+
     Stapes.on('eventscope', function(data, e) {
+        console.log(e);
         ok(e.scope === module1, "Scope of event from global Stapes object should be the emitting model");
     });
 
@@ -268,4 +274,5 @@ test("event scope", function() {
     });
 
     module1.emit('eventscope');
+    module2.emit('eventscope');
 });
