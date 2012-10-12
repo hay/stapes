@@ -593,7 +593,7 @@
         <article id="m-set">
             <h1>set</h1>
 
-            <h2>module.set(key, value);</h2>
+            <h2>module.set(key, value, [silent]);</h2>
             <h2>module.set(object);</h2>
 
             <p>Sets an attribute. Use <code><a href="#m-push">push</a></code> if you want to 'push' a value
@@ -639,6 +639,13 @@
         "name" : "Elvis",
         "instrument" : "guitar"
     });
+            </code></pre>
+
+            <p>If you do not want your <code>set</code> to trigger an event set
+                the optional <code>silent</code> flag to true</p>
+
+            <pre><code>
+    module.set('singer', 'Johnny', true /* <-- silent flag */);
             </code></pre>
 
             <p id="m-mutate">To get the old or previous value of an attribute
@@ -694,7 +701,7 @@
         <article id="m-remove">
             <h1>remove</h1>
 
-            <h2>module.remove( key );</h2>
+            <h2>module.remove( key, [silent] );</h2>
             <h2>module.remove( function );</h2>
 
             <p>Deletes an attribute. Triggers <code>remove</code> and
@@ -711,6 +718,13 @@
     module.remove(function(item) {
         return item.done === true;
     });
+            </code></pre>
+
+            <p>If you do not want your <code>remove</code> to trigger an event set
+                the optional <code>silent</code> flag to true.</p>
+
+            <pre><code>
+    module.remove('singer', true /* <-- silent flag */);
             </code></pre>
         </article>
 
@@ -763,12 +777,15 @@
         <article id="m-push">
             <h1>push</h1>
 
-            <h2>module.push( value );</h2>
+            <h2>module.push( value, [silent] );</h2>
             <h2>module.push( array );</h2>
 
             <p>Sets a value, automatically generates an unique uuid as a key.</p>
 
             <p>You can also push an array of values.</p>
+
+            <p>Just as with <code>set</code> the optional <code>silent</code> flag will
+                prevent any change events from being emitted.</p>
 
             <p>For the rest of the behaviour of this method see <code>
                 <a href="#m-set">set</a></code>.</p>
@@ -1127,12 +1144,16 @@
 
         <h3 id="m-history">History</h3>
         <ul>
-            <li>0.5.2</li>
+            <li>0.6</li>
             <ul>
                 <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> now also triggers namespaced events
                     (<a href="https://github.com/hay/stapes/issues/13">issue #13</a>).</li>
+                <li><small>Feature</small> <a href="#m-set"><code>set</code></a>, <a href="#m-push"><code>push</code></a> and
+                    <a href="#m-remove"><code>remove</code></a> now have an optional <code>silent</code> flag that
+                    will preveny any events from being triggered (<a href="https://github.com/hay/stapes/issues/18">issue #18</a>)</li>
                 <li><small>Bugfix</small> Events didn't bubble up to the global <code>Stapes</code> object
                     (<a href="https://github.com/hay/stapes/issues/12">issue #12</a>)</li>
+                <li><small>Bugfix</small> Fix for the <code>remove</code> handler in IE8. Thanks <a href="https://github.com/wellcaffeinated">@wellcaffeinated</a>!</li>
             </ul>
             <li>0.5.1 - July 20th 2012</li>
             <ul>
