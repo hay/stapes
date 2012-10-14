@@ -693,6 +693,11 @@
 
     console.log(module.name); // "Elvis"
             </code></pre>
+
+            <p><code>set</code> returns the module, so this method is chainable</p>
+            <pre><code>
+    var module = Stapes.create().extend({}).set('property', true);
+            </code></pre>
         </article>
 
         <article id="m-remove">
@@ -723,6 +728,8 @@
             <pre><code>
     module.remove('singer', true /* <-- silent flag */);
             </code></pre>
+
+            <p><code>remove</code> returns the module, so this method is chainable.</p>
         </article>
 
         <article id="m-getall">
@@ -798,6 +805,8 @@
         "baz"
     ]);
             </code></pre>
+
+            <p><code>push</code> returns the module, so this method is chainable.</p>
         </article>
 
         <article id="m-filter">
@@ -904,6 +913,8 @@
         return item;
     });
             </code></pre>
+
+            <p><code>update</code> returns the module, so this method is chainable.</p>
         </article>
 
         <h3 id="m-util">Util</h3>
@@ -948,6 +959,9 @@
                 <li><small>Feature</small> <a href="#m-set"><code>set</code></a>, <a href="#m-push"><code>push</code></a> and
                     <a href="#m-remove"><code>remove</code></a> now have an optional <code>silent</code> flag that
                     will preveny any events from being triggered (<a href="https://github.com/hay/stapes/issues/18">issue #18</a>)</li>
+                <li><small>Feature</small> <a href="#m-push"><code>push</code></a>, <a href="#m-set"><code>set</code></a>,
+                    <a href="#m-remove"><code>remove</code></a> and <a href="#m-update"><code>udpate</code></a> now return the
+                    module, so you can chain these methods (<a href="https://github.com/hay/stapes/issues/17">issue #17</a>)</li>
                 <li><small>Bugfix</small> Events didn't bubble up to the global <code>Stapes</code> object
                     (<a href="https://github.com/hay/stapes/issues/12">issue #12</a>)</li>
                 <li><small>Bugfix</small> Fix for the <code>remove</code> handler in IE8. Thanks <a href="https://github.com/wellcaffeinated">@wellcaffeinated</a>!</li>
@@ -1014,6 +1028,8 @@
             <li><a href="https://github.com/wellcaffeinated">wellcaffeinated (Jasper)</a></li>
             <li><a href="https://github.com/feklee">Felix E. Klee</a></li>
             <li>Jarrod Overson</li>
+            <li><a href="https://github.com/mahonnaise">Jos Hirth (mahonnaise)</a></li>
+            <li><a href="https://github.com/Contra">Eric Schoffstall (contra)</a></li>
         </ul>
     </section> <!-- #content -->
 

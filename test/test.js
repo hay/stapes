@@ -288,3 +288,14 @@ test("event scope", function() {
     module1.emit('eventscope');
     module2.emit('eventscope');
 });
+
+test("chaining", function() {
+    var module = Stapes.create().set('foo', true);
+    ok(!!module.get && module.get('foo'), "set() should return the object");
+    module = module.update('foo', function() { return true; });
+    ok(!!module.get && module.get('foo'), "update() should return the object");
+    module  = module.remove('foo');
+    ok(!!module.get && module.get('foo') === null, "remove() should return the object");
+    module = module.push(true);
+    ok(!!module.get && module.size() === 1, "push() should return the object");
+});

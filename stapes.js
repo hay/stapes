@@ -375,6 +375,8 @@
             } else {
                 _.setAttribute.call(this, _.makeUuid(), input, silent || false);
             }
+
+            return this;
         },
 
         remove : function(input, silent) {
@@ -388,6 +390,8 @@
             	// nb: checking for exists happens in removeAttribute
                 _.removeAttribute.call(this, input, silent || false);
             }
+
+            return this;
         },
 
         set : function(objOrKey, value, silent) {
@@ -396,8 +400,10 @@
                     _.setAttribute.call(this, key, objOrKey[key]);
                 }
             } else {
-                return _.setAttribute.call(this, objOrKey, value, silent || false);
+                _.setAttribute.call(this, objOrKey, value, silent || false);
             }
+
+            return this;
         },
 
         size : function() {
@@ -412,6 +418,8 @@
                     _.updateAttribute.call(this, key, keyOrFn);
                 });
             }
+
+            return this;
         }
     };
 
