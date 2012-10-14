@@ -98,14 +98,7 @@
         },
 
         clone : function(obj) {
-            var newObj = {};
-
-            for (var key in obj) {
-                var value = obj[key];
-                newObj[key] = value;
-            }
-
-            return newObj;
+            return _.extend({}, obj);
         },
 
         create : function(obj) {
@@ -142,6 +135,14 @@
                 event.scope = scope;
                 event.handler.call(event.scope, data, event);
             }
+        },
+
+        extend : function(obj, props) {
+            for (var key in props) {
+                obj[key] = props[key];
+            }
+
+            return obj;
         },
 
         // from http://stackoverflow.com/a/2117523/152809
@@ -310,13 +311,10 @@
         },
 
         extend : function(objectOrValues, valuesIfObject) {
-            var object = (valuesIfObject) ? objectOrValues : this,
-                values = (valuesIfObject) ? valuesIfObject : objectOrValues;
+            var object = (valuesIfObject) ? objectOrValues : this;
+            var values = (valuesIfObject) ? valuesIfObject : objectOrValues;
 
-            for (var key in values) {
-                var value = values[key];
-                object[key] = value;
-            }
+            _.extend(object, values);
 
             return this;
         },
@@ -425,9 +423,7 @@
         },
 
         "extend" : function(obj) {
-            for (var key in obj) {
-                _.Module[key] = obj[key];
-            }
+            return _.extend(_.Module, obj);
         },
 
         "mixinEvents" : function(obj) {
@@ -435,11 +431,7 @@
 
             _.addGuid(obj);
 
-            for (var method in Events) {
-                obj[method] = Events[method];
-            }
-
-            return obj;
+            return _.extend(obj, Events);
         },
 
         "on" : function() {
