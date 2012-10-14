@@ -151,8 +151,25 @@
         }
     };
 
-    for (name in util) {
-        var fn = util[name];
-        Stapes[name] = fn;
+    // This library can be used as an AMD module, a Node.js module, or an
+    // old fashioned global
+    if (typeof exports !== "undefined") {
+        // Server
+        if (typeof module !== "undefined" && module.exports) {
+            exports = module.exports = util;
+        }
+        exports.util = util;
+    } else if (typeof define === "function" && define.amd) {
+        // AMD
+        define(function() {
+            return util;
+        });
+    } else {
+        // Global scope
+        if (window.Stapes) {
+            window.Stapes.util = util;
+        } else {
+            window.StapesUtil = util;
+        }
     }
 })();
