@@ -125,7 +125,8 @@
             var handlers = _.eventHandlers[explicitGuid][type];
 
             for (var i = 0, l = handlers.length; i < l; i++) {
-                var event = handlers[i];
+                // Clone the event to prevent issue #19
+                var event = _.extend({}, handlers[i]);
                 var scope = (event.scope) ? event.scope : this;
 
                 if (explicitType) {

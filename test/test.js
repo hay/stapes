@@ -263,25 +263,32 @@ test("guid", function() {
 });
 
 test("event scope", function() {
-    var module1 = Stapes.create().extend({ name : "module1" });
-    var module2 = Stapes.create().extend({ name : "module2" });
+    var module1 = Stapes.create();
+    var module2 = Stapes.create();
+    var firstDone = false;
 
     module1.on('eventscope', function(data, e) {
         ok(e.scope === module1, "Scope of event should be the emitting model");
     });
 
     module2.on('eventscope', function(data, e) {
-        ok(e.scope === module2, "Scope of event in other model should be emitting model");
+        ok(e.scope === module2, "Scope of event should be the emitting model");
     });
 
     Stapes.on('eventscope', function(data, e) {
-        ok(e.scope === module1, "Scope of event from global Stapes object should be the emitting model");
+        if (firstDone) {
+            ok(e.scope !== module1, "Scope of event from global Stapes object should not be the mixed with other models");
+            ok(e.scope === module2, "Scope of event from global Stapes object should be the emitting model");
+        } else {
+            ok(e.scope === module1, "Scope of event from global Stapes object should be the emitting model");
+            firstDone = true;
+        }
     });
 
     Stapes.on('all', function(data, e) {
         if (e.type === "eventscope") {
             // Prevent other events from other tests getting here
-            ok(e.scope === module1, "Scope event from on 'all' handler on Stapes.on should be emitting model");
+            ok(e.scope === module1 || e.scope === module2, "Scope event from on 'all' handler on Stapes.on should be emitting model");
         }
     });
 
