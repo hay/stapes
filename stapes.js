@@ -17,165 +17,13 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.5.1";
+    var VERSION = "0.6";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
 
-    /** Utility functions
-     *
-     *  These are more or less modelled on the ones used in Underscore.js,
-     *  but might not be as extensive or failproof.
-     *  However, they are pretty damn useful and can be accessed by using
-     *  the Stapes.util global
-     */
-    var util = {
-        "bind" : function(fn, ctx) {
-            if (util.isObject(fn)) {
-                // Bind all functions in this object to this object
-                util.each(fn, function(fun, name) {
-                    if (util.typeOf(fun) === "function") {
-                        fn[name] = util.bind(fun, fn);
-                    }
-                });
-
-                return fn;
-            } else {
-                if (Function.prototype.bind) {
-                    // Native
-                    return fn.bind(ctx);
-                } else {
-                    // Non-native
-                    return function() {
-                        return fn.apply(ctx, arguments);
-                    };
-                }
-            }
-        },
-
-        "clone" : function(obj) {
-            if (util.isArray(obj)) {
-                return obj.slice();
-            } else if (util.isObject(obj)) {
-                var newObj = {};
-
-                util.each(obj, function(value, key) {
-                    newObj[key] = value;
-                });
-
-                return newObj;
-            } else {
-                return obj;
-            }
-        },
-
-        "create" : function(context) {
-            var instance;
-
-            if (typeof Object.create === "function") {
-                // Native
-                instance = Object.create(context);
-            } else {
-                // Non-native
-                var F = function(){};
-                F.prototype = context;
-                instance = new F();
-            }
-
-            return instance;
-        },
-
-        "each" : function(list, fn, context) {
-            if (util.isArray(list)) {
-                if (Array.prototype.forEach) {
-                    // Native forEach
-                    list.forEach( fn, context );
-                } else {
-                    for (var i = 0, l = list.length; i < l; i++) {
-                        fn.call(context, list[i], i);
-                    }
-                }
-            } else {
-                for (var key in list) {
-                    fn.call(context, list[key], key);
-                }
-            }
-        },
-
-        "filter" : function(list, fn, context) {
-            var results = [];
-
-            if (util.isArray(list) && Array.prototype.filter) {
-                return list.filter(fn, context);
-            }
-
-            util.each(list, function(value) {
-                if (fn.call(context, value)) {
-                    results.push(value);
-                }
-            });
-
-            return results;
-        },
-
-        "isArray" : function(val) {
-            return util.typeOf(val) === "array";
-        },
-
-        "isObject" : function(val) {
-            return util.typeOf(val) === "object";
-        },
-
-        "keys" : function(list) {
-            return util.map(list, function(value, key) {
-                return key;
-            });
-        },
-
-        // from http://stackoverflow.com/a/2117523/152809
-        "makeUuid" : function() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-                return v.toString(16);
-            });
-        },
-
-        "map" : function(list, fn, context) {
-            var results = [];
-
-            if (util.isArray(list) && Array.prototype.map) {
-                return list.map(fn, context);
-            }
-
-            util.each(list, function(value, index) {
-                results.push( fn.call(context, value, index) );
-            });
-
-            return results;
-        },
-
-        "size" : function(list) {
-            return (util.isArray(list)) ? list.length : util.keys(list).length;
-        },
-
-        "toArray" : function(val) {
-            if (util.isObject(val)) {
-                return util.values(val);
-            } else {
-                return Array.prototype.slice.call(val, 0);
-            }
-        },
-
-        "typeOf" : function(val) {
-            return Object.prototype.toString.call(val).replace(/\[object |\]/g, '').toLowerCase();
-        },
-
-        "values" : function(list) {
-            return util.map(list, function(value, key) {
-                return value;
-            });
-        }
-    };
+    // Makes _.create() faster
+    var cachedFunction = function(){};
 
     // Private attributes and helper functions, stored in an object so they
     // are overwritable by plugins
@@ -218,18 +66,20 @@
                 eventMap = argTypeOrMap;
             }
 
-            util.each(eventMap, function(handler, eventString) {
+            for (var eventString in eventMap) {
+                var handler = eventMap[eventString];
                 var events = eventString.split(" ");
 
-                util.each(events, function(eventType) {
+                for (var i = 0, l = events.length; i < l; i++) {
+                    var eventType = events[i];
                     _.addEvent.call(this, {
-                        "guid" : this._guid,
+                        "guid" : this._guid || this._.guid,
                         "handler" : handler,
                         "scope" : scope,
                         "type" : eventType
                     });
-                }, this);
-            }, this);
+                }
+            }
         },
 
         addGuid : function(object, forceGuid) {
@@ -247,9 +97,18 @@
             return _.attributes[guid];
         },
 
+        clone : function(obj) {
+            return _.extend({}, obj);
+        },
+
+        create : function(obj) {
+            cachedFunction.prototype = obj;
+            return new cachedFunction();
+        },
+
         // Stapes objects have some extra properties that are set on creation
         createModule : function( context ) {
-            var instance = util.create( context );
+            var instance = _.create( context );
 
             _.addGuid( instance, true );
 
@@ -263,14 +122,53 @@
             explicitType = explicitType || false;
             explicitGuid = explicitGuid || this._guid;
 
-            util.each(_.eventHandlers[explicitGuid][type], function(event) {
+            var handlers = _.eventHandlers[explicitGuid][type];
+
+            for (var i = 0, l = handlers.length; i < l; i++) {
+                // Clone the event to prevent issue #19
+                var event = _.extend({}, handlers[i]);
                 var scope = (event.scope) ? event.scope : this;
+
                 if (explicitType) {
                     event.type = explicitType;
                 }
+
                 event.scope = scope;
                 event.handler.call(event.scope, data, event);
-            }, this);
+            }
+        },
+
+        extend : function(obj, props) {
+            for (var key in props) {
+                obj[key] = props[key];
+            }
+
+            return obj;
+        },
+
+        // from http://stackoverflow.com/a/2117523/152809
+        "makeUuid" : function() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                return v.toString(16);
+            });
+        },
+
+        removeAttribute : function(key, silent) {
+            silent = silent || false;
+
+            // Actually delete the item
+            delete _.attr(this._guid)[key];
+
+            // If 'silent' is set, do not throw any events
+            if (silent) {
+                return this;
+            }
+
+            this.emit('change', key);
+            this.emit('change:' + key);
+            this.emit('remove', key);
+            this.emit('remove:' + key);
         },
 
         removeEventHandler : function(type, handler) {
@@ -278,11 +176,16 @@
 
             if (type && handler) {
                 // Remove a specific handler
-                util.each(handlers[type], function(eventObject, index) {
-                    if (eventObject.handler === handler) {
-                        handlers[type].splice(index--, 1);
+                handlers = handlers[type];
+                if (!handlers) return;
+
+                for (var i = 0, l = handlers.length, h; i < l; i++) {
+                    h = handlers[i].handler;
+                    if (h && h === handler) {
+                        handlers.splice(i--, 1);
+                        l--;
                     }
-                }, this);
+                }
             } else if (type) {
                 // Remove all handlers for a specific type
                 delete handlers[type];
@@ -292,10 +195,12 @@
             }
         },
 
-        setAttribute : function(key, value) {
+        setAttribute : function(key, value, silent) {
+            silent = silent || false;
+
             // We need to do this before we actually add the item :)
-            var itemExists = this.has(key),
-                oldValue = _.attr(this._guid)[key];
+            var itemExists = this.has(key);
+            var oldValue = _.attr(this._guid)[key];
 
             // Is the value different than the oldValue? If not, ignore this call
             if (value === oldValue) {
@@ -304,6 +209,11 @@
 
             // Actually add the item to the attributes
             _.attr(this._guid)[key] = value;
+
+            // If 'silent' flag is set, do not throw any events
+            if (silent) {
+                return;
+            }
 
             // Throw a generic event
             this.emit('change', key);
@@ -332,9 +242,17 @@
             this.emit(specificEvent + ':' + key, value);
         },
 
+        "typeOf" : function(val) {
+            if (val === null || typeof val === "undefined") {
+                return String(val);
+            } else {
+                return Object.prototype.toString.call(val).replace(/\[object |\]/g, '').toLowerCase();
+            }
+        },
+
         updateAttribute : function(key, fn) {
             var item = this.get(key),
-                newValue = fn( util.clone(item) );
+                newValue = fn( _.clone(item) );
 
             _.setAttribute.call(this, key, newValue);
         }
@@ -345,7 +263,11 @@
         emit : function(types, data) {
             data = (typeof data === "undefined") ? null : data;
 
-            util.each(types.split(" "), function(type) {
+            var splittedTypes = types.split(" ");
+
+            for (var i = 0, l = splittedTypes.length; i < l; i++) {
+                var type = splittedTypes[i];
+
                 // First 'all' type events: is there an 'all' handler in the
                 // global stack?
                 if (_.eventHandlers[-1].all) {
@@ -368,7 +290,7 @@
                         _.emitEvents.call(this, type, data);
                     }
                 }
-            }, this);
+            }
         },
 
         off : function() {
@@ -386,22 +308,33 @@
         },
 
         each : function(fn, ctx) {
-            util.each(_.attr(this._guid), fn, ctx || this);
+            var attr = _.attr(this._guid);
+            for (var key in attr) {
+                var value = attr[key];
+                fn.call(ctx || this, value, key);
+            }
         },
 
         extend : function(objectOrValues, valuesIfObject) {
-            var object = (valuesIfObject) ? objectOrValues : this,
-                values = (valuesIfObject) ? valuesIfObject : objectOrValues;
+            var object = (valuesIfObject) ? objectOrValues : this;
+            var values = (valuesIfObject) ? valuesIfObject : objectOrValues;
 
-            util.each(values, function(value, key) {
-                object[key] = value;
-            });
+            _.extend(object, values);
 
             return this;
         },
 
         filter : function(fn) {
-            return util.filter(_.attr(this._guid), fn);
+            var filtered = [];
+            var attributes = _.attr(this._guid);
+
+            for (var key in attributes) {
+                if ( fn.call(this, attributes[key], key)) {
+                    filtered.push( attributes[key] );
+                }
+            }
+
+            return filtered;
         },
 
         get : function(input) {
@@ -414,19 +347,24 @@
         },
 
         getAll : function() {
-            return util.clone( _.attr(this._guid) );
+            return _.clone( _.attr(this._guid) );
         },
 
         getAllAsArray : function() {
-            var arr = util.map(_.attr(this._guid), function(value, key) {
-                if (util.isObject(value)) {
+            var arr = [];
+            var attributes = _.attr(this._guid);
+
+            for (var key in attributes) {
+                var value = attributes[key];
+
+                if (_.typeOf(value) === "object") {
                     value.id = key;
                 }
 
-                return value;
-            });
+                arr.push(value);
+            }
 
-            return util.clone( arr );
+            return arr;
         },
 
         has : function(key) {
@@ -434,44 +372,47 @@
         },
 
         // Akin to set(), but makes a unique id
-        push : function(input) {
-            if (util.isArray(input)) {
-                util.each(input, function(value) {
-                    _.setAttribute.call(this, util.makeUuid(), value);
-                }, this);
+        push : function(input, silent) {
+            if (_.typeOf(input) === "array") {
+                for (var i = 0, l = input.length; i < l; i++) {
+                    _.setAttribute.call(this, _.makeUuid(), input[i]);
+                }
             } else {
-                _.setAttribute.call(this, util.makeUuid(), input);
+                _.setAttribute.call(this, _.makeUuid(), input, silent || false);
             }
+
+            return this;
         },
 
-        remove : function(input) {
+        remove : function(input, silent) {
             if (typeof input === "function") {
                 this.each(function(item, key) {
                     if (input(item)) {
-                        delete _.attr(this._guid)[key];
-                        this.emit('remove change');
+                        _.removeAttribute.call(this, key, silent);
                     }
                 });
             } else {
-                if (this.has(input)) {
-                    delete _.attr(this._guid)[input];
-                    this.emit('remove change');
-                }
+            	// nb: checking for exists happens in removeAttribute
+                _.removeAttribute.call(this, input, silent || false);
             }
+
+            return this;
         },
 
-        set : function(objOrKey, value) {
-            if (util.isObject(objOrKey)) {
-                util.each(objOrKey, function(value, key) {
-                    _.setAttribute.call(this, key, value);
-                }, this);
+        set : function(objOrKey, value, silent) {
+            if (typeof objOrKey === "object") {
+                for (var key in objOrKey) {
+                    _.setAttribute.call(this, key, objOrKey[key]);
+                }
             } else {
-                _.setAttribute.call(this, objOrKey, value);
+                _.setAttribute.call(this, objOrKey, value, silent || false);
             }
+
+            return this;
         },
 
         size : function() {
-            return util.size( _.attributes[this._guid] );
+            return Object.keys(_.attributes[this._guid]).length;
         },
 
         update : function(keyOrFn, fn) {
@@ -482,6 +423,8 @@
                     _.updateAttribute.call(this, key, keyOrFn);
                 });
             }
+
+            return this;
         }
     };
 
@@ -493,9 +436,7 @@
         },
 
         "extend" : function(obj) {
-            util.each(obj, function(value, key) {
-                _.Module[key] = value;
-            });
+            return _.extend(_.Module, obj);
         },
 
         "mixinEvents" : function(obj) {
@@ -503,18 +444,12 @@
 
             _.addGuid(obj);
 
-            util.each(Events, function(value, key) {
-                obj[key] = value;
-            });
-
-            return obj;
+            return _.extend(obj, Events);
         },
 
         "on" : function() {
             _.addEventHandler.apply(this, arguments);
         },
-
-        "util" : util,
 
         "version" : VERSION
     };

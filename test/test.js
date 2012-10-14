@@ -1,5 +1,16 @@
 var undef;
-var util = Stapes.util;
+
+// Some shims for IE
+if (!Object.keys) {
+    Object.keys = function(obj) {
+        var arr = [];
+        for (var key in obj) {
+            arr.push(key);
+        }
+
+        return arr;
+    }
+}
 
 module("set");
 
@@ -13,6 +24,13 @@ test("change events", function() {
     module.on({
         'change' : function(key) {
             ok(key === 'name' || key === 'instrument', 'change event when name is set');
+            if (key === "silent") {
+                ok(false, "Silent event should not trigger");
+            }
+        },
+
+        'change:silent' : function(key) {
+            ok(false, "Silent event should not trigger");
         },
 
         'change:name' : function(value) {
@@ -50,6 +68,7 @@ test("change events", function() {
     module.set('name', 'Emmylou');
     module.set('instrument', 'guitar');
     module.set('instrument', 'guitar'); // Change event should only be thrown once!
+    module.set('silent', 'silent', true); // silent events should not trigger anything
 });
 
 module("update");
@@ -78,6 +97,39 @@ test("update", function() {
         };
     });
 });
+
+module("remove");
+
+test("remove", function() {
+    var module = Stapes.create();
+    module.set('foo', 'bar');
+    module.set('silent', 'silent');
+
+    module.on({
+        'change': function( key ){
+            ok(key === 'foo', 'change event with key of attribute');
+        },
+
+        'change:foo': function(key, e){
+            ok(e.type === 'change:foo', 'change:key event');
+        },
+
+        'remove': function( key ){
+            ok(key === 'foo', 'remove event with key of attribute');
+        },
+
+        'remove:foo': function(key, e){
+            ok(e.type === 'remove:foo', 'change:key event');
+        },
+
+        'remove:silent' : function() {
+            ok(false, 'silent event should not trigger');
+        }
+    });
+
+    module.remove('foo');
+    module.remove('silent', true); // should not trigger because of silent flag
+})
 
 module("iterators");
 
@@ -153,17 +205,15 @@ test("filter", function() {
     deepEqual(filtered, [], "when does not matches anything returns an empty array");
 });
 
-module("util");
-
-test("util.typeof", function() {
-    ok(Stapes.util.typeOf( {} ) === "object", "typeof {} = object");
-    ok(Stapes.util.typeOf( [] ) === "array", "typeof [] = array");
-    ok(Stapes.util.typeOf( function(){} ) === "function", "typeof function(){} = function");
-    ok(Stapes.util.typeOf( true ) === "boolean", "typeof true = boolean");
-    ok(Stapes.util.typeOf( 1 ) === "number", "typeof 1 = number");
-    ok(Stapes.util.typeOf( '' ) === "string", "typeof '' = string");
-    ok(Stapes.util.typeOf( null ) === "null", "typeof null = null");
-    ok(Stapes.util.typeOf( undefined ) === "undefined", "typeof undefined = undefined");
+test("_.typeof", function() {
+    ok(Stapes._.typeOf( {} ) === "object", "typeof {} = object");
+    ok(Stapes._.typeOf( [] ) === "array", "typeof [] = array");
+    ok(Stapes._.typeOf( function(){} ) === "function", "typeof function(){} = function");
+    ok(Stapes._.typeOf( true ) === "boolean", "typeof true = boolean");
+    ok(Stapes._.typeOf( 1 ) === "number", "typeof 1 = number");
+    ok(Stapes._.typeOf( '' ) === "string", "typeof '' = string");
+    ok(Stapes._.typeOf( null ) === "null", "typeof null = null");
+    ok(Stapes._.typeOf( undefined ) === "undefined", "typeof undefined = undefined");
 });
 
 module("events");
@@ -180,7 +230,7 @@ test("off", function() {
 
     var events = Stapes._.eventHandlers[module._guid];
 
-    ok(util.size(events) === 2, "Event handlers are set");
+    ok(Object.keys(events).length === 2, "Event handlers are set");
 
     module.off("foo", handler);
 
@@ -192,7 +242,7 @@ test("off", function() {
 
     module.off();
 
-    ok(util.size(Stapes._.eventHandlers[module._guid]) === 0, "no handlers for module");
+    ok(Object.keys(Stapes._.eventHandlers[module._guid]).length === 0, "no handlers for module");
 });
 
 test("Stapes.mixinEvents", function() {
@@ -209,6 +259,12 @@ test("Stapes.mixinEvents", function() {
     var g = new F();
 
     ok(f._guid !== g._guid, "_guid of two newly created objects should not be the same");
+
+    Stapes.on('foo', function(data, e) {
+        ok(e.type === "foo", "Check if local events bubble through the Stapes object");
+    });
+
+    g.emit('foo');
 });
 
 test("guid", function() {
@@ -216,4 +272,49 @@ test("guid", function() {
     var module2 = module1.create();
 
     ok(module2._guid === (module1._guid + 1), "A new module should increase its guid by 1");
+});
+
+test("event scope", function() {
+    var module1 = Stapes.create();
+    var module2 = Stapes.create();
+    var firstDone = false;
+
+    module1.on('eventscope', function(data, e) {
+        ok(e.scope === module1, "Scope of event should be the emitting model");
+    });
+
+    module2.on('eventscope', function(data, e) {
+        ok(e.scope === module2, "Scope of event should be the emitting model");
+    });
+
+    Stapes.on('eventscope', function(data, e) {
+        if (firstDone) {
+            ok(e.scope !== module1, "Scope of event from global Stapes object should not be the mixed with other models");
+            ok(e.scope === module2, "Scope of event from global Stapes object should be the emitting model");
+        } else {
+            ok(e.scope === module1, "Scope of event from global Stapes object should be the emitting model");
+            firstDone = true;
+        }
+    });
+
+    Stapes.on('all', function(data, e) {
+        if (e.type === "eventscope") {
+            // Prevent other events from other tests getting here
+            ok(e.scope === module1 || e.scope === module2, "Scope event from on 'all' handler on Stapes.on should be emitting model");
+        }
+    });
+
+    module1.emit('eventscope');
+    module2.emit('eventscope');
+});
+
+test("chaining", function() {
+    var module = Stapes.create().set('foo', true);
+    ok(!!module.get && module.get('foo'), "set() should return the object");
+    module = module.update('foo', function() { return true; });
+    ok(!!module.get && module.get('foo'), "update() should return the object");
+    module  = module.remove('foo');
+    ok(!!module.get && module.get('foo') === null, "remove() should return the object");
+    module = module.push(true);
+    ok(!!module.get && module.size() === 1, "push() should return the object");
 });

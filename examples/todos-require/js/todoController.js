@@ -79,7 +79,7 @@ function(Stapes, TodoModel, TodoView, TodoStore) {
 			this.view.render( this.model.getItemsByState( this.get('state') ) );
 			this.view.showLeft( this.model.getLeft().length );
 
-			if ( this.model.getAllAsArray().length > 0 ) {
+			if ( this.model.size() > 0 ) {
 				this.view.show();
 			} else {
 				this.view.hide();

@@ -1,8 +1,8 @@
 'use strict';
 (function() {
-	var todoView = Stapes.create(),
-		todoTmpl,
-		ENTER_KEY_KEYCODE = 13;
+	var todoView = Stapes.create();
+	var todoTmpl;
+	var ENTER_KEY_KEYCODE = 13;
 
 	function bindEventHandlers() {
 		$('#new-todo').on('keyup', function(e) {
