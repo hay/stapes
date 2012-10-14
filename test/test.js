@@ -1,5 +1,17 @@
 var undef;
 
+// Some shims for IE
+if (!Object.keys) {
+    Object.keys = function(obj) {
+        var arr = [];
+        for (var key in obj) {
+            arr.push(key);
+        }
+
+        return arr;
+    }
+}
+
 module("set");
 
 test("change events", function() {
