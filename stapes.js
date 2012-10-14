@@ -17,7 +17,7 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.5.2";
+    var VERSION = "0.6";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
@@ -356,7 +356,7 @@
                     value.id = key;
                 }
 
-                return value;
+                arr.push(value);
             }
 
             return arr;
