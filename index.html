@@ -880,7 +880,7 @@
         <article id="m-update">
             <h1>update</h1>
 
-            <h2>module.update( key, fn );</h2>
+            <h2>module.update( key, fn, [silent] );</h2>
             <h2>module.update( fn );</h2>
 
             <p>Updates an attribute with a new value, based on the return value
@@ -913,6 +913,8 @@
         return item;
     });
             </code></pre>
+
+            <p>The <code>silent</code> flag will prevent any change events from firing.</p>
 
             <p><code>update</code> returns the module, so this method is chainable.</p>
         </article>
@@ -952,6 +954,10 @@
 
         <h3 id="m-history">History</h3>
         <ul>
+            <li>0.6.1</li>
+            <ul>
+                <li><small>Feature</small> <a href="#m-update"><code>update</code></a> now has a <code>silent</code> option too.</li>
+            </ul>
             <li>0.6 - October 14th 2012</li>
             <ul>
                 <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> now also triggers namespaced events

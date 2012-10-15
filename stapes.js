@@ -17,13 +17,13 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.6";
+    var VERSION = "0.6.1";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
 
     // Makes _.create() faster
-    var cachedFunction = function(){};
+    var CachedFunction = function(){};
 
     // Private attributes and helper functions, stored in an object so they
     // are overwritable by plugins
@@ -102,8 +102,8 @@
         },
 
         create : function(obj) {
-            cachedFunction.prototype = obj;
-            return new cachedFunction();
+            CachedFunction.prototype = obj;
+            return new CachedFunction();
         },
 
         // Stapes objects have some extra properties that are set on creation
@@ -250,11 +250,11 @@
             }
         },
 
-        updateAttribute : function(key, fn) {
-            var item = this.get(key),
-                newValue = fn( _.clone(item) );
+        updateAttribute : function(key, fn, silent) {
+            var item = this.get(key);
+            var newValue = fn( _.clone(item) );
 
-            _.setAttribute.call(this, key, newValue);
+            _.setAttribute.call(this, key, newValue, silent || false);
         }
     };
 
@@ -392,7 +392,7 @@
                     }
                 });
             } else {
-            	// nb: checking for exists happens in removeAttribute
+                // nb: checking for exists happens in removeAttribute
                 _.removeAttribute.call(this, input, silent || false);
             }
 
@@ -415,9 +415,9 @@
             return Object.keys(_.attributes[this._guid]).length;
         },
 
-        update : function(keyOrFn, fn) {
+        update : function(keyOrFn, fn, silent) {
             if (typeof keyOrFn === "string") {
-                _.updateAttribute.call(this, keyOrFn, fn);
+                _.updateAttribute.call(this, keyOrFn, fn, silent || false);
             } else if (typeof keyOrFn === "function") {
                 this.each(function(value, key) {
                     _.updateAttribute.call(this, key, keyOrFn);

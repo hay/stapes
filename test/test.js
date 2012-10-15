@@ -81,9 +81,14 @@ test("update", function() {
         "vocal" : true,
         "guitar" : true
     });
+    module.set('silent', true);
 
     module.on('change:name', function(value) {
         ok(value === "Emmylou", "update triggers change namespaced event");
+    });
+
+    module.on('change:silent', function() {
+        ok(false, "silent flag should not trigger any events");
     });
 
     module.update('name', function(oldValue) {
@@ -96,6 +101,10 @@ test("update", function() {
             "guitar" : true
         };
     });
+
+    module.update('silent', function(val) {
+        return "silent";
+    }, true /* silent flag */);
 });
 
 module("remove");
