@@ -191,6 +191,12 @@ test("filter", function() {
         'key2': 'value2',
         'key3': 'value3'
     });
+    var module2 = Stapes.create().set('key', 'value');
+
+    module2.filter(function(value, key) {
+        ok(value === "value", "Value should be value");
+        ok(key === "key", "Key should be the second argument");
+    });
 
     var values = [];
     module.filter(function(value) {

@@ -814,7 +814,9 @@
 
             <h2>module.filter( function );</h2>
 
-            <p>Gets an array of attributes using a custom function.</p>
+            <p>Gets an array of attribute values using a custom function.</p>
+
+            <p>The callback <code>function</code> gets two arguments: the value of the attribute, and the original key.</p>
 
             <pre><code>
     module.set('singer', {
@@ -822,9 +824,9 @@
         'instrument' : 'Guitar'
     });
 
-    var singer = module.filter(function(item) {
-        return item.name === "Elvis";
-    }); // ['singer']
+    var singer = module.filter(function(item, key) {
+        return item.name === "Elvis" && key === "singer";
+    }); // [ { name : 'Elvis', instrument : 'Guitar' }]
             </code></pre>
         </article>
 
