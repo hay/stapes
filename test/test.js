@@ -90,12 +90,17 @@ test("update", function() {
         return "Emmylou";
     });
 
-    module.update('instruments', function(oldValue) {
+    module.update('instruments', function(oldValue, key) {
+        ok(this === module, "this should refer to the module being updated");
+        ok(key === "instruments", "second argument of update should be original key");
+
         return {
             "vocal" : true,
             "guitar" : true
         };
     });
+
+
 });
 
 module("remove");

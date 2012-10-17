@@ -914,6 +914,10 @@
     });
             </code></pre>
 
+            <p>The callback function in <code>update</code> gets two arguments: the
+                value being modified, and the original key. The <code>this</code>
+                value of the callback will be set to the module you're updating.</p>
+
             <p><code>update</code> returns the module, so this method is chainable.</p>
         </article>
 
