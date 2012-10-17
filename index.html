@@ -743,6 +743,12 @@
     });
             </code></pre>
 
+            <p>It's possible to remove multiple keys in one go, simply space seperate them:</p>
+
+            <pre><code>
+    module.remove('singer instrument johnny');
+            </code></pre>
+
             <p>If you do not want your <code>remove</code> to trigger an event set
                 the optional <code>silent</code> flag to true.</p>
 
@@ -960,6 +966,7 @@
             <li>0.6.1</li>
             <ul>
                 <li><small>Feature</small> <a href="#m-update"><code>update</code></a> now has a <code>silent</code> option too.</li>
+                <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> now accepts multiple keys to remove.</li>
             </ul>
             <li>0.6 - October 14th 2012</li>
             <ul>

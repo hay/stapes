@@ -9,7 +9,7 @@ if (!Object.keys) {
         }
 
         return arr;
-    }
+    };
 }
 
 module("set");
@@ -113,10 +113,18 @@ test("remove", function() {
     var module = Stapes.create();
     module.set('foo', 'bar');
     module.set('silent', 'silent');
+    module.set({
+        'remove1' : true,
+        'remove2' : true
+    });
+
+    function isKey(key) {
+        return (key === 'foo' || key === 'remove1' || key === 'remove2');
+    }
 
     module.on({
         'change': function( key ){
-            ok(key === 'foo', 'change event with key of attribute');
+            ok(isKey(key), 'change event with key of attribute');
         },
 
         'change:foo': function(key, e){
@@ -124,7 +132,7 @@ test("remove", function() {
         },
 
         'remove': function( key ){
-            ok(key === 'foo', 'remove event with key of attribute');
+            ok(isKey(key), 'remove event with key of attribute');
         },
 
         'remove:foo': function(key, e){
@@ -138,6 +146,8 @@ test("remove", function() {
 
     module.remove('foo');
     module.remove('silent', true); // should not trigger because of silent flag
+    module.remove('  remove1   remove2'); // note the extra spaces to FU the parser :)
+    ok(module.size() === 0, 'all attributes should be removed');
 })
 
 module("iterators");

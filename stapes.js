@@ -154,21 +154,28 @@
             });
         },
 
-        removeAttribute : function(key, silent) {
+        removeAttribute : function(keys, silent) {
             silent = silent || false;
 
+            // Split the key, maybe we want to remove more than one item
+            var attributes = _.trim(keys).split(" ");
+
             // Actually delete the item
-            delete _.attr(this._guid)[key];
+            for (var i = 0, l = attributes.length; i < l; i++) {
+                var key = _.trim(attributes[i]);
 
-            // If 'silent' is set, do not throw any events
-            if (silent) {
-                return this;
+                if (key) {
+                    delete _.attr(this._guid)[key];
+
+                    // If 'silent' is set, do not throw any events
+                    if (!silent) {
+                        this.emit('change', key);
+                        this.emit('change:' + key);
+                        this.emit('remove', key);
+                        this.emit('remove:' + key);
+                    }
+                }
             }
-
-            this.emit('change', key);
-            this.emit('change:' + key);
-            this.emit('remove', key);
-            this.emit('remove:' + key);
         },
 
         removeEventHandler : function(type, handler) {
@@ -242,7 +249,11 @@
             this.emit(specificEvent + ':' + key, value);
         },
 
-        "typeOf" : function(val) {
+        trim : function(str) {
+            return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+        },
+
+        typeOf : function(val) {
             if (val === null || typeof val === "undefined") {
                 return String(val);
             } else {
