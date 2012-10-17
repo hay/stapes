@@ -557,6 +557,61 @@
         </article>
 
         <h3 id="m-data">Data methods</h3>
+        <article id="m-each">
+            <h1>each</h1>
+
+            <h2>module.each( function, [context] );</h2>
+
+            <p>Iterate over all attributes of a module.</p>
+
+            <p>When giving a <code>context</code> parameter this will be set as
+                the <code>this</code> value in the iterator function. If <code>context</code>
+                is not set it will be set to the module itself.</p>
+
+            <pre><code>
+    var module = Stapes.create(),
+        singers = ['Johnny', 'Emmylou', 'Gram', 'June'];
+
+    module.msg = "I'll be your ";
+
+    module.push(singers);
+
+    module.each(function(singer) {
+        console.log(this.msg + singer);
+    });
+
+
+    // Using the second context parameter of each()
+    module.singers = Stapes.create();
+    module.singers.push( singers );
+
+    module.singers.each(function(singer) {
+        console.log(this.msg + singer);
+    }, module);
+            </code></pre>
+        </article>
+
+        <article id="m-filter">
+            <h1>filter</h1>
+
+            <h2>module.filter( function );</h2>
+
+            <p>Gets an array of attribute values    using a custom function.</p>
+
+            <p>The callback <code>function</code> gets two arguments: the value of the attribute, and the original key.</p>
+
+            <pre><code>
+    module.set('singer', {
+        'name' : 'Elvis',
+        'instrument' : 'Guitar'
+    });
+
+    var singer = module.filter(function(item, key) {
+        return item.name === "Elvis" && key === "singer";
+    }); // [ { name : 'Elvis', instrument : 'Guitar' }]
+            </code></pre>
+        </article>
+
         <article id="m-get">
             <h1>get</h1>
 
@@ -585,6 +640,123 @@
         return value === "guitar";
     }); // 'instrument'
             </code></pre>
+        </article>
+
+
+        <article id="m-getall">
+            <h1>getAll</h1>
+
+            <h2>module.getAll();</h2>
+
+            <p>Returns all the attributes of an module as an object. Handy for JSON
+                serializing and persistence layers.</p>
+
+            <p>Note that this method returns a copy/clone instead of a reference.</p>
+        </article>
+
+        <article id="m-getallasarray">
+            <h1>getAllAsArray</h1>
+
+            <h2>module.getAllAsArray();</h2>
+
+            <p>Returns all attributes as an array, so you can easily iterate.
+            Note that the original key of the attribute is always available as a
+            'id' key in the the value, provided your value is an object.</p>
+
+            <p>Note that this method returns a copy/clone instead of a reference.</p>
+
+            <pre><code>
+    module.set({
+        "name" : "Johnny",
+        "instrument" : "guitar"
+    });
+
+    module.getAllAsArray().length; // '2'
+            </code></pre>
+        </article>
+
+        <article id="m-has">
+            <h1>has</h1>
+
+            <h2>module.has( key );</h2>
+
+            <p>Checks if a key is available and returns true or false.</p>
+
+            <pre><code>
+    module.set('singer', 'Johnny');
+
+    module.has('singer'); // true
+    module.has('instrument'); // false
+            </code></pre>
+        </article>
+
+        <article id="m-push">
+            <h1>push</h1>
+
+            <h2>module.push( value, [silent] );</h2>
+            <h2>module.push( array );</h2>
+
+            <p>Sets a value, automatically generates an unique uuid as a key.</p>
+
+            <p>You can also push an array of values.</p>
+
+            <p>Just as with <code>set</code> the optional <code>silent</code> flag will
+                prevent any change events from being emitted.</p>
+
+            <p>For the rest of the behaviour of this method see <code>
+                <a href="#m-set">set</a></code>.</p>
+
+            <pre><code>
+    m.push("foo");
+
+    m.getAll(); // will look something like { "5323be61-afb8-4034-b408-51132756cd43" : "foo"}
+
+    m.push([
+        "foo",
+        "bar",
+        "baz"
+    ]);
+            </code></pre>
+
+            <p><code>push</code> returns the module, so this method is chainable.</p>
+        </article>
+
+        <article id="m-remove">
+            <h1>remove</h1>
+
+            <h2>module.remove( key, [silent] );</h2>
+            <h2>module.remove( function );</h2>
+
+            <p>Deletes an attribute. Triggers <code>remove</code> and
+            <code>change</code> events.</p>
+
+            <p><code>remove</code> also triggers namespaced <code>change</code> and
+                <code>remove</code> events (e.g. <code>change:foo</code> and
+                <code>remove:foo</code>).</p>
+
+            <p>You can either use a <code>key</code> as an argument or a
+            <code>function</code></p>
+
+            <pre><code>
+    module.remove(function(item) {
+        return item.done === true;
+    });
+            </code></pre>
+
+            <p>It's possible to remove multiple keys in one go, simply space seperate them:</p>
+
+            <pre><code>
+    module.remove('singer instrument johnny');
+            </code></pre>
+
+            <p>If you do not want your <code>remove</code> to trigger an event set
+                the optional <code>silent</code> flag to true.</p>
+
+            <pre><code>
+    module.remove('singer', true /* <-- silent flag */);
+            </code></pre>
+
+            <p><code>remove</code> returns the module, so this method is chainable.</p>
         </article>
 
         <article id="m-set">
@@ -700,70 +872,6 @@
             </code></pre>
         </article>
 
-        <article id="m-remove">
-            <h1>remove</h1>
-
-            <h2>module.remove( key, [silent] );</h2>
-            <h2>module.remove( function );</h2>
-
-            <p>Deletes an attribute. Triggers <code>remove</code> and
-            <code>change</code> events.</p>
-
-            <p><code>remove</code> also triggers namespaced <code>change</code> and
-                <code>remove</code> events (e.g. <code>change:foo</code> and
-                <code>remove:foo</code>).</p>
-
-            <p>You can either use a <code>key</code> as an argument or a
-            <code>function</code></p>
-
-            <pre><code>
-    module.remove(function(item) {
-        return item.done === true;
-    });
-            </code></pre>
-
-            <p>If you do not want your <code>remove</code> to trigger an event set
-                the optional <code>silent</code> flag to true.</p>
-
-            <pre><code>
-    module.remove('singer', true /* <-- silent flag */);
-            </code></pre>
-
-            <p><code>remove</code> returns the module, so this method is chainable.</p>
-        </article>
-
-        <article id="m-getall">
-            <h1>getAll</h1>
-
-            <h2>module.getAll();</h2>
-
-            <p>Returns all the attributes of an module as an object. Handy for JSON
-                serializing and persistence layers.</p>
-
-            <p>Note that this method returns a copy/clone instead of a reference.</p>
-        </article>
-
-        <article id="m-getallasarray">
-            <h1>getAllAsArray</h1>
-
-            <h2>module.getAllAsArray();</h2>
-
-            <p>Returns all attributes as an array, so you can easily iterate.
-            Note that the original key of the attribute is always available as a
-            'id' key in the the value, provided your value is an object.</p>
-
-            <p>Note that this method returns a copy/clone instead of a reference.</p>
-
-            <pre><code>
-    module.set({
-        "name" : "Johnny",
-        "instrument" : "guitar"
-    });
-
-    module.getAllAsArray().length; // '2'
-            </code></pre>
-        </article>
-
         <article id="m-size">
             <h1>size</h1>
 
@@ -778,109 +886,10 @@
     </code></pre>
         </article>
 
-        <article id="m-push">
-            <h1>push</h1>
-
-            <h2>module.push( value, [silent] );</h2>
-            <h2>module.push( array );</h2>
-
-            <p>Sets a value, automatically generates an unique uuid as a key.</p>
-
-            <p>You can also push an array of values.</p>
-
-            <p>Just as with <code>set</code> the optional <code>silent</code> flag will
-                prevent any change events from being emitted.</p>
-
-            <p>For the rest of the behaviour of this method see <code>
-                <a href="#m-set">set</a></code>.</p>
-
-            <pre><code>
-    m.push("foo");
-
-    m.getAll(); // will look something like { "5323be61-afb8-4034-b408-51132756cd43" : "foo"}
-
-    m.push([
-        "foo",
-        "bar",
-        "baz"
-    ]);
-            </code></pre>
-
-            <p><code>push</code> returns the module, so this method is chainable.</p>
-        </article>
-
-        <article id="m-filter">
-            <h1>filter</h1>
-
-            <h2>module.filter( function );</h2>
-
-            <p>Gets an array of attributes using a custom function.</p>
-
-            <pre><code>
-    module.set('singer', {
-        'name' : 'Elvis',
-        'instrument' : 'Guitar'
-    });
-
-    var singer = module.filter(function(item) {
-        return item.name === "Elvis";
-    }); // ['singer']
-            </code></pre>
-        </article>
-
-        <article id="m-each">
-            <h1>each</h1>
-
-            <h2>module.each( function, [context] );</h2>
-
-            <p>Iterate over all attributes of a module.</p>
-
-            <p>When giving a <code>context</code> parameter this will be set as
-                the <code>this</code> value in the iterator function. If <code>context</code>
-                is not set it will be set to the module itself.</p>
-
-            <pre><code>
-    var module = Stapes.create(),
-        singers = ['Johnny', 'Emmylou', 'Gram', 'June'];
-
-    module.msg = "I'll be your ";
-
-    module.push(singers);
-
-    module.each(function(singer) {
-        console.log(this.msg + singer);
-    });
-
-
-    // Using the second context parameter of each()
-    module.singers = Stapes.create();
-    module.singers.push( singers );
-
-    module.singers.each(function(singer) {
-        console.log(this.msg + singer);
-    }, module);
-            </code></pre>
-        </article>
-
-        <article id="m-has">
-            <h1>has</h1>
-
-            <h2>module.has( key );</h2>
-
-            <p>Checks if a key is available and returns true or false.</p>
-
-            <pre><code>
-    module.set('singer', 'Johnny');
-
-    module.has('singer'); // true
-    module.has('instrument'); // false
-            </code></pre>
-        </article>
-
         <article id="m-update">
             <h1>update</h1>
 
-            <h2>module.update( key, fn );</h2>
+            <h2>module.update( key, fn, [silent] );</h2>
             <h2>module.update( fn );</h2>
 
             <p>Updates an attribute with a new value, based on the return value
@@ -917,6 +926,8 @@
             <p>The callback function in <code>update</code> gets two arguments: the
                 value being modified, and the original key. The <code>this</code>
                 value of the callback will be set to the module you're updating.</p>
+
+            <p>The <code>silent</code> flag will prevent any change events from firing.</p>
 
             <p><code>update</code> returns the module, so this method is chainable.</p>
         </article>
@@ -960,6 +971,8 @@
             <ul>
                 <li><small>Feature</small> <a href="#m-update"><code>update</code></a> now gets the module set as the
                     <code>this</code> context, and gets the key in the callback function</li>
+                <li><small>Feature</small> <a href="#m-update"><code>update</code></a> now has a <code>silent</code> option too.</li>
+                <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> now accepts multiple keys to remove.</li>
                 <li><small>Bugfix</small> <a href="#m-getallasarray"><code>getAllAsArray</code></a> no longer overwrites
                     an <code>id</code> value if its present in the object</li>
             </ul>

@@ -17,13 +17,13 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.6";
+    var VERSION = "0.6.1";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
 
     // Makes _.create() faster
-    var cachedFunction = function(){};
+    var CachedFunction = function(){};
 
     // Private attributes and helper functions, stored in an object so they
     // are overwritable by plugins
@@ -102,8 +102,8 @@
         },
 
         create : function(obj) {
-            cachedFunction.prototype = obj;
-            return new cachedFunction();
+            CachedFunction.prototype = obj;
+            return new CachedFunction();
         },
 
         // Stapes objects have some extra properties that are set on creation
@@ -147,28 +147,35 @@
         },
 
         // from http://stackoverflow.com/a/2117523/152809
-        "makeUuid" : function() {
+        makeUuid : function() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
                 return v.toString(16);
             });
         },
 
-        removeAttribute : function(key, silent) {
+        removeAttribute : function(keys, silent) {
             silent = silent || false;
 
+            // Split the key, maybe we want to remove more than one item
+            var attributes = _.trim(keys).split(" ");
+
             // Actually delete the item
-            delete _.attr(this._guid)[key];
+            for (var i = 0, l = attributes.length; i < l; i++) {
+                var key = _.trim(attributes[i]);
 
-            // If 'silent' is set, do not throw any events
-            if (silent) {
-                return this;
+                if (key) {
+                    delete _.attr(this._guid)[key];
+
+                    // If 'silent' is set, do not throw any events
+                    if (!silent) {
+                        this.emit('change', key);
+                        this.emit('change:' + key);
+                        this.emit('remove', key);
+                        this.emit('remove:' + key);
+                    }
+                }
             }
-
-            this.emit('change', key);
-            this.emit('change:' + key);
-            this.emit('remove', key);
-            this.emit('remove:' + key);
         },
 
         removeEventHandler : function(type, handler) {
@@ -242,7 +249,11 @@
             this.emit(specificEvent + ':' + key, value);
         },
 
-        "typeOf" : function(val) {
+        trim : function(str) {
+            return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+        },
+
+        typeOf : function(val) {
             if (val === null || typeof val === "undefined") {
                 return String(val);
             } else {
@@ -253,8 +264,7 @@
         updateAttribute : function(key, fn) {
             var item = this.get(key);
             var newValue = fn.call(this, _.clone(item), key);
-
-            _.setAttribute.call(this, key, newValue);
+            _.setAttribute.call(this, key, newValue, silent || false);
         }
     };
 
@@ -392,7 +402,7 @@
                     }
                 });
             } else {
-            	// nb: checking for exists happens in removeAttribute
+                // nb: checking for exists happens in removeAttribute
                 _.removeAttribute.call(this, input, silent || false);
             }
 
@@ -415,9 +425,9 @@
             return Object.keys(_.attributes[this._guid]).length;
         },
 
-        update : function(keyOrFn, fn) {
+        update : function(keyOrFn, fn, silent) {
             if (typeof keyOrFn === "string") {
-                _.updateAttribute.call(this, keyOrFn, fn);
+                _.updateAttribute.call(this, keyOrFn, fn, silent || false);
             } else if (typeof keyOrFn === "function") {
                 this.each(function(value, key) {
                     _.updateAttribute.call(this, key, keyOrFn);

@@ -9,7 +9,7 @@ if (!Object.keys) {
         }
 
         return arr;
-    }
+    };
 }
 
 module("set");
@@ -81,9 +81,14 @@ test("update", function() {
         "vocal" : true,
         "guitar" : true
     });
+    module.set('silent', true);
 
     module.on('change:name', function(value) {
         ok(value === "Emmylou", "update triggers change namespaced event");
+    });
+
+    module.on('change:silent', function() {
+        ok(false, "silent flag should not trigger any events");
     });
 
     module.update('name', function(oldValue) {
@@ -100,7 +105,9 @@ test("update", function() {
         };
     });
 
-
+    module.update('silent', function(val) {
+        return "silent";
+    }, true /* silent flag */);
 });
 
 module("remove");
@@ -109,10 +116,18 @@ test("remove", function() {
     var module = Stapes.create();
     module.set('foo', 'bar');
     module.set('silent', 'silent');
+    module.set({
+        'remove1' : true,
+        'remove2' : true
+    });
+
+    function isKey(key) {
+        return (key === 'foo' || key === 'remove1' || key === 'remove2');
+    }
 
     module.on({
         'change': function( key ){
-            ok(key === 'foo', 'change event with key of attribute');
+            ok(isKey(key), 'change event with key of attribute');
         },
 
         'change:foo': function(key, e){
@@ -120,7 +135,7 @@ test("remove", function() {
         },
 
         'remove': function( key ){
-            ok(key === 'foo', 'remove event with key of attribute');
+            ok(isKey(key), 'remove event with key of attribute');
         },
 
         'remove:foo': function(key, e){
@@ -134,6 +149,8 @@ test("remove", function() {
 
     module.remove('foo');
     module.remove('silent', true); // should not trigger because of silent flag
+    module.remove('  remove1   remove2'); // note the extra spaces to FU the parser :)
+    ok(module.size() === 0, 'all attributes should be removed');
 })
 
 module("iterators");
@@ -186,6 +203,12 @@ test("filter", function() {
         'key1': 'value1',
         'key2': 'value2',
         'key3': 'value3'
+    });
+    var module2 = Stapes.create().set('key', 'value');
+
+    module2.filter(function(value, key) {
+        ok(value === "value", "Value should be value");
+        ok(key === "key", "Key should be the second argument");
     });
 
     var values = [];
