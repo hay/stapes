@@ -357,7 +357,7 @@
             for (var key in attributes) {
                 var value = attributes[key];
 
-                if (_.typeOf(value) === "object") {
+                if (_.typeOf(value) === "object" && !value.id) {
                     value.id = key;
                 }
 
