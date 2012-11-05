@@ -261,7 +261,7 @@
             }
         },
 
-        updateAttribute : function(key, fn) {
+        updateAttribute : function(key, fn, silent) {
             var item = this.get(key);
             var newValue = fn.call(this, _.clone(item), key);
             _.setAttribute.call(this, key, newValue, silent || false);
