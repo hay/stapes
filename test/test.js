@@ -155,7 +155,7 @@ test("remove", function() {
 
 module("iterators");
 
-test("each with a single object", function() {
+test("each and map with a single object", function() {
     var module = Stapes.create();
     module.set({
         'key1': 'value1',
@@ -171,15 +171,35 @@ test("each with a single object", function() {
     });
     deepEqual(values, ['value1', 'value2', 'value3'], "iterates over values");
     deepEqual(keys, ['key1', 'key2', 'key3'], "and keys");
+
+    var newList = module.map(function(value, key) {
+        return value + ':' + key;
+    });
+
+    deepEqual(newList, ['value1:key1', 'value2:key2', 'value3:key3'], "map() should return an array of new items");
 });
 
 test("context of each() is set to current module", function() {
     var module = Stapes.create();
-    module.set('val', true);
-    module.push([1,2,3]);
-    module.each(function(nr) {
-        ok(this === module);
+    var module2 = Stapes.create();
+
+    module.push(1);
+
+    module.each(function() {
+        ok(this === module, "each should have context of module set");
     });
+
+    module.map(function() {
+        ok(this === module, "map should have context of module set");
+    });
+
+    module.each(function() {
+        ok(this === module2, "context of each should be overwritable");
+    }, module2);
+
+    module.map(function() {
+        ok(this === module2, "context of map should be overwritable");
+    }, module2);
 });
 
 test("each with an array", function() {

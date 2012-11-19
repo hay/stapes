@@ -690,6 +690,30 @@
             </code></pre>
         </article>
 
+        <article id="m-map">
+            <h1>map</h1>
+
+            <h2>module.map( function, [context] )</h2>
+
+            <p>Just like <a href="#m-each"><code>each</code></a>, <code>map</code> iterates over
+                all attributes of a module. <code>map</code> returns a new array, where every attribute
+                value of a module has been passed through <code>function</code>.</p>
+
+            <pre><code>
+    module.push([1, 2, 3]);
+
+    var arr = module.map(function(nr) {
+        return nr * 2;
+    });
+
+    console.log(arr); // '[2, 4, 6]'
+            </code></pre>
+
+            <p>By default <code>map</code> gets the module as the value of <code>this</code>, but this
+                can be overwritten with the second argument.</p>
+
+        </article>
+
         <article id="m-push">
             <h1>push</h1>
 
@@ -967,8 +991,9 @@
 
         <h3 id="m-history">History</h3>
         <ul>
-            <li>0.6.1</li>
+            <li>0.7.0</li>
             <ul>
+                <li><small>Feature</small>Added a <a href="#m-map"><code>map</code></a> function to every module.</li>
                 <li><small>Feature</small> <a href="#m-update"><code>update</code></a> now gets the module set as the
                     <code>this</code> context, and gets the key in the callback function</li>
                 <li><small>Feature</small> <a href="#m-update"><code>update</code></a> now has a <code>silent</code> option too.</li>

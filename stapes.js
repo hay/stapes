@@ -17,7 +17,7 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.6.1";
+    var VERSION = "0.7.0-pre";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
@@ -379,6 +379,14 @@
 
         has : function(key) {
             return (typeof _.attr(this._guid)[key] !== "undefined");
+        },
+
+        map : function(fn, ctx) {
+            var mapped = [];
+            this.each(function(value, key) {
+                mapped.push( fn.call(ctx || this, value, key) );
+            }, ctx || this);
+            return mapped;
         },
 
         // Akin to set(), but makes a unique id
