@@ -338,6 +338,8 @@
                 to a <code>self</code> or <code>that</code> variable.</p>
 
             <pre><code>
+    var module = Stapes.create();
+    
     module.on('ready', function() {
         console.log('your module is ready!');
     });
@@ -349,15 +351,35 @@
 
         "walk" : function() {
             console.log('your module is walking!');
+        },
+        
+        "eat" : function( food ) {
+            console.log('your module is eating ' + (this.get('food') || 'nothing'));
         }
     })
-
-    // Set the scope for the event handler to 'this'
-    module.on({
-        "eat" : function( food ) {
+    
+    var feeder = Stapes.create();
+    
+    // Set the scope for the event handler to 'module'
+    feeder.on({
+        "feed" : function( food ) {
             this.set('food', food);
         }
-    }, this);
+    }, module);
+    
+    module.emit('eat')
+    // "your module is eating nothing"
+    
+    feeder.emit('feed', 'cookies');
+    
+    module.emit('eat')
+    // "your module is eating cookies"
+    
+    module.get('food')
+    // "cookies"
+    
+    feeder.get('food')
+    // null
             </code></pre>
 
             <p>The <code>on</code> method on the global <code>Stapes</code>
