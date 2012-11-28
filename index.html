@@ -147,8 +147,8 @@
         }
 
         window.Module = Stapes.create().extend({
-            "show" : function(var) {
-                private = var;
+            "show" : function(val) {
+                private = val;
                 showPrivate();
             }
         });
@@ -176,12 +176,12 @@
         var private;
 
         function showPrivate() {
-            console.log("This is private: " + private);s
+            console.log("This is private: " + private);
         }
 
         return Stapes.create().extend({
-            "show" : function(var) {
-                private = var;
+            "show" : function(val) {
+                private = val;
                 showPrivate();
             }
         });
@@ -262,6 +262,8 @@
             as the first parameter.</p>
 
             <pre><code>
+    var module = Stapes.create();
+    
     module.extend({
         "names" : {
             "woman" : ['claire', 'alice']
@@ -416,7 +418,7 @@
 
             <p>Removes eventhandlers from an object. Giving in both an eventType
                 and a handler will remove that specific handler from a module.
-                Giving only an eventType will remove all handlers binded to
+                Giving only an eventType will remove all handlers bound to
                 that event type.</p>
 
             <p>With no arguments at all <code>off()</code>
