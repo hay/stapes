@@ -147,8 +147,8 @@
         }
 
         window.Module = Stapes.create().extend({
-            "show" : function(var) {
-                private = var;
+            "show" : function(val) {
+                private = val;
                 showPrivate();
             }
         });
@@ -176,12 +176,12 @@
         var private;
 
         function showPrivate() {
-            console.log("This is private: " + private);s
+            console.log("This is private: " + private);
         }
 
         return Stapes.create().extend({
-            "show" : function(var) {
-                private = var;
+            "show" : function(val) {
+                private = val;
                 showPrivate();
             }
         });
@@ -262,6 +262,8 @@
             as the first parameter.</p>
 
             <pre><code>
+    var module = Stapes.create();
+    
     module.extend({
         "names" : {
             "woman" : ['claire', 'alice']
