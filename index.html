@@ -147,8 +147,8 @@
         }
 
         window.Module = Stapes.create().extend({
-            "show" : function(var) {
-                private = var;
+            "show" : function(val) {
+                private = val;
                 showPrivate();
             }
         });
@@ -176,12 +176,12 @@
         var private;
 
         function showPrivate() {
-            console.log("This is private: " + private);s
+            console.log("This is private: " + private);
         }
 
         return Stapes.create().extend({
-            "show" : function(var) {
-                private = var;
+            "show" : function(val) {
+                private = val;
                 showPrivate();
             }
         });
@@ -262,6 +262,8 @@
             as the first parameter.</p>
 
             <pre><code>
+    var module = Stapes.create();
+    
     module.extend({
         "names" : {
             "woman" : ['claire', 'alice']
@@ -336,6 +338,8 @@
                 to a <code>self</code> or <code>that</code> variable.</p>
 
             <pre><code>
+    var module = Stapes.create();
+    
     module.on('ready', function() {
         console.log('your module is ready!');
     });
@@ -347,15 +351,35 @@
 
         "walk" : function() {
             console.log('your module is walking!');
-        }
-    })
-
-    // Set the scope for the event handler to 'this'
-    module.on({
+        },
+        
         "eat" : function( food ) {
+            console.log('your module is eating ' + (this.get('food') || 'nothing'));
+        }
+    });
+    
+    var feedme = Stapes.create();
+    
+    // Set the scope for the event handler to 'module'
+    feedme.on({
+        "feed" : function( food ) {
             this.set('food', food);
         }
-    }, this);
+    }, module);
+    
+    module.emit('eat');
+    // "your module is eating nothing"
+    
+    feedme.emit('feed', 'cookies');
+    
+    module.emit('eat');
+    // "your module is eating cookies"
+    
+    module.get('food');
+    // "cookies"
+    
+    feedme.get('food');
+    // null
             </code></pre>
 
             <p>The <code>on</code> method on the global <code>Stapes</code>
@@ -414,12 +438,12 @@
             <h2>module.off(eventType)</h2>
             <h2>module.off()</h2>
 
-            <p>Removes eventhandlers from an object. Giving in both an eventType
+            <p>Removes event handlers from an object. Giving both an eventType
                 and a handler will remove that specific handler from a module.
-                Giving only an eventType will remove all handlers binded to
+                Giving only an eventType will remove all handlers bound to
                 that event type.</p>
 
-            <p>With no arguments at all <code>off()</code>
+            <p>With no arguments at all, <code>off()</code>
                 will remove <i>all</i> event handlers from a module.</p>
 
             <pre><code>
