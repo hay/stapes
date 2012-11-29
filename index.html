@@ -263,7 +263,7 @@
 
             <pre><code>
     var module = Stapes.create();
-    
+
     module.extend({
         "names" : {
             "woman" : ['claire', 'alice']
@@ -339,7 +339,7 @@
 
             <pre><code>
     var module = Stapes.create();
-    
+
     module.on('ready', function() {
         console.log('your module is ready!');
     });
@@ -352,32 +352,32 @@
         "walk" : function() {
             console.log('your module is walking!');
         },
-        
+
         "eat" : function( food ) {
             console.log('your module is eating ' + (this.get('food') || 'nothing'));
         }
     });
-    
+
     var feedme = Stapes.create();
-    
+
     // Set the scope for the event handler to 'module'
     feedme.on({
         "feed" : function( food ) {
             this.set('food', food);
         }
     }, module);
-    
+
     module.emit('eat');
     // "your module is eating nothing"
-    
+
     feedme.emit('feed', 'cookies');
-    
+
     module.emit('eat');
     // "your module is eating cookies"
-    
+
     module.get('food');
     // "cookies"
-    
+
     feedme.get('food');
     // null
             </code></pre>
@@ -1092,7 +1092,7 @@
         </ul>
 
         <h3 id="m-contributors">Contributors</h3>
-        <p>Thanks to all of you for contributing code, reporting bugs, giving good advice and inspiration!</p>
+        <p>Thanks to all of you for contributing code, docs, reporting bugs, giving good advice and inspiration!</p>
         <ul>
             <li><a href="https://github.com/frenkie">Frank Bosma</a></li>
             <li><a href="https://github.com/adie">Anton Dieterle</a></li>
@@ -1104,6 +1104,7 @@
             <li>Jarrod Overson</li>
             <li><a href="https://github.com/mahonnaise">Jos Hirth (mahonnaise)</a></li>
             <li><a href="https://github.com/Contra">Eric Schoffstall (contra)</a></li>
+            <li><a href="https://github.com/josher19">josher19</a></li>
         </ul>
     </section> <!-- #content -->
 
