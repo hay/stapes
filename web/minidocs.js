@@ -1,18 +1,31 @@
 (function() {
+    /** Set data-tooltip or title (if useTitles is truthy) of element `el` to string `text`. */
+    function setTooltip(el, text, useTitles) {
+        if (useTitles || !el.setAttribute) {
+            el.title = text;
+        } else {
+            if (text) {
+                el.setAttribute('data-tooltip', text);
+            } else {
+                el.removeAttribute('data-tooltip');
+            }
+        }
+    }
     /**
      * Mini documentation using titles on code spans created with rainbowco.de or similiar. 
-     * Args: docs object {functionName:documentation_string,...}, optional domElements collection or selector string.
+     * Args: docs object {functionName:documentation_string,...}, optional domElements collection or selector string, optional boolean useTitles to use titles instead of tooltips.
      * Uses: document.querySelectorAll defined in HTML5. Need a shim for obsolete browsers, or pass in domElements found using other selector such as jQuery sizzle or Zepto.
      */
-    function minidocs(docs, domEls) {
-      if (typeof domEls !== "object") domEls = document.querySelectorAll(domEls || 'code span.function');
+    function minidocs(docs, domEls, useTitles) {
+      if (typeof domEls === "boolean") { useTitles = domEls; domEls = ''; }
+      if (typeof domEls !== "object") domEls = document.querySelectorAll(domEls || 'code span.function,span.method');
       // Could also do 'code span.method'
       var hits = 0, missed = [];
       for (var i = 0, t, len = domEls && domEls.length; i < len; ++i) {
         t = docs[domEls[i].textContent];
         if (null != t) {
-          ++hits;
-          domEls[i].title = t;
+          ++hits;          
+          setTooltip(domEls[i], t, useTitles);
         } else {
           missed.push(domEls[i].textContent);
         }
@@ -26,7 +39,8 @@
         missed: missed,
         toString: asString,
         show: function(str) { return docs[str]; },
-        clear: function(doc,els) { return clearTitles(doc || docs, els || domEls); }
+        redo: minidocs,
+        clear: function(doc,els,titles) { return clearTitles(doc || docs, els || domEls, useTitles || titles); }
       }
     }
     /** Remove duplicates if ra.filter and ra.sort are defined. Args: array ra */
@@ -37,11 +51,12 @@
       return ra;
     }
     /** Erase all titles on for elements in docs. See also: minidocs. Args: object docs, optional domEls collection or selector string */
-    function clearTitles(docs, domEls) {
+    function clearTitles(docs, domEls,useTitles) {
       var empty = {};
       for (var key in docs) empty[key] = "";
-      return minidocs(empty, domEls);
+      return minidocs(empty, domEls,useTitles);
     }
+    minidocs.clear = clearTitles;
     /** Convenience function to display returned results as a String. See: minidocs. */
     function asString() {
       return Math.round(this.perc) + "% = " + this.hits + " hits : " + this.misses + " misses. Need: " + this.missed;
@@ -74,7 +89,8 @@
                 missed: missed,
                 toString: asString,
                 show: function(str) { return docs[str]; },
-                clear: function(doc,items) { return clearTitles(doc || docs, items || els); }
+                redo: addDocs,
+                clear: function(doc,items,titles) { return clearTitles(doc || docs, items || els,titles || useTitles); }
             }
         }; //TODO: combine with dom minidocs using Strategy pattern?
         if (typeof module !== "undefined" && module.exports) {
