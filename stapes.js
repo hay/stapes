@@ -211,6 +211,8 @@
 
             // Is the value different than the oldValue? If not, ignore this call
             if (value === oldValue) {
+                // allows detection when nothing changes
+                this.emit('nochange:' + key, value);
                 return;
             }
 
