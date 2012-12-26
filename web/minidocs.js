@@ -12,7 +12,7 @@
         }
     }
     /**
-     * Mini documentation using titles on code spans created with rainbowco.de or similiar. 
+     * Mini documentation using titles on code spans created with rainbowco.de or similar. 
      * Args: docs object {functionName:documentation_string,...}, optional domElements collection or selector string, optional boolean useTitles to use titles instead of tooltips.
      * Uses: document.querySelectorAll defined in HTML5. Need a shim for obsolete browsers, or pass in domElements found using other selector such as jQuery sizzle or Zepto.
      */

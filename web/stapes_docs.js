@@ -14,7 +14,7 @@ var docs = {
   "off": "Removes event handler(s) from this object. Args: optional string eventType, optional function handler.",
   "on": "Add an event listener triggered by emit. Args: string eventName, function handler, optional context OR object {eventName1: handler1, eventName2: handler2, ...}, optional context.",
   "push": "Sets a value, automatically generates an unique uuid as a key. Args: array or value, optional boolean silent.",
-  "remove": "Deletes an attibute. Opposite of `.set(key)`. Args: key or function, optional boolean silent.",
+  "remove": "Deletes an attribute. Opposite of `.set(key)`. Args: key or function, optional boolean silent.",
   "set": "Sets an attribute of key to value, triggering an event unless `silent` is true. See also: get, emit. Args: string key, value, optional boolean silent.",
   "size": "Returns the number of attributes in a module.",
   "update": "Updates an attribute with a new value, based on the return value of a function. Args: optional key, function."
