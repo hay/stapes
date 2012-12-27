@@ -19,5 +19,5 @@ var docs = {
   "size": "Returns the number of attributes in a module.",
   "update": "Updates an attribute with a new value, based on the return value of a function. Args: optional key, function."
 }
-minidocs(docs).hits || setTimeout( function() { minidocs(docs); }, 500 );
+minidocs(docs).hits || setTimeout( function() { minidocs(docs); }, 1200 );
 if (typeof exports === "object") { exports.minidocs = minidocs, exports.docs = docs }
