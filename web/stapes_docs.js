@@ -1,4 +1,10 @@
-if (typeof require !== "undefined") minidocs = require('./minidocs');
+if (typeof require !== "undefined") { 
+    try { 
+        var minidocs = require('./minidocs'), Stapes = require('../stapes.js'); 
+    } catch(e) { 
+        console.log(e); 
+    } 
+}
 var docs = {
   "Stapes": "A (really) tiny Javascript MVC microframework. See also: Stapes.create",
   "create": "Create a new instance of a Stapes object. See also: mixinEvents, extend, on",
@@ -18,6 +24,25 @@ var docs = {
   "set": "Sets an attribute of key to value, triggering an event unless `silent` is true. See also: get, emit. Args: string key, value, optional boolean silent.",
   "size": "Returns the number of attributes in a module.",
   "update": "Updates an attribute with a new value, based on the return value of a function. Args: optional key, function."
+};
+
+;(function(self,minidocs){
+    // minidocs(docs).hits || setTimeout( function() { minidocs(docs); }, 1200 );
+    if (typeof Rainbow !== "undefined") { 
+        if ("undefined" !== typeof console) console.log("Rainbow.onHighlight"); 
+        var count = 0;
+        Rainbow.onHighlight(function(code, language) { 
+            if ("undefined" !== typeof console) console.log(++count, language, typeof code, code && code.children && code.children.length, typeof code.querySelectorAll); 
+            minidocs(docs, code.querySelectorAll ? code.querySelectorAll('span.function,span.method') : '');
+        }); 
+    } else if ("undefined" !== typeof console) console.log("No Rainbow");
+})(this,minidocs);
+
+if (typeof exports === "object") { 
+    minidocs(docs, Stapes);
+    if (Stapes && Stapes._) minidocs(docs, Stapes._.Module);
+    exports.minidocs = minidocs;
+    exports.docs = docs;
+    exports.Stapes = Stapes;
+    exports.help = minidocs.help;
 }
-minidocs(docs).hits || setTimeout( function() { minidocs(docs); }, 1200 );
-if (typeof exports === "object") { exports.minidocs = minidocs, exports.docs = docs }
