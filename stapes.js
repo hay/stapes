@@ -112,18 +112,6 @@
             }
         },
 
-        // Stapes objects have some extra properties that are set on creation
-        createModule : function( context ) {
-            var instance = _.create( context );
-
-            _.addGuid( instance, true );
-
-            // Mixin events
-            Stapes.mixinEvents( instance );
-
-            return instance;
-        },
-
         createSubclass : function(props, mixinEvents) {
             mixinEvents = mixinEvents || false;
             props = props || {};
@@ -151,10 +139,6 @@
                     _.extend(this.prototype, obj);
                 },
 
-                statics : function(obj) {
-                    this.extend(obj);
-                },
-
                 subclass : function(obj) {
                     obj = obj || {};
                     obj.superclass = this;
@@ -163,8 +147,16 @@
 
                 super : superclass,
             });
-            if (props.methods) _.extend(constructor.prototype, props.methods);
-            if (props.statics) extend(constructor, props.statics);
+
+            // Shortcuts for methods and statics
+            if (props.methods) {
+                constructor.methods(props.methods);
+            }
+
+            if (props.statics) {
+                constructor.extend(props.statics);
+            }
+
             return constructor;
         },
 
@@ -488,12 +480,6 @@
             return Object.keys(_.attributes[this._guid]).length;
         },
 
-        // 'statics' is just a wrapper for extend, it does not extends the
-        // Module's prototype
-        statics : function() {
-            debugger
-        },
-
         update : function(keyOrFn, fn, silent) {
             if (typeof keyOrFn === "string") {
                 _.updateAttribute.call(this, keyOrFn, fn, silent || false);
@@ -512,7 +498,13 @@
 
         // Compatiblity option, this method is deprecated
         "create" : function() {
-            return _.createModule( _.Module.prototype );
+            var instance = _.create( _.Module.prototype );
+            _.addGuid( instance, true );
+
+            // Mixin events
+            Stapes.mixinEvents( instance );
+
+            return instance;
         },
 
         "extend" : function(obj) {
