@@ -135,10 +135,6 @@
                     _.extend(this, obj);
                 },
 
-                methods : function(obj) {
-                    _.extend(this.prototype, obj);
-                },
-
                 subclass : function(obj) {
                     obj = obj || {};
                     obj.superclass = this;
@@ -148,13 +144,11 @@
                 super : superclass,
             });
 
-            // Shortcuts for methods and statics
-            if (props.methods) {
-                constructor.methods(props.methods);
-            }
-
-            if (props.statics) {
-                constructor.extend(props.statics);
+            // Copy all props given in the definition to the prototype
+            for (var key in props) {
+                if (key !== 'constructor') {
+                    constructor.prototype[key] = props[key];
+                }
             }
 
             return constructor;

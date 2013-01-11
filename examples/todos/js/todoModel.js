@@ -1,5 +1,9 @@
 'use strict';
-var TodoModel = Stapes.create().extend({
+var TodoModel = Stapes.subclass({
+	'constructor' : function(todos) {
+		this.set( todos );
+	},
+
 	'addTodo': function(title) {
 		this.push({
 			'completed' : false,
