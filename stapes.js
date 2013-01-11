@@ -23,7 +23,9 @@
     var guid = 1;
 
     // Makes _.create() faster
-    var CachedFunction = function(){};
+    if (!Object.create) {
+        var CachedFunction = function(){};
+    }
 
     // Private attributes and helper functions, stored in an object so they
     // are overwritable by plugins
@@ -101,9 +103,13 @@
             return _.extend({}, obj);
         },
 
-        create : function(obj) {
-            CachedFunction.prototype = obj;
-            return new CachedFunction();
+        create : function(proto) {
+            if (Object.create) {
+                return Object.create(proto);
+            } else {
+                CachedFunction.prototype = obj;
+                return new CachedFunction();
+            }
         },
 
         // Stapes objects have some extra properties that are set on creation
@@ -116,6 +122,50 @@
             Stapes.mixinEvents( instance );
 
             return instance;
+        },
+
+        createSubclass : function(props, mixinEvents) {
+            mixinEvents = mixinEvents || false;
+            props = props || {};
+            var superclass = props.superclass.prototype;
+            // Objects always have a constructor, so we need to be sure this is
+            // a property instead of something from the prototype
+            var realConstructor = props.hasOwnProperty('constructor') ? props.constructor : function(){};
+            var constructor = function() {
+                _.addGuid( this, true );
+                realConstructor.apply(this, arguments);
+            };
+
+            if (mixinEvents) {
+                _.extend(superclass, Events);
+            }
+
+            constructor.prototype = _.create(superclass);
+            constructor.prototype.constructor = constructor;
+            _.extend(constructor, {
+                extend : function(obj) {
+                    _.extend(this, obj);
+                },
+
+                methods : function(obj) {
+                    _.extend(this.prototype, obj);
+                },
+
+                statics : function(obj) {
+                    this.extend(obj);
+                },
+
+                subclass : function(obj) {
+                    obj = obj || {};
+                    obj.superclass = this;
+                    return _.createSubclass(obj);
+                },
+
+                super : superclass,
+            });
+            if (props.methods) _.extend(constructor.prototype, props.methods);
+            if (props.statics) extend(constructor, props.statics);
+            return constructor;
         },
 
         emitEvents : function(type, data, explicitType, explicitGuid) {
@@ -312,9 +362,14 @@
         }
     };
 
-    _.Module = {
+    _.Module = function(){};
+    _.Module.prototype = {
+        // create() is deprecated from 0.8.0
         create : function() {
-            return _.createModule( this );
+            throw new Error(''.concat(
+                'create() on Stapes modules no longer works from 0.8.0. ',
+                'Check the docs.'
+            ));
         },
 
         each : function(fn, ctx) {
@@ -433,6 +488,12 @@
             return Object.keys(_.attributes[this._guid]).length;
         },
 
+        // 'statics' is just a wrapper for extend, it does not extends the
+        // Module's prototype
+        statics : function() {
+            debugger
+        },
+
         update : function(keyOrFn, fn, silent) {
             if (typeof keyOrFn === "string") {
                 _.updateAttribute.call(this, keyOrFn, fn, silent || false);
@@ -449,8 +510,9 @@
     var Stapes = {
         "_" : _, // private helper functions and properties
 
+        // Compatiblity option, this method is deprecated
         "create" : function() {
-            return _.createModule( _.Module );
+            return _.createModule( _.Module.prototype );
         },
 
         "extend" : function(obj) {
@@ -467,6 +529,12 @@
 
         "on" : function() {
             _.addEventHandler.apply(this, arguments);
+        },
+
+        "subclass" : function(obj) {
+            obj = obj || {};
+            obj.superclass = _.Module;
+            return _.createSubclass(obj, true);
         },
 
         "version" : VERSION
