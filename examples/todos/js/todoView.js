@@ -3,8 +3,16 @@ var TodoView = Stapes.subclass({
 	'constructor' : function() {
 		this.bindEventHandlers();
 		this.loadTemplates();
-	},
+	}
+});
 
+// Static methods and properties
+TodoView.extend({
+	ENTER_KEY_KEYCODE : 13
+});
+
+// Prototype methods and properties
+TodoView.proto({
 	'bindEventHandlers' : function() {
 		$('#new-todo').on('keyup', function(e) {
 			var todoVal = $.trim($(e.target).val());
@@ -103,5 +111,3 @@ var TodoView = Stapes.subclass({
 		$("#toggle-all").get(0).checked = (left === 0);
 	}
 });
-
-TodoView.ENTER_KEY_KEYCODE = 13;

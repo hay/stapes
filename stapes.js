@@ -135,6 +135,10 @@
                     _.extend(this, obj);
                 },
 
+                proto : function(obj) {
+                    _.extend(this.prototype, obj);
+                },
+
                 subclass : function(obj) {
                     obj = obj || {};
                     obj.superclass = this;
