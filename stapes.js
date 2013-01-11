@@ -27,6 +27,9 @@
         var CachedFunction = function(){};
     }
 
+    // So we can use slice.call for arguments later on
+    var slice = Array.prototype.slice;
+
     // Private attributes and helper functions, stored in an object so they
     // are overwritable by plugins
     var _ = {
@@ -131,12 +134,12 @@
             constructor.prototype = _.create(superclass);
             constructor.prototype.constructor = constructor;
             _.extend(constructor, {
-                extend : function(obj) {
-                    _.extend(this, obj);
+                extend : function() {
+                    return _.extendThis.apply(this, arguments);
                 },
 
-                proto : function(obj) {
-                    _.extend(this.prototype, obj);
+                proto : function() {
+                    return _.extendThis.apply(this.prototype, arguments);
                 },
 
                 subclass : function(obj) {
@@ -178,12 +181,26 @@
             }
         },
 
-        extend : function(obj, props) {
-            for (var key in props) {
-                obj[key] = props[key];
+        // Extend an object with more objects
+        extend : function() {
+            var args = slice.call(arguments);
+            var object = args.shift();
+
+            for (var i = 0, l = args.length; i < l; i++) {
+                var props = args[i];
+                for (var key in props) {
+                    object[key] = props[key];
+                }
             }
 
-            return obj;
+            return object;
+        },
+
+        // The same as extend, but uses the this value as the scope
+        extendThis : function() {
+            var args = slice.call(arguments);
+            args.unshift(this);
+            return _.extend.apply(this, args);
         },
 
         // from http://stackoverflow.com/a/2117523/152809
@@ -370,13 +387,8 @@
             }
         },
 
-        extend : function(objectOrValues, valuesIfObject) {
-            var object = (valuesIfObject) ? objectOrValues : this;
-            var values = (valuesIfObject) ? valuesIfObject : objectOrValues;
-
-            _.extend(object, values);
-
-            return this;
+        extend : function() {
+            return _.extendThis.apply(this, arguments);
         },
 
         filter : function(fn) {
@@ -505,8 +517,8 @@
             return instance;
         },
 
-        "extend" : function(obj) {
-            return _.extend(_.Module, obj);
+        "extend" : function() {
+            return _.extendThis.apply(_.Moduel, arguments);
         },
 
         "mixinEvents" : function(obj) {
