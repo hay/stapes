@@ -71,7 +71,7 @@
             <li>A powerful yet simple event system using <a href="#m-on"><code>on</code></a> and
             <a href="#m-emit"><code>emit</code></a> methods. Usable on non-Stapes objects as well using
             <a href="#m-mixinEvents">event mixins</a>.</li>
-            <li<a href="http://wiki.ecmascript.org/doku.php?id=harmony:classes">Ecmascript Harmoney-like classes</a>using <a href="#m-subclass"><code>subclass</code></a>.</li>
+            <li><a href="http://wiki.ecmascript.org/doku.php?id=harmony:classes">Ecmascript Harmoney-like classes</a> using <a href="#m-subclass"><code>subclass</code></a>.</li>
             <li>Event-triggering attributes using <a href="#m-get"><code>get</code></a> and <a href="#m-set"><code>set</code></a>.</li>
             <li>Powerful <a href="#m-filter"><code>filter</code></a> and <a href="#m-remove"><code>remove</code></a> methods for attributes.</li>
             <li>Usable in traditional Javascript, as an AMD module (for <a href="http://requirejs.org">Require.js</a>)
@@ -82,15 +82,17 @@
 
         <p><em>But what about templating, persistence, routing, history management, etc?</em></p>
 
-        <p>That's the flexibility of Stapes: you're free to use any library you want. To see how that
-        works in practice, try out the two <a href="#m-examples">todo examples</a>. The first one
-        uses global variables and jQuery, while the 'require' version uses require.js and the
-        <a href="http://zeptojs.com">Zepto</a> library.</p>
+        <p>That's the flexibility of Stapes: you're free to use any library you want.</p>
 
         <p><em>Right, so this is your hobby project. Does this actually work in production?</em></p>
 
         <p>Stapes was written for a complex HTML5 media player in a high-traffic website,
-        and it works nicely there.</p>
+        and it works nicely there, as well as in multiple other projects. Have you used Stapes in your
+        project? <a href="mailto:hay@bykr.org">Let me know</a>, and i'll add you to this site as a showcase.</p>
+
+        <p><em>Where do i report bugs, feature requests, patches?</em></p>
+
+        <p>Please report all of those things on <a href="https://github.com/hay/stapes">Github</a>.</p>
 
         <p><em>Okay, seems promising. Where do i start?</em></p>
 
@@ -143,6 +145,8 @@
 
         return Module;
     })();
+
+    var module = new Module('Emmylou');
         </code></pre>
 
         <h3 id="m-mixinevents-h3">Using event methods with any non-Stapes object or function</h3>
@@ -200,7 +204,7 @@
         <p>Note that the two todo examples are also available from
             <a href="http://addyosmani.github.com/todomvc/labs/">TodoMVC</a>.</p>
 
-        <h3 id="m-general">Creation methods</h3>
+        <h3 id="m-general">API: Creation methods</h3>
         <p>These methods aid in the creation and extension of classes, or
             <em>modules</em>. These terms are used interchangeably in this
             document.</p>
@@ -250,7 +254,7 @@
 
     var BetterModule = Module.subclass({
         sayNameBetter : function() {
-            this.sayName();
+            this.sayName(); // Inherits 'sayName' from 'Module'
             console.log('i say my name better!');
         }
     });
@@ -264,7 +268,7 @@
                 with an empty constructor.</p>
 
             <p>Because <code>subclass</code> set ups the prototype chain correctly
-                the <code>instanceof</code> parameter will work correctly.</p>
+                the <code>instanceof</code> parameter will work as expected.</p>
 
         <pre><code>
     module instanceof BetterModule; // true
@@ -277,7 +281,7 @@
 
         <pre><code>
     var BetterModule = Module.subclass({
-        // Note that this method is the same as the one in Module
+        // Note that this method name is the same as the one in Module
         sayName : function() {
             BetterModule.super.sayName.apply(this, arguments);
             console.log('i say my name better');
@@ -293,7 +297,7 @@
         <article id="m-extend">
             <h1>extend</h1>
 
-            <h2>module.extend([context, ]object)</h2>
+            <h2>module.extend( object[, object...])</h2>
 
             <h2>Stapes.extend( object )</h2>
 
@@ -325,6 +329,20 @@
     Module.extend({
         names : ['claire', 'alice'];
     });
+            </code></pre>
+
+            <p>Both <code>extend</code> and <a href="#m-proto"><code>proto</code></a> accept
+                multiple objects as arguments:</p>
+
+            <pre><code>
+    var module = new (Stapes.subclass());
+
+    var instruments = { guitar : true };
+    var voices = { singing : true };
+
+    module.extend(instruments, voices);
+
+    console.log('guitar' in module, 'singing' in module); // true, true
             </code></pre>
 
             <p id="m-plugins"><code>Stapes.extend()</code> can be used for writing extra methods
@@ -365,7 +383,9 @@
             <p>Adds properties and methods to the prototype of the module.</p>
 
             <p>Note that it's usally easier to directly add methods to the prototype
-                using the <a href="#m-subclass"><code>subclass</code></a> method.</p>
+                using the <a href="#m-subclass"><code>subclass</code></a> method.
+                However,if you want to add methods to the prototype later on,
+                <code>proto</code> might be useful.</p>
 
             <pre><code>
     var Module = Stapes.subclass();
@@ -385,16 +405,31 @@
     };
             </code></pre>
 
+            <p>Both <code>proto</code> and <a href="#m-extend"><code>extend</code></a> accept
+                multiple objects as arguments. This can be very handy for mixins.</p>
+
+            <pre><code>
+    var Module = Stapes.subclass();
+
+    var instruments = { guitar : true };
+    var voices = { singing : true };
+
+    Module.proto(instruments, voices);
+
+    var module = new Module();
+
+    console.log(module.guitar, module.singing); // true, true
+            </code></pre>
         </article>
 
-        <h3 id="m-events">Events</h3>
+        <h3 id="m-events">API: Events</h3>
         <article id="m-on">
             <h1>on</h1>
 
-            <h2>module.on(eventName, handler, context)</h2>
-            <h2>module.on(object, context)</h2>
-            <h2>Stapes.on(object, context)</h2>
-            <h2>Stapes.on(eventName, handler, context)</h2>
+            <h2>module.on(eventName, handler [, context] )</h2>
+            <h2>module.on(object [, context] )</h2>
+            <h2>Stapes.on(object [, context] )</h2>
+            <h2>Stapes.on(eventName, handler [, context] )</h2>
 
             <p>Add an event listener to a Stapes module or <a href="#m-mixinEvents">object
                 with mixed-in events</a>. When an event is
@@ -406,8 +441,9 @@
             <p>As an optional third (when defining a single listener) or second
                 (when defining multipe listeners using an object) parameter you can set what the value of
                 <code>this</code> should be in the scope of the event handler.
-                This is handy to prevent having to temporary save the scope
-                to a <code>self</code> or <code>that</code> variable.</p>
+                This is handy to prevent having to temporarily save the scope
+                to a <code>self</code> or <code>that</code> variable or use the
+                new <code>bind</code> property of EcmaScript 5.</p>
 
             <pre><code>
     module.on('ready', function() {
@@ -636,7 +672,7 @@
 
         </article>
 
-        <h3 id="m-data">Data methods</h3>
+        <h3 id="m-data">API: Data methods</h3>
         <article id="m-each">
             <h1>each</h1>
 
@@ -1037,8 +1073,8 @@
         <h3 id="m-deprecated">Deprecated and removed stuff</h3>
         <article id="m-deprecated-intro">
             <h1>Introduction</h1>
-            <p>These methods, modules and other things are either no longer part of
-                Stapes or have been removed. Don't use these features in new code,
+            <p>These methods, modules and other things are either deprecated
+                or have been removed. Don't use these features in new code,
                 and remove any dependencies on them in your current code, in a future
                 version they might be removed completely.</p>
         </article>
@@ -1061,8 +1097,8 @@
                 don't need to be initialized.</p>
 
             <p>In Stapes 0.7.0 the <code>create</code> method on the <code>Stapes</code>
-                object was deprecated and the <code>create</code> method on new modules
-                now triggers an error. Both methods are to be removed in a future
+                object was deprecated (but still works) and the <code>create</code> method on new modules
+                now triggers an error (and doesn't work). Both methods are to be removed in a future
                 version.</p>
 
             <p>In new code, please use <a href="#m-subclass"><code>subclass</code></a>
@@ -1158,7 +1194,7 @@
             <ul>
                 <li><small>Feature</small> All private methods are now part of the <code>Stapes._</code> which means
                     plugin authors can overwrite and redefine every part of Stapes.</li>
-                <li><small>Bugfix</small> Fixed a bug where calling subclass() on a module wouldn't increase the guid
+                <li><small>Bugfix</small> Fixed a bug where calling create() on a module wouldn't increase the guid
                     (issue <a href="https://github.com/hay/stapes/issues/8">#8</a>). Thanks
                     <a href="https://github.com/wellcaffeinated">@wellcaffeinated</a>!</li>
             </ul>
