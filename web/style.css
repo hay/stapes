@@ -48,6 +48,10 @@ nav li {
     font-size: 15px;
 }
 
+nav li strong {
+    font-weight: normal;
+}
+
 #content {
     padding-left: 240px;
     max-width: 600px;
@@ -80,6 +84,10 @@ article h1 {
     border-bottom: 1px solid #ccc;
     padding-bottom: 5px;
     color: #666;
+}
+
+article h1 strong {
+    color: red;
 }
 
 article h2 {
