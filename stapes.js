@@ -115,8 +115,8 @@
             }
         },
 
-        createSubclass : function(props, mixinEvents, includeEvents) {
-            mixinEvents = mixinEvents || false;
+        createSubclass : function(props, includeEvents) {
+            includeEvents = includeEvents || false;
             props = props || {};
             var superclass = props.superclass.prototype;
             // Objects always have a constructor, so we need to be sure this is
@@ -130,7 +130,7 @@
                 realConstructor.apply(this, arguments);
             };
 
-            if (mixinEvents) {
+            if (includeEvents) {
                 _.extend(superclass, Events);
             }
 
@@ -540,7 +540,7 @@
             classOnly = classOnly || false;
             obj = obj || {};
             obj.superclass = classOnly ? function(){} : _.Module;
-            return _.createSubclass(obj, !classOnly, !classOnly);
+            return _.createSubclass(obj, !classOnly);
         },
 
         "version" : VERSION
