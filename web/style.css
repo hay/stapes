@@ -31,6 +31,12 @@ p {
     line-height: 24px;
 }
 
+p.warning {
+    border: 1px solid #666;
+    background: #f99;
+    padding: 10px;
+}
+
 nav {
     position: fixed;
     top: 0;
@@ -46,6 +52,10 @@ nav {
 nav li {
     padding: 1px 0;
     font-size: 15px;
+}
+
+nav li strong {
+    font-weight: normal;
 }
 
 #content {
@@ -80,6 +90,10 @@ article h1 {
     border-bottom: 1px solid #ccc;
     padding-bottom: 5px;
     color: #666;
+}
+
+article h1 strong {
+    color: red;
 }
 
 article h2 {

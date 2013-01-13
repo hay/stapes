@@ -1,8 +1,19 @@
 'use strict';
 define(
-['stapes', 'todoModel', 'todoView', 'todoStore'],
-function(Stapes, TodoModel, TodoView, TodoStore) {
-	return Stapes.create().extend({
+['stapes', 'todoView', 'todoStore', 'todoModel'],
+function(Stapes, TodoView, TodoStore, TodoModel) {
+	return Stapes.subclass({
+		'constructor' : function() {
+			this.view = new TodoView();
+			this.store = new TodoStore();
+			this.model = new TodoModel( this.store.load() );
+
+			this.bindEventHandlers();
+
+			// Initial state from the URL
+			this.set('state', this.view.getState());
+		},
+
 		'bindEventHandlers': function() {
 			this.on({
 				'change:state': function(state) {
@@ -28,10 +39,6 @@ function(Stapes, TodoModel, TodoView, TodoStore) {
 
 				'edittodo': function(id) {
 					this.view.makeEditable(id);
-				},
-
-				'ready': function() {
-					this.model.set( this.store.load() );
 				},
 
 				'statechange': function(state) {
@@ -84,21 +91,6 @@ function(Stapes, TodoModel, TodoView, TodoStore) {
 			} else {
 				this.view.hide();
 			}
-		},
-
-		'init': function() {
-			this.model = TodoModel;
-			this.view = TodoView;
-			this.store = TodoStore;
-
-			this.bindEventHandlers();
-
-			this.view.init();
-			this.store.init();
-
-			// Initial state from the URL
-			this.set('state', this.view.getState());
-
 		}
 	});
 });

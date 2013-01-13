@@ -1,11 +1,10 @@
-require(
-    {
-        paths : {
-            "stapes" : "../../../stapes"
-        }
+require.config({
+    paths : {
+        "stapes" : "../../../stapes"
     },
-    ["todoController"],
-    function(todoController) {
-        todoController.init();
-    }
-);
+    urlArgs : "cachebust=" + Math.random()
+});
+
+require(["todoController"], function(TodoController) {
+    new TodoController();
+});

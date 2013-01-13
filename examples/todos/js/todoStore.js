@@ -1,6 +1,6 @@
 'use strict';
-var TodoStore = Stapes.create().extend({
-	'init': function() {
+var TodoStore = Stapes.subclass({
+	'constructor' : function() {
 		if (!'localStorage' in window) {
 			alert("Saving is not supported in your browser :(")
 		}
@@ -9,12 +9,10 @@ var TodoStore = Stapes.create().extend({
 	'load': function() {
 		var result = window.localStorage['todos-stapes'];
 
-		if (result) {
-			return JSON.parse(result);
-		}
+		return result ? JSON.parse(result) : {};
 	},
 
 	'save': function(data) {
-		localStorage['todos-stapes'] = JSON.stringify( data );
+		window.localStorage['todos-stapes'] = JSON.stringify( data );
 	}
 });

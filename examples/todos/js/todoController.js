@@ -1,5 +1,16 @@
 'use strict';
-var TodoController = Stapes.create().extend({
+var TodoController = Stapes.subclass({
+	'constructor' : function() {
+		this.view = new TodoView();
+		this.store = new TodoStore();
+		this.model = new TodoModel( this.store.load() );
+
+		this.bindEventHandlers();
+
+		// Initial state from the URL
+		this.set('state', this.view.getState());
+	},
+
 	'bindEventHandlers': function() {
 		this.on({
 			'change:state': function(state) {
@@ -25,10 +36,6 @@ var TodoController = Stapes.create().extend({
 
 			'edittodo': function(id) {
 				this.view.makeEditable(id);
-			},
-
-			'ready': function() {
-				this.model.set( this.store.load() );
 			},
 
 			'statechange': function(state) {
@@ -81,20 +88,5 @@ var TodoController = Stapes.create().extend({
 		} else {
 			this.view.hide();
 		}
-	},
-
-	'init': function() {
-		this.model = TodoModel;
-		this.view = TodoView;
-		this.store = TodoStore;
-
-		this.bindEventHandlers();
-
-		this.view.init();
-		this.store.init();
-
-		// Initial state from the URL
-		this.set('state', this.view.getState());
-
 	}
 });
