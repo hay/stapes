@@ -31,6 +31,12 @@ p {
     line-height: 24px;
 }
 
+p.warning {
+    border: 1px solid #666;
+    background: #f99;
+    padding: 10px;
+}
+
 nav {
     position: fixed;
     top: 0;

@@ -214,10 +214,12 @@
 
             <h2>Module.subclass( [object] )</h2>
 
-            <h2>Stapes.subclass( [object] )</h2>
+            <h2>Stapes.subclass( [object, classOnly] )</h2>
 
             <p>Create a new Stapes class that you can instantiate later on with
                 <code>new</code>.</p>
+
+            <p class="warning">Note that until Stapes 0.6.0 the preferred way of creating new modules was by using <code>Stapes.create</code>. This has been deprecated by <code>subclass</code> since 0.7.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
 
             <p>You can add a <code>constructor</code> (the function that is run when you
                 instantiate the class) property to the object. All other properties
@@ -290,6 +292,25 @@
 
     var module = new BetterModule();
     module.sayName(); // 'i say my name! i say my name better!'
+        </code></pre>
+
+            <p>The optional <code>classOnly</code> flag can be set to true to make
+                a class without any <a href="#m-events">event</a> or
+                <a href="#m-data">data</a> methods. You will get all of the
+                <a href="#m-general">creation</a> methods, so you can still subclass
+                and extend your class. Use this flag to use Stapes as a simple
+                class creation library.</p>
+
+
+        <pre><code>
+    var Class = Stapes.subclass({
+        constructor : function(name) {
+            this.name = name;
+        }
+    }, true /* <-- 'classOnly' flag */);
+
+    'subclass' in Class; // true
+    'get' in Class; // false
         </code></pre>
 
         </article>
@@ -1087,6 +1108,8 @@
 
             <p>Create a new instance of a Stapes object.</p>
 
+            <p class="warning">This method has been deprecated and partially removed since 0.7.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
+
             <p>Always returns <code>this</code>, so you can easily chain
             <code>create</code> with <code>extend</code>.</p>
 
@@ -1165,7 +1188,7 @@
             <ul>
                 <li><small>Feature</small> Completely revised the creation of new modules with
                     <a href="#m-subclass"><code>subclass</code></a>. The old <a href="m-create"><code>create</code></a>
-                    is still available for backwards compatibility.</li>
+                    is still available for backwards compatibility. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read here</a> why i deprecated <code>create</code>.</li>
                 <li><small>Feature</small> Added a <a href="#m-map"><code>map</code></a> function to every module.</li>
                 <li><small>Feature</small> <a href="#m-update"><code>update</code></a> now gets the module set as the
                     <code>this</code> context, and gets the key in the callback function.</li>
