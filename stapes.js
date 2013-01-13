@@ -332,7 +332,15 @@
 
         updateAttribute : function(key, fn, silent) {
             var item = this.get(key);
-            var newValue = fn.call(this, _.clone(item), key);
+
+            // In previous versions of Stapes we didn't have the check for object,
+            // but still this worked. In 0.7.0 it suddenly doesn't work anymore and
+            // we need the check. Why? I have no clue.
+            if (_.typeOf(item) === 'object') {
+                item = _.clone(item);
+            }
+
+            var newValue = fn.call(this, item, key);
             _.setAttribute.call(this, key, newValue, silent || false);
         }
     };
