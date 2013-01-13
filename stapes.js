@@ -126,6 +126,11 @@
             var realConstructor = props.hasOwnProperty('constructor') ? props.constructor : function(){};
 
             function constructor() {
+                // Be kind to people forgetting new
+                if (!(this instanceof constructor)) {
+                    throw new Error("Please use 'new' when initializing Stapes classes");
+                }
+
                 if (includeEvents) {
                     _.addGuid( this, true );
                 }
