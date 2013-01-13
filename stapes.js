@@ -116,19 +116,22 @@
         },
 
         createSubclass : function(props, includeEvents) {
-            includeEvents = includeEvents || false;
             props = props || {};
+            includeEvents = includeEvents || false;
+
             var superclass = props.superclass.prototype;
+
             // Objects always have a constructor, so we need to be sure this is
             // a property instead of something from the prototype
             var realConstructor = props.hasOwnProperty('constructor') ? props.constructor : function(){};
-            var constructor = function() {
+
+            function constructor() {
                 if (includeEvents) {
                     _.addGuid( this, true );
                 }
 
                 realConstructor.apply(this, arguments);
-            };
+            }
 
             if (includeEvents) {
                 _.extend(superclass, Events);
@@ -136,6 +139,7 @@
 
             constructor.prototype = _.create(superclass);
             constructor.prototype.constructor = constructor;
+
             _.extend(constructor, {
                 extend : function() {
                     return _.extendThis.apply(this, arguments);
