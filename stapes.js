@@ -115,7 +115,7 @@
             }
         },
 
-        createSubclass : function(props, mixinEvents) {
+        createSubclass : function(props, mixinEvents, includeEvents) {
             mixinEvents = mixinEvents || false;
             props = props || {};
             var superclass = props.superclass.prototype;
@@ -123,7 +123,10 @@
             // a property instead of something from the prototype
             var realConstructor = props.hasOwnProperty('constructor') ? props.constructor : function(){};
             var constructor = function() {
-                _.addGuid( this, true );
+                if (includeEvents) {
+                    _.addGuid( this, true );
+                }
+
                 realConstructor.apply(this, arguments);
             };
 
@@ -153,7 +156,7 @@
 
             // Copy all props given in the definition to the prototype
             for (var key in props) {
-                if (key !== 'constructor') {
+                if (key !== 'constructor' && key !== 'superclass') {
                     constructor.prototype[key] = props[key];
                 }
             }
@@ -533,10 +536,11 @@
             _.addEventHandler.apply(this, arguments);
         },
 
-        "subclass" : function(obj) {
+        "subclass" : function(obj, classOnly) {
+            classOnly = classOnly || false;
             obj = obj || {};
-            obj.superclass = _.Module;
-            return _.createSubclass(obj, true);
+            obj.superclass = classOnly ? function(){} : _.Module;
+            return _.createSubclass(obj, !classOnly, !classOnly);
         },
 
         "version" : VERSION
