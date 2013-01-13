@@ -1,6 +1,6 @@
 (function() {
-    var SCREEN_WIDTH = $(window).width(),
-        SCREEN_HEIGHT;
+    var SCREEN_WIDTH = $(window).width();
+    var SCREEN_HEIGHT;
 
     function rand(min, max) {
         return Math.floor(Math.random() * (max - min)) + min;
@@ -14,17 +14,8 @@
         return !!navigator.userAgent.match(/(iPad|iPhone|iPod)/i);
     }
 
-    var Sound = Stapes.create().extend({
-        "sprites" : [
-            [0, 0.5],
-            [1, 1.5],
-            [2, 2.5],
-            [3, 3.5]
-        ],
-
-        "el" : null,
-
-        "init" : function() {
+    var Sound = Stapes.subclass({
+        constructor : function() {
             if (!("Audio" in window)) return;
 
             $("body").append(''.concat(
@@ -37,6 +28,13 @@
             this.el = $("#sound").get(0);
         },
 
+        "sprites" : [
+            [0, 0.5],
+            [1, 1.5],
+            [2, 2.5],
+            [3, 3.5]
+        ],
+
         "play" : function(index) {
             // Sigh.. iPhone doesn't work
             if (isiOS()) return;
@@ -44,8 +42,8 @@
             // And IE < 9 too
             if (!("Audio" in window)) return;
 
-            var data = this.sprites[index],
-                self = this;
+            var data = this.sprites[index];
+            var self = this;
 
             this.el.currentTime = data[0];
             this.el.play();
@@ -62,7 +60,18 @@
         }
     });
 
-    var Ball = Stapes.create().extend({
+    var Ball = Stapes.subclass({
+        constructor : function() {
+            this.set({
+                "direction" : rand(35, 65),
+                "x" : rand(50, 900),
+                "y" : 1,
+                "width" : 20,
+                "height" : 20,
+                "speed" : 15,
+            });
+        },
+
         "getSpeedDirection" : function() {
             var d = this.get('direction');
 
@@ -134,17 +143,6 @@
             });
         },
 
-        "reset" : function() {
-            this.set({
-                "direction" : rand(35, 65),
-                "x" : rand(50, 900),
-                "y" : 1,
-                "width" : 20,
-                "height" : 20,
-                "speed" : 15,
-            });
-        },
-
         "reverseDirection" : function() {
             this.update('direction', function(d) {
                 d = d - 50;
@@ -154,7 +152,7 @@
         }
     });
 
-    var Block = Stapes.create().extend({
+    var Block = Stapes.subclass({
         "isHit" : function(obj) {
             var a = (obj.getAll) ? (obj.getAll()) : obj,
                 b = this.getAll();
@@ -177,24 +175,21 @@
         }
     });
 
-    var Blocks = Stapes.create().extend({
-        "blockWidth" : 60,
-        "blockHeight" : 20,
-
+    var Blocks = Stapes.subclass({
         "addBlock" : function(x, y) {
-            var b = Block.create(),
-                self = this;
+            var block = new Block();
+            var self = this;
 
-            b.set({
+            block.set({
                 "x" : Math.round(x),
                 "y" : Math.round(y),
                 "color" : "black",
-                "width" : this.blockWidth,
-                "height" : this.blockHeight
+                "width" : Blocks.blockWidth,
+                "height" : Blocks.blockHeight
             });
 
-            this.push(b);
-            b.render();
+            this.push(block);
+            block.render();
         },
 
         "isHit" : function(obj) {
@@ -204,17 +199,39 @@
         }
     });
 
-    var Timer = Stapes.create().extend({
-        "init" : function() {
-            var self = this;
+    Blocks.extend({
+        "blockWidth" : 60,
+        "blockHeight" : 20
+    })
 
+    var Timer = Stapes.subclass({
+        "constructor" : function(interval) {
+            this.interval = interval;
+        },
+
+        start : function() {
             setInterval(function() {
-                Timer.emit('tick');
-            }, this.get('interval'));
+                this.emit('tick');
+            }.bind(this), this.interval);
         }
     });
 
-    var Bounce = Stapes.create().extend({
+    var Bounce = Stapes.subclass({
+        constructor : function() {
+            this.blocks = new Blocks();
+            this.timer = new Timer( 1000 / 60 );
+            this.ball = new Ball();
+            this.sound = new Sound();
+
+            this.bindEventHandlers();
+            this.timer.start();
+
+            $(this.el).append(''.concat(
+                '<pre style="position:fixed;top:0;left:0;width:300px;height:300px;">',
+                '</pre>'
+            ));
+        },
+
         "el" : $("body").get(0),
 
         "bindEventHandlers" : function() {
@@ -229,7 +246,7 @@
                         y = e.pageY - $(self.el).offset().top - Blocks.blockHeight / 2;
 
                     self.blocks.addBlock(x, y);
-                    Sound.play(2);
+                    self.sound.play(2);
                 }
             });
 
@@ -239,15 +256,15 @@
 
             this.timer.on('tick', function() {
                 if (this.ball.isOutOfBounds()) {
-
                     var x = this.ball.get('x');
+
                     if (x < 0) {
                         this.ball.set('x', SCREEN_WIDTH - 30);
                     } else if (x > SCREEN_WIDTH) {
                         this.ball.set('x', 20);
                     } else {
-                        Sound.play(0);
-                        this.ball.reverseDirection( 20 );
+                        this.sound.play(0);
+                        this.ball.reverseDirection();
                     }
                 }
 
@@ -256,33 +273,14 @@
                 if (hittedBlock) {
                     hittedBlock.set('color', 'green');
                     hittedBlock.render();
-                    Sound.play(1);
+                    this.sound.play(1);
                     this.ball.reverseDirection();
                 }
 
                 this.ball.move();
             }, this);
-        },
-
-        "init" : function() {
-            this.blocks = Blocks;
-            this.timer = Timer;
-            this.ball = Ball;
-
-            Timer.set('interval', 1000 / 60);
-
-            this.ball.reset();
-
-            this.bindEventHandlers();
-            Sound.init();
-            this.timer.init();
-
-            $(this.el).append(''.concat(
-                '<pre style="position:fixed;top:0;left:0;width:300px;height:300px;">',
-                '</pre>'
-            ));
         }
     });
 
-    Bounce.init();
+    window.bounce = new Bounce();
 })();
