@@ -509,7 +509,14 @@
         },
 
         size : function() {
-            return Object.keys(_.attributes[this._guid]).length;
+            var size = 0;
+            var attr = _.attr(this._guid);
+
+            for (var key in attr) {
+                size++;
+            }
+
+            return size;
         },
 
         update : function(keyOrFn, fn, silent) {
