@@ -9,7 +9,7 @@ if (!Object.keys) {
         }
 
         return arr;
-    }
+    };
 }
 
 module("set");
@@ -81,21 +81,33 @@ test("update", function() {
         "vocal" : true,
         "guitar" : true
     });
+    module.set('silent', true);
 
     module.on('change:name', function(value) {
         ok(value === "Emmylou", "update triggers change namespaced event");
+    });
+
+    module.on('change:silent', function() {
+        ok(false, "silent flag should not trigger any events");
     });
 
     module.update('name', function(oldValue) {
         return "Emmylou";
     });
 
-    module.update('instruments', function(oldValue) {
+    module.update('instruments', function(oldValue, key) {
+        ok(this === module, "this should refer to the module being updated");
+        ok(key === "instruments", "second argument of update should be original key");
+
         return {
             "vocal" : true,
             "guitar" : true
         };
     });
+
+    module.update('silent', function(val) {
+        return "silent";
+    }, true /* silent flag */);
 });
 
 module("remove");
@@ -104,10 +116,18 @@ test("remove", function() {
     var module = Stapes.create();
     module.set('foo', 'bar');
     module.set('silent', 'silent');
+    module.set({
+        'remove1' : true,
+        'remove2' : true
+    });
+
+    function isKey(key) {
+        return (key === 'foo' || key === 'remove1' || key === 'remove2');
+    }
 
     module.on({
         'change': function( key ){
-            ok(key === 'foo', 'change event with key of attribute');
+            ok(isKey(key), 'change event with key of attribute');
         },
 
         'change:foo': function(key, e){
@@ -115,7 +135,7 @@ test("remove", function() {
         },
 
         'remove': function( key ){
-            ok(key === 'foo', 'remove event with key of attribute');
+            ok(isKey(key), 'remove event with key of attribute');
         },
 
         'remove:foo': function(key, e){
@@ -129,11 +149,13 @@ test("remove", function() {
 
     module.remove('foo');
     module.remove('silent', true); // should not trigger because of silent flag
+    module.remove('  remove1   remove2'); // note the extra spaces to FU the parser :)
+    ok(module.size() === 0, 'all attributes should be removed');
 })
 
 module("iterators");
 
-test("each with a single object", function() {
+test("each and map with a single object", function() {
     var module = Stapes.create();
     module.set({
         'key1': 'value1',
@@ -149,15 +171,35 @@ test("each with a single object", function() {
     });
     deepEqual(values, ['value1', 'value2', 'value3'], "iterates over values");
     deepEqual(keys, ['key1', 'key2', 'key3'], "and keys");
+
+    var newList = module.map(function(value, key) {
+        return value + ':' + key;
+    });
+
+    deepEqual(newList, ['value1:key1', 'value2:key2', 'value3:key3'], "map() should return an array of new items");
 });
 
 test("context of each() is set to current module", function() {
     var module = Stapes.create();
-    module.set('val', true);
-    module.push([1,2,3]);
-    module.each(function(nr) {
-        ok(this === module);
+    var module2 = Stapes.create();
+
+    module.push(1);
+
+    module.each(function() {
+        ok(this === module, "each should have context of module set");
     });
+
+    module.map(function() {
+        ok(this === module, "map should have context of module set");
+    });
+
+    module.each(function() {
+        ok(this === module2, "context of each should be overwritable");
+    }, module2);
+
+    module.map(function() {
+        ok(this === module2, "context of map should be overwritable");
+    }, module2);
 });
 
 test("each with an array", function() {
@@ -181,6 +223,12 @@ test("filter", function() {
         'key1': 'value1',
         'key2': 'value2',
         'key3': 'value3'
+    });
+    var module2 = Stapes.create().set('key', 'value');
+
+    module2.filter(function(value, key) {
+        ok(value === "value", "Value should be value");
+        ok(key === "key", "Key should be the second argument");
     });
 
     var values = [];
@@ -265,13 +313,6 @@ test("Stapes.mixinEvents", function() {
     });
 
     g.emit('foo');
-});
-
-test("guid", function() {
-    var module1 = Stapes.create();
-    var module2 = module1.create();
-
-    ok(module2._guid === (module1._guid + 1), "A new module should increase its guid by 1");
 });
 
 test("event scope", function() {

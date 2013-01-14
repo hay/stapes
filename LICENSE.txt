@@ -1,4 +1,4 @@
-Copyright 2012 Hay Kranen
+Copyright 2012, 2013 Hay Kranen < hay@bykr.org >
 All rights reserved.
 
 Permission is hereby granted, free of charge, to any person

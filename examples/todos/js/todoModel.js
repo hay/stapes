@@ -1,5 +1,9 @@
 'use strict';
-var TodoModel = Stapes.create().extend({
+var TodoModel = Stapes.subclass({
+	'constructor' : function(todos) {
+		this.set( todos );
+	},
+
 	'addTodo': function(title) {
 		this.push({
 			'completed' : false,
@@ -16,7 +20,14 @@ var TodoModel = Stapes.create().extend({
 	// Returns items on the basis of the current state
 	'getItemsByState' : function(state) {
 		state = state || "all"; // default
-		return this.itemStates[ state ].call(this);
+
+		if (state === 'all') {
+			return this.getAllAsArray();
+		} else if (state === 'active') {
+			return this.getLeft();
+		} else if (state === 'complted') {
+			return this.getComplete();
+		}
 	},
 
 	'getComplete': function() {
@@ -29,19 +40,5 @@ var TodoModel = Stapes.create().extend({
 		return this.filter(function(item) {
 			return item.completed === false;
 		});
-	},
-
-	'itemStates': {
-		'all' : function() {
-			return this.getAllAsArray();
-		},
-
-		'active': function() {
-			return this.getLeft();
-		},
-
-		'completed': function() {
-			return this.getComplete();
-	    }
 	}
 });

@@ -1,6 +1,10 @@
 'use strict';
 define(['stapes'], function(Stapes) {
-	return Stapes.create().extend({
+	return Stapes.subclass({
+		'constructor' : function(todos) {
+			this.set( todos );
+		},
+
 		'addTodo': function(title) {
 			this.push({
 				'completed' : false,
@@ -17,7 +21,14 @@ define(['stapes'], function(Stapes) {
 		// Returns items on the basis of the current state
 		'getItemsByState' : function(state) {
 			state = state || "all"; // default
-			return this.itemStates[ state ].call(this);
+
+			if (state === 'all') {
+				return this.getAllAsArray();
+			} else if (state === 'active') {
+				return this.getLeft();
+			} else if (state === 'complted') {
+				return this.getComplete();
+			}
 		},
 
 		'getComplete': function() {
@@ -30,20 +41,6 @@ define(['stapes'], function(Stapes) {
 			return this.filter(function(item) {
 				return item.completed === false;
 			});
-		},
-
-		'itemStates': {
-			'all' : function() {
-				return this.getAllAsArray();
-			},
-
-			'active': function() {
-				return this.getLeft();
-			},
-
-			'completed': function() {
-				return this.getComplete();
-		    }
 		}
 	});
 });
