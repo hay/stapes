@@ -1,3 +1,13 @@
+// .bind shim for IE8
+if (!Function.prototype.bind) {
+    Function.prototype.bind = function(context) {
+        var self = this;
+        return function() {
+            return self.apply(context, arguments);
+        };
+    };
+}
+
 (function() {
     var SCREEN_WIDTH = $(window).width();
     var SCREEN_HEIGHT;

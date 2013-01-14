@@ -1,4 +1,15 @@
 'use strict';
+
+// .bind shim for IE8
+if (!Function.prototype.bind) {
+    Function.prototype.bind = function(context) {
+        var self = this;
+        return function() {
+            return self.apply(context, arguments);
+        };
+    };
+}
+
 var TodoController = Stapes.subclass({
 	'constructor' : function() {
 		this.view = new TodoView();
