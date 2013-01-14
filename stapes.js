@@ -17,7 +17,7 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.7.0-pre";
+    var VERSION = "0.7.0";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
@@ -110,7 +110,7 @@
             if (Object.create) {
                 return Object.create(proto);
             } else {
-                CachedFunction.prototype = obj;
+                CachedFunction.prototype = proto;
                 return new CachedFunction();
             }
         },
@@ -150,6 +150,10 @@
                     return _.extendThis.apply(this, arguments);
                 },
 
+                // We can't call this 'super' because that's a reserved keyword
+                // and fails in IE8
+                'parent' : superclass,
+
                 proto : function() {
                     return _.extendThis.apply(this.prototype, arguments);
                 },
@@ -158,9 +162,7 @@
                     obj = obj || {};
                     obj.superclass = this;
                     return _.createSubclass(obj);
-                },
-
-                super : superclass,
+                }
             });
 
             // Copy all props given in the definition to the prototype
