@@ -31,10 +31,17 @@ p {
     line-height: 24px;
 }
 
-p.warning {
+p.warning, p.info {
     border: 1px solid #666;
-    background: #f99;
     padding: 10px;
+}
+
+p.warning {
+    background: #f99;
+}
+
+p.info {
+    background: #ccf;
 }
 
 nav {

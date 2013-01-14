@@ -31,11 +31,11 @@
         <h3 id="m-downloads">Downloads</h3>
         <ul>
             <li><a href="stapes.min.js">
-                Download production version 0.6 (minified)</a>
+                Download production version 0.7 (minified)</a>
             </li>
 
-            <li><a href="https://github.com/hay/stapes/zipball/v0.6">
-                Download development version 0.6 (full source and annotated examples)</a>
+            <li><a href="https://github.com/hay/stapes/zipball/v0.7">
+                Download development version 0.7 (full source and annotated examples)</a>
             </li>
 
             <li><a href="http://github.com/hay/stapes">Fork it and report bugs on Github</a>
@@ -71,7 +71,7 @@
             <li>A powerful yet simple event system using <a href="#m-on"><code>on</code></a> and
             <a href="#m-emit"><code>emit</code></a> methods. Usable on non-Stapes objects as well using
             <a href="#m-mixinEvents">event mixins</a>.</li>
-            <li><a href="http://wiki.ecmascript.org/doku.php?id=harmony:classes">Ecmascript Harmoney-like classes</a> using <a href="#m-subclass"><code>subclass</code></a>.</li>
+            <li><a href="http://wiki.ecmascript.org/doku.php?id=harmony:classes">Ecmascript Harmony-like classes</a> using <a href="#m-subclass"><code>subclass</code></a>.</li>
             <li>Event-triggering attributes using <a href="#m-get"><code>get</code></a> and <a href="#m-set"><code>set</code></a>.</li>
             <li>Powerful <a href="#m-filter"><code>filter</code></a> and <a href="#m-remove"><code>remove</code></a> methods for attributes.</li>
             <li>Usable in traditional Javascript, as an AMD module (for <a href="http://requirejs.org">Require.js</a>)
@@ -94,13 +94,20 @@
 
         <p>Please report all of those things on <a href="https://github.com/hay/stapes">Github</a>.</p>
 
+        <p><em>Does this work in all browsers?</em></p>
+
+        <p>Stapes should work on all current (mobile) browsers, as well as on
+            older browsers like Internet Explorer 8. If you come accross any
+            browser-specific bugs, please <a href="http://github.com/hay/stapes">report them</a>
+            on Github.</p>
+
         <p><em>Okay, seems promising. Where do i start?</em></p>
 
         <p>Read on...</p>
 
         <h3 id="m-intro">Introduction</h3>
 
-        <p><b>If you're new to writing MVC apps you probably want to read this
+        <p class="info"><b>If you're new to writing MVC apps you probably want to read this
         <a href="http://www.haykranen.nl/2012/07/19/learn-mvc-create-a-javascript-todo-list-using-stapes-js-in-less-than-100-lines-code/">
             beginner's tutorial</a>, and write a todo app in less than 100 lines of code using Stapes</b>.</p>
 
@@ -277,15 +284,18 @@
     module instanceof Module; // true
         </code></pre>
 
-            <p>All modules automatically get a <code>super</code> property that links
+            <p>All modules automatically get a <code>parent</code> property that links
                 back to the prototype of the parent. You can use this to override a
-                method in a new class, but still call the method of the parent class.</p>
+                method in a new class, but still call the method of the parent class, like
+                the <code>super</code> method that is available in lots of languages.
+                Unfortunately <code>super</code> is a reserved keyword in Javascript, so that's
+                not usable in Stapes.</p>
 
         <pre><code>
     var BetterModule = Module.subclass({
         // Note that this method name is the same as the one in Module
         sayName : function() {
-            BetterModule.super.sayName.apply(this, arguments);
+            BetterModule.parent.sayName.apply(this, arguments);
             console.log('i say my name better');
         }
     });
@@ -364,6 +374,28 @@
     module.extend(instruments, voices);
 
     console.log('guitar' in module, 'singing' in module); // true, true
+            </code></pre>
+
+            <p><code>extend</code> is also useful for stuff like configuration
+                properties.</p>
+
+            <pre><code>
+    var Module = new Stapes.subclass({
+        constructor : function(props) {
+            this.extend( props );
+        },
+
+        sayInfo : function() {
+            console.log(this.name + ' plays ' + this.instrument);
+        }
+    });
+
+    var module = new Module({
+        'name' : 'Johnny',
+        'instrument' : 'guitar'
+    });
+
+    module.sayInfo();
             </code></pre>
 
             <p id="m-plugins"><code>Stapes.extend()</code> can be used for writing extra methods
@@ -1149,7 +1181,16 @@
             <p>In new code, please use <a href="#m-subclass"><code>subclass</code></a>
                 instead of <code>create</code>.</p>
 
-            <p>Calling <code>create</code> on an exisiting module can be used to
+            <p>If you like the old pattern of creating classes with <code>create</code> and
+                <code>extend</code> i recommend you use a pattern like this:</p>
+
+            <pre><code>
+    var Car = (new Stapes.subclass()).extend({
+        type : 'normal car'
+    });
+            </code></pre>
+
+            <p>In releases of Stapes before 0.7.0 calling <code>create</code> on an exisiting module could be used to
                 create child modules.</p>
 
             <pre><code>
