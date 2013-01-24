@@ -25,7 +25,7 @@ var TodoModel = Stapes.subclass({
 			return this.getAllAsArray();
 		} else if (state === 'active') {
 			return this.getLeft();
-		} else if (state === 'complted') {
+		} else if (state === 'completed') {
 			return this.getComplete();
 		}
 	},
