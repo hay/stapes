@@ -384,10 +384,12 @@
 
         off : function() {
             _.removeEventHandler.apply(this, arguments);
+            return this;
         },
 
         on : function() {
             _.addEventHandler.apply(this, arguments);
+            return this;
         }
     };
 
