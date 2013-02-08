@@ -17,13 +17,18 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.7.0-pre";
+    var VERSION = "0.7.0";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
 
     // Makes _.create() faster
-    var CachedFunction = function(){};
+    if (!Object.create) {
+        var CachedFunction = function(){};
+    }
+
+    // So we can use slice.call for arguments later on
+    var slice = Array.prototype.slice;
 
     // Private attributes and helper functions, stored in an object so they
     // are overwritable by plugins
@@ -101,21 +106,73 @@
             return _.extend({}, obj);
         },
 
-        create : function(obj) {
-            CachedFunction.prototype = obj;
-            return new CachedFunction();
+        create : function(proto) {
+            if (Object.create) {
+                return Object.create(proto);
+            } else {
+                CachedFunction.prototype = proto;
+                return new CachedFunction();
+            }
         },
 
-        // Stapes objects have some extra properties that are set on creation
-        createModule : function( context ) {
-            var instance = _.create( context );
+        createSubclass : function(props, includeEvents) {
+            props = props || {};
+            includeEvents = includeEvents || false;
 
-            _.addGuid( instance, true );
+            var superclass = props.superclass.prototype;
 
-            // Mixin events
-            Stapes.mixinEvents( instance );
+            // Objects always have a constructor, so we need to be sure this is
+            // a property instead of something from the prototype
+            var realConstructor = props.hasOwnProperty('constructor') ? props.constructor : function(){};
 
-            return instance;
+            function constructor() {
+                // Be kind to people forgetting new
+                if (!(this instanceof constructor)) {
+                    throw new Error("Please use 'new' when initializing Stapes classes");
+                }
+
+                if (includeEvents) {
+                    _.addGuid( this, true );
+                }
+
+                realConstructor.apply(this, arguments);
+            }
+
+            if (includeEvents) {
+                _.extend(superclass, Events);
+            }
+
+            constructor.prototype = _.create(superclass);
+            constructor.prototype.constructor = constructor;
+
+            _.extend(constructor, {
+                extend : function() {
+                    return _.extendThis.apply(this, arguments);
+                },
+
+                // We can't call this 'super' because that's a reserved keyword
+                // and fails in IE8
+                'parent' : superclass,
+
+                proto : function() {
+                    return _.extendThis.apply(this.prototype, arguments);
+                },
+
+                subclass : function(obj) {
+                    obj = obj || {};
+                    obj.superclass = this;
+                    return _.createSubclass(obj);
+                }
+            });
+
+            // Copy all props given in the definition to the prototype
+            for (var key in props) {
+                if (key !== 'constructor' && key !== 'superclass') {
+                    constructor.prototype[key] = props[key];
+                }
+            }
+
+            return constructor;
         },
 
         emitEvents : function(type, data, explicitType, explicitGuid) {
@@ -138,12 +195,26 @@
             }
         },
 
-        extend : function(obj, props) {
-            for (var key in props) {
-                obj[key] = props[key];
+        // Extend an object with more objects
+        extend : function() {
+            var args = slice.call(arguments);
+            var object = args.shift();
+
+            for (var i = 0, l = args.length; i < l; i++) {
+                var props = args[i];
+                for (var key in props) {
+                    object[key] = props[key];
+                }
             }
 
-            return obj;
+            return object;
+        },
+
+        // The same as extend, but uses the this value as the scope
+        extendThis : function() {
+            var args = slice.call(arguments);
+            args.unshift(this);
+            return _.extend.apply(this, args);
         },
 
         // from http://stackoverflow.com/a/2117523/152809
@@ -263,7 +334,15 @@
 
         updateAttribute : function(key, fn, silent) {
             var item = this.get(key);
-            var newValue = fn.call(this, _.clone(item), key);
+
+            // In previous versions of Stapes we didn't have the check for object,
+            // but still this worked. In 0.7.0 it suddenly doesn't work anymore and
+            // we need the check. Why? I have no clue.
+            if (_.typeOf(item) === 'object') {
+                item = _.clone(item);
+            }
+
+            var newValue = fn.call(this, item, key);
             _.setAttribute.call(this, key, newValue, silent || false);
         }
     };
@@ -312,9 +391,14 @@
         }
     };
 
-    _.Module = {
+    _.Module = function(){};
+    _.Module.prototype = {
+        // create() is deprecated from 0.8.0
         create : function() {
-            return _.createModule( this );
+            throw new Error(''.concat(
+                'create() on Stapes modules no longer works from 0.8.0. ',
+                'Check the docs.'
+            ));
         },
 
         each : function(fn, ctx) {
@@ -325,13 +409,8 @@
             }
         },
 
-        extend : function(objectOrValues, valuesIfObject) {
-            var object = (valuesIfObject) ? objectOrValues : this;
-            var values = (valuesIfObject) ? valuesIfObject : objectOrValues;
-
-            _.extend(object, values);
-
-            return this;
+        extend : function() {
+            return _.extendThis.apply(this, arguments);
         },
 
         filter : function(fn) {
@@ -430,7 +509,14 @@
         },
 
         size : function() {
-            return Object.keys(_.attributes[this._guid]).length;
+            var size = 0;
+            var attr = _.attr(this._guid);
+
+            for (var key in attr) {
+                size++;
+            }
+
+            return size;
         },
 
         update : function(keyOrFn, fn, silent) {
@@ -449,12 +535,19 @@
     var Stapes = {
         "_" : _, // private helper functions and properties
 
+        // Compatiblity option, this method is deprecated
         "create" : function() {
-            return _.createModule( _.Module );
+            var instance = _.create( _.Module.prototype );
+            _.addGuid( instance, true );
+
+            // Mixin events
+            Stapes.mixinEvents( instance );
+
+            return instance;
         },
 
-        "extend" : function(obj) {
-            return _.extend(_.Module, obj);
+        "extend" : function() {
+            return _.extendThis.apply(_.Moduel, arguments);
         },
 
         "mixinEvents" : function(obj) {
@@ -467,6 +560,13 @@
 
         "on" : function() {
             _.addEventHandler.apply(this, arguments);
+        },
+
+        "subclass" : function(obj, classOnly) {
+            classOnly = classOnly || false;
+            obj = obj || {};
+            obj.superclass = classOnly ? function(){} : _.Module;
+            return _.createSubclass(obj, !classOnly);
         },
 
         "version" : VERSION

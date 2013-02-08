@@ -1,7 +1,7 @@
 'use strict';
 define(['stapes'], function(Stapes) {
-	return Stapes.create().extend({
-		'init': function() {
+	return Stapes.subclass({
+		'constructor' : function() {
 			if (!'localStorage' in window) {
 				alert("Saving is not supported in your browser :(")
 			}
@@ -10,13 +10,11 @@ define(['stapes'], function(Stapes) {
 		'load': function() {
 			var result = window.localStorage['todos-stapes'];
 
-			if (result) {
-				return JSON.parse(result);
-			}
+			return result ? JSON.parse(result) : {};
 		},
 
 		'save': function(data) {
-			localStorage['todos-stapes'] = JSON.stringify( data );
+			window.localStorage['todos-stapes'] = JSON.stringify( data );
 		}
 	});
 });

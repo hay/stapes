@@ -1,66 +1,73 @@
 'use strict';
 define(['stapes'], function(Stapes) {
-	var todoView = Stapes.create(),
-		todoTmpl,
-		ENTER_KEY_KEYCODE = 13;
-
-	function bindEventHandlers() {
-		$('#new-todo').on('keyup', function(e) {
-			var todoVal = $.trim($(this).val());
-
-			if (e.which === ENTER_KEY_KEYCODE && todoVal !== '') {
-				e.preventDefault();
-				todoView.emit('todoadd', todoVal);
-			}
-		});
-
-		$('#todo-list').on('click', '.destroy', function() {
-			todoView.emit('tododelete', $(this).parents('li').data('id'));
-		});
-
-		$('#todo-list').on('click', 'input.toggle', function(e) {
-			var event = $(e.target).is(':checked') ? 'todocompleted' : 'todouncompleted';
-			todoView.emit(event, $(this).parents('li').data('id'));
-		});
-
-		$('#todo-list').on('dblclick', 'li', function(e) {
-			todoView.emit('edittodo', $(this).data('id'));
-		});
-
-		$('#todo-list').on('keyup focusout', 'input.edit', function(e) {
-			if (e.type === 'keyup') {
-				if (e.which === ENTER_KEY_KEYCODE) {
-					e.preventDefault();
-				} else {
-					return false;
-				}
-			}
-
-			todoView.emit('todoedit', {
-				id : $(this).parents('li').data('id'),
-				title : $.trim($(this).val())
-			});
-		});
-
-		$('#clear-completed').on('click', function() {
-			todoView.emit('clearcompleted');
-		});
-
-		$('#toggle-all').on('click', function() {
-			var isChecked = $(this).is(':checked');
-			todoView.emit( isChecked ? 'completedall' : 'uncompletedall', isChecked);
-		});
-
-		window.onhashchange = function() {
-			todoView.emit('statechange', todoView.getState());
+	var TodoView = Stapes.subclass({
+		'constructor' : function() {
+			this.bindEventHandlers();
+			this.loadTemplates();
 		}
-	}
+	});
 
-	function loadTemplates() {
-		todoTmpl = Handlebars.compile( $('#todo-template').html() );
-	}
+	// Static methods and properties
+	TodoView.extend({
+		ENTER_KEY_KEYCODE : 13
+	});
 
-	todoView.extend({
+	// Prototype methods and properties
+	TodoView.proto({
+		'bindEventHandlers' : function() {
+			$('#new-todo').on('keyup', function(e) {
+				var todoVal = $.trim($(e.target).val());
+
+				if (e.which === TodoView.ENTER_KEY_KEYCODE && todoVal !== '') {
+					e.preventDefault();
+					this.emit('todoadd', todoVal);
+				}
+			}.bind(this));
+
+			$('#todo-list').on('click', '.destroy', function(e) {
+				this.emit('tododelete', $(e.target).parents('li').data('id'));
+			}.bind(this));
+
+			$('#todo-list').on('click', 'input.toggle', function(e) {
+				var event = $(e.target).is(':checked') ? 'todocompleted' : 'todouncompleted';
+				this.emit(event, $(e.target).parents('li').data('id'));
+			}.bind(this));
+
+			$('#todo-list').on('dblclick', 'li', function(e) {
+				this.emit('edittodo', $(e.target).closest('li').data('id'));
+			}.bind(this));
+
+			$('#todo-list').on('keyup focusout', 'input.edit', function(e) {
+				if (e.type === 'keyup') {
+					if (e.which === TodoView.ENTER_KEY_KEYCODE) {
+						e.preventDefault();
+					} else {
+						return false;
+					}
+				}
+
+				var $li = $(e.target).closest('li');
+
+				this.emit('todoedit', {
+					id : $li.data('id'),
+					title : $.trim($li.find('.edit').val())
+				});
+			}.bind(this));
+
+			$('#clear-completed').on('click', function() {
+				this.emit('clearcompleted');
+			}.bind(this));
+
+			$('#toggle-all').on('click', function(e) {
+				var isChecked = $(e.target).is(':checked');
+				this.emit( isChecked ? 'completedall' : 'uncompletedall', isChecked);
+			}.bind(this));
+
+			window.onhashchange = function() {
+				this.emit('statechange', this.getState());
+			}.bind(this)
+		},
+
 		'clearInput': function() {
 			$('#new-todo').val('');
 		},
@@ -73,26 +80,17 @@ define(['stapes'], function(Stapes) {
 			$('#main, #footer').hide();
 		},
 
-		'init': function() {
-			bindEventHandlers();
-			loadTemplates();
-			this.emit('ready');
+		'loadTemplates' : function() {
+			this.template = Handlebars.compile( $('#todo-template').html() );
 		},
 
 		'makeEditable' : function(id) {
-			// Zepto is a little quirky here and both doesn't accept filter()
-			// and $('#todo-list li[data-id=' + id + ']') :(
-			var $item;
-
-		 	$('#todo-list li').each(function() {
-				if ($(this).data('id') === id) $item = $(this);
-			});
-
+			var $item = $('#todo-list li[data-id=' + id + ']');
 			$item.addClass('editing').find('input.edit').focus();
 		},
 
 		'render': function(todos) {
-			var html = todoTmpl({ 'todos' : todos });
+			var html = this.template({ 'todos' : todos });
 			$('#todo-list').html( html );
 		},
 
@@ -117,5 +115,5 @@ define(['stapes'], function(Stapes) {
 		}
 	});
 
-	return todoView;
+	return TodoView;
 });

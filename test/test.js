@@ -315,13 +315,6 @@ test("Stapes.mixinEvents", function() {
     g.emit('foo');
 });
 
-test("guid", function() {
-    var module1 = Stapes.create();
-    var module2 = module1.create();
-
-    ok(module2._guid === (module1._guid + 1), "A new module should increase its guid by 1");
-});
-
 test("event scope", function() {
     var module1 = Stapes.create();
     var module2 = Stapes.create();
