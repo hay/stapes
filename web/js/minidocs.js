@@ -12,7 +12,7 @@
         }
     }
     /**
-     * Mini documentation using titles on code spans created with rainbowco.de or similar. 
+     * Mini documentation using titles on code spans created with rainbowco.de or similar.
      * Args: docs object {functionName:documentation_string,...}, optional domElements collection or selector string, optional boolean useTitles to use titles instead of tooltips, optional callback cb.
      * Uses: document.querySelectorAll defined in HTML5. Need a shim for obsolete browsers, or pass in domElements found using other selector such as jQuery sizzle or Zepto.
      */
@@ -26,7 +26,7 @@
           for (var i = 0, t, len = domEls && domEls.length; i < len; ++i) {
             t = docs[domEls[i].textContent];
             if (null != t) {
-              ++hits;          
+              ++hits;
               setTooltip(domEls[i], t, useTitles);
             } else {
               missed.push(domEls[i].textContent);
@@ -69,16 +69,16 @@
     function asString() {
       return Math.round(this.perc) + "% = " + this.hits + " hits : " + this.misses + " misses. Need: " + this.missed;
     }
-    
+
     // Can be used as an AMD module, a Node.js module, or a global.
     if (typeof exports !== "undefined") {
         // Server
         var doc = require('doc').doc;
-        var addDocs = function addDocs(docs,els) { 
+        var addDocs = function addDocs(docs,els) {
             doc: "Adds documentation which will be shown with help(function). Args: object docs {funcName:doc_string,...}, els as module or prototype or array of functions."
-            if (null == els || typeof els == "string") els = global; 
+            if (null == els || typeof els == "string") els = global;
             var hits = 0, missed = [];
-            for (var f in els) { 
+            for (var f in els) {
                 if ("function" == typeof els[f]) {
                   if (null != docs[f]) {
                       els[f].doc = docs[f];

@@ -72,7 +72,7 @@ nav li strong {
 
 #content > h1 {
     text-indent: -9999px;
-    background: url('logo.png') no-repeat;
+    background: url('../img/logo.png') no-repeat;
     width: 322px;
     height: 79px;
 }

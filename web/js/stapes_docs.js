@@ -1,10 +1,3 @@
-if (typeof require !== "undefined") { 
-    try { 
-        var minidocs = require('./minidocs'), Stapes = require('../stapes.js'); 
-    } catch(e) { 
-        console.log(e); 
-    } 
-}
 var docs = {
   "Stapes": "A (really) tiny Javascript MVC microframework. See also: Stapes.create",
   "create": "DEPRECATED for `subclass`. Create a new instance of a Stapes object. See also: subclass, proto, mixinEvents, extend, on",
@@ -31,17 +24,16 @@ var docs = {
 
 ;(function(self,minidocs){
     // minidocs(docs).hits || setTimeout( function() { minidocs(docs); }, 1200 );
-    if (typeof Rainbow !== "undefined") { 
-        if ("undefined" !== typeof console) console.log("Rainbow.onHighlight"); 
+    if (typeof Rainbow !== "undefined") {
+        // if ("undefined" !== typeof console) console.log("Rainbow.onHighlight");
         var count = 0;
-        Rainbow.onHighlight(function(code, language) { 
-            if ("undefined" !== typeof console) console.log(++count, language, typeof code, code && code.children && code.children.length, typeof code.querySelectorAll); 
+        Rainbow.onHighlight(function(code, language) {
             minidocs(docs, code.querySelectorAll ? code.querySelectorAll('span.function,span.method') : '');
-        }); 
-    } else if ("undefined" !== typeof console) console.log("No Rainbow");
+        });
+    }
 })(this,minidocs);
 
-if (typeof exports === "object") { 
+if (typeof exports === "object") {
     minidocs(docs, Stapes);
     if (Stapes && Stapes._) minidocs(docs, Stapes._.Module);
     exports.minidocs = minidocs;
