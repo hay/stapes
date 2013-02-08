@@ -349,6 +349,44 @@ test("event scope", function() {
     module2.emit('eventscope');
 });
 
+test("events on subclasses", function() {
+    expect(3);
+
+    var Parent = Stapes.subclass({
+        constructor : function(id) {
+            this.id = id;
+        },
+
+        getId : function() {
+            this.emit('id', this.id);
+        }
+    });
+
+    var Child = Parent.subclass({
+        constructor : Parent.prototype.constructor
+    });
+
+    var parent = new Parent('parent');
+    var parent2 = new Parent('parent2');
+    var child = new Child('child');
+
+    parent.on('id', function(id) {
+        ok(id === 'parent', 'id of parent should be parent');
+    });
+
+    parent2.on('id', function(id) {
+        ok(id === 'parent2', 'id of parent2 should be parent2');
+    });
+
+    child.on('id', function(id) {
+        ok(id === 'child', 'id of child should be child');
+    });
+
+    parent.getId();
+    parent2.getId();
+    child.getId();
+});
+
 test("chaining", function() {
     var module = Stapes.create().set('foo', true);
     ok(!!module.get && module.get('foo'), "set() should return the object");

@@ -131,6 +131,7 @@
                     throw new Error("Please use 'new' when initializing Stapes classes");
                 }
 
+                // If this class has events add a GUID as well
                 if (this.on) {
                     _.addGuid( this, true );
                 }
