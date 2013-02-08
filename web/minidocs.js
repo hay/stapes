@@ -13,35 +13,43 @@
     }
     /**
      * Mini documentation using titles on code spans created with rainbowco.de or similar. 
-     * Args: docs object {functionName:documentation_string,...}, optional domElements collection or selector string, optional boolean useTitles to use titles instead of tooltips.
+     * Args: docs object {functionName:documentation_string,...}, optional domElements collection or selector string, optional boolean useTitles to use titles instead of tooltips, optional callback cb.
      * Uses: document.querySelectorAll defined in HTML5. Need a shim for obsolete browsers, or pass in domElements found using other selector such as jQuery sizzle or Zepto.
      */
-    function minidocs(docs, domEls, useTitles) {
-      if (typeof domEls === "boolean") { useTitles = domEls; domEls = ''; }
-      if (typeof domEls !== "object") domEls = document.querySelectorAll(domEls || 'code span.function,span.method');
-      // Could also do 'code span.method'
-      var hits = 0, missed = [];
-      for (var i = 0, t, len = domEls && domEls.length; i < len; ++i) {
-        t = docs[domEls[i].textContent];
-        if (null != t) {
-          ++hits;          
-          setTooltip(domEls[i], t, useTitles);
-        } else {
-          missed.push(domEls[i].textContent);
+    function minidocs(docs, domEls, useTitles, cb) {
+        try {
+          if (typeof domEls === "function") { cb = domEls; domEls = ''; }
+          if (typeof domEls === "boolean") { useTitles = domEls; domEls = ''; }
+          if (typeof domEls !== "object") domEls = document.querySelectorAll(domEls || 'code span.function,span.method');
+          // Could also do 'code span.method'
+          var hits = 0, missed = [];
+          for (var i = 0, t, len = domEls && domEls.length; i < len; ++i) {
+            t = docs[domEls[i].textContent];
+            if (null != t) {
+              ++hits;          
+              setTooltip(domEls[i], t, useTitles);
+            } else {
+              missed.push(domEls[i].textContent);
+            }
+          }
+          var misses = missed.length;
+          missed = uniq(missed);
+          var results = {
+            hits: hits,
+            misses: misses,
+            perc: 100 * hits / (hits + misses),
+            missed: missed,
+            toString: asString,
+            show: function(str) { return docs[str]; },
+            redo: minidocs,
+            clear: function(doc,els,titles) { return clearTitles(doc || docs, els || domEls, useTitles || titles); }
+          }
+          if (cb) cb(null, results);
+          return results;
+        } catch (err) {
+          if (cb) cb(err, null);
+          return {error: err, hits:0};
         }
-      }
-      var misses = missed.length;
-      missed = uniq(missed);
-      return {
-        hits: hits,
-        misses: misses,
-        perc: 100 * hits / (hits + misses),
-        missed: missed,
-        toString: asString,
-        show: function(str) { return docs[str]; },
-        redo: minidocs,
-        clear: function(doc,els,titles) { return clearTitles(doc || docs, els || domEls, useTitles || titles); }
-      }
     }
     /** Remove duplicates if ra.filter and ra.sort are defined. Args: array ra */
     function uniq(ra) {

@@ -7,7 +7,7 @@ if (typeof require !== "undefined") {
 }
 var docs = {
   "Stapes": "A (really) tiny Javascript MVC microframework. See also: Stapes.create",
-  "create": "Create a new instance of a Stapes object. See also: mixinEvents, extend, on",
+  "create": "DEPRECATED for `subclass`. Create a new instance of a Stapes object. See also: subclass, proto, mixinEvents, extend, on",
   "each": "Iterate over all attributes of a module. Args: function, optional context (default: this module).",
   "emit": "Send event(s) to the module. Args: string eventName(s), optional data.",
   "extend": "Extend your module by giving an object from which to copy attributes. Args: optional context (default=this module), object.",
@@ -24,6 +24,9 @@ var docs = {
   "set": "Sets an attribute of key to value, triggering an event unless `silent` is true. See also: get, emit. Args: string key, value, optional boolean silent.",
   "size": "Returns the number of attributes in a module.",
   "update": "Updates an attribute with a new value, based on the return value of a function. Args: optional key, function."
+  , // new to version 0.7
+  "subclass": "Create a new Stapes class that you can instantiate later on with new.",
+  "proto": "Adds properties and methods to the prototype of the module."
 };
 
 ;(function(self,minidocs){
