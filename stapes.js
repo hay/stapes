@@ -179,8 +179,9 @@
         emitEvents : function(type, data, explicitType, explicitGuid) {
             explicitType = explicitType || false;
             explicitGuid = explicitGuid || this._guid;
-
-            var handlers = _.eventHandlers[explicitGuid][type];
+    
+            // make a local copy of the array
+            var handlers = Array.prototype.concat.apply(_.eventHandlers[explicitGuid][type]);
 
             for (var i = 0, l = handlers.length; i < l; i++) {
                 // Clone the event to prevent issue #19
