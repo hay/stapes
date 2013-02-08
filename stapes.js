@@ -502,10 +502,10 @@
         set : function(objOrKey, value, silent) {
             if (typeof objOrKey === "object") {
                 for (var key in objOrKey) {
-                    _.setAttribute.call(this, key, objOrKey[key]);
+                    _.setAttribute.call(this, key, objOrKey[key], !!silent);
                 }
             } else {
-                _.setAttribute.call(this, objOrKey, value, silent || false);
+                _.setAttribute.call(this, objOrKey, value, !!silent);
             }
 
             return this;
