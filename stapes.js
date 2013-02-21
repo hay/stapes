@@ -550,7 +550,7 @@
         },
 
         "extend" : function() {
-            return _.extendThis.apply(_.Moduel, arguments);
+            return _.extendThis.apply(_.Module, arguments);
         },
 
         "mixinEvents" : function(obj) {
