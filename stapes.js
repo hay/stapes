@@ -329,6 +329,8 @@
 
         typeOf : function(val) {
             if (val === null || typeof val === "undefined") {
+                // This is a special exception for IE, in other browsers the 
+                // method below works all the time
                 return String(val);
             } else {
                 return Object.prototype.toString.call(val).replace(/\[object |\]/g, '').toLowerCase();
