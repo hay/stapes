@@ -13,11 +13,10 @@
 // < http://en.wikipedia.org/wiki/MIT_License >
 //
 // Stapes.js : http://hay.github.com/stapes
-
 (function() {
     'use strict';
 
-    var VERSION = "0.7.1";
+    var VERSION = "0.7.2-pre";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
@@ -103,7 +102,15 @@
         },
 
         clone : function(obj) {
-            return _.extend({}, obj);
+            var type = _.typeOf(obj);
+
+            if (type === 'object') {
+                return _.extend({}, obj);
+            }
+
+            if (type === 'array') {
+                return obj.slice(0);
+            }
         },
 
         create : function(proto) {
@@ -343,7 +350,9 @@
             // In previous versions of Stapes we didn't have the check for object,
             // but still this worked. In 0.7.0 it suddenly doesn't work anymore and
             // we need the check. Why? I have no clue.
-            if (_.typeOf(item) === 'object') {
+            var type = _.typeOf(item);
+
+            if (type === 'object' || type === 'array') {
                 item = _.clone(item);
             }
 
