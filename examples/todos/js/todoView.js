@@ -33,21 +33,23 @@ TodoView.proto({
 		}.bind(this));
 
 		$('#todo-list').on('dblclick', 'li', function(e) {
-			this.emit('edittodo', $(e.target).data('id'));
+			this.emit('edittodo', $(e.target).closest('li').data('id'));
 		}.bind(this));
 
 		$('#todo-list').on('keyup focusout', 'input.edit', function(e) {
 			if (e.type === 'keyup') {
-				if (e.which === ENTER_KEY_KEYCODE) {
+				if (e.which === TodoView.ENTER_KEY_KEYCODE) {
 					e.preventDefault();
 				} else {
 					return false;
 				}
 			}
 
+			var $li = $(e.target).closest('li');
+
 			this.emit('todoedit', {
-				id : $(e.target).parents('li').data('id'),
-				title : $.trim($(this).val())
+				id : $li.data('id'),
+				title : $.trim($li.find('.edit').val())
 			});
 		}.bind(this));
 

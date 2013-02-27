@@ -17,7 +17,7 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.7.0";
+    var VERSION = "0.7.1";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
@@ -131,7 +131,8 @@
                     throw new Error("Please use 'new' when initializing Stapes classes");
                 }
 
-                if (includeEvents) {
+                // If this class has events add a GUID as well
+                if (this.on) {
                     _.addGuid( this, true );
                 }
 
@@ -179,7 +180,9 @@
             explicitType = explicitType || false;
             explicitGuid = explicitGuid || this._guid;
 
-            var handlers = _.eventHandlers[explicitGuid][type];
+            // #30: make a local copy of handlers to prevent problems with
+            // unbinding the event while unwinding the loop
+            var handlers = slice.call(_.eventHandlers[explicitGuid][type]);
 
             for (var i = 0, l = handlers.length; i < l; i++) {
                 // Clone the event to prevent issue #19
@@ -391,7 +394,10 @@
         }
     };
 
-    _.Module = function(){};
+    _.Module = function() {
+
+    }
+
     _.Module.prototype = {
         // create() is deprecated from 0.8.0
         create : function() {
@@ -547,7 +553,7 @@
         },
 
         "extend" : function() {
-            return _.extendThis.apply(_.Moduel, arguments);
+            return _.extendThis.apply(_.Module.prototype, arguments);
         },
 
         "mixinEvents" : function(obj) {

@@ -7,7 +7,7 @@
         "mvc", "framework", "lightweight", "base", "events", "class", "data",
         "server", "client", "browser"
     ],
-    "version": "0.7.0",
+    "version": "0.7.1",
     "repository" : {
         "type" : "git",
         "url" : "http://github.com/hay/stapes.git"

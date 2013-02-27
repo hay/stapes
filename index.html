@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <title>Stapes.js - a (really) tiny Javascript MVC microframework</title>
-    <link rel="stylesheet" href="web/style.css" />
-    <link rel="stylesheet" href="web/code.css" />
+    <link rel="stylesheet" href="web/css/style.css" />
+    <link rel="stylesheet" href="web/css/code.css" />
+    <link rel="stylesheet" href="web/css/tooltip.css" />
 
     <script>
       var _gaq = _gaq || [];
@@ -31,11 +32,11 @@
         <h3 id="m-downloads">Downloads</h3>
         <ul>
             <li><a href="stapes.min.js">
-                Download production version 0.7.0 (minified)</a>
+                Download production version 0.7.1 (minified)</a>
             </li>
 
-            <li><a href="https://github.com/hay/stapes/archive/v0.7.0.zip">
-                Download development version 0.7.0 (full source and annotated examples)</a>
+            <li><a href="https://github.com/hay/stapes/archive/v0.7.1.zip">
+                Download development version 0.7.1 (full source and annotated examples)</a>
             </li>
 
             <li><a href="http://github.com/hay/stapes">Fork it and report bugs on Github</a>
@@ -276,6 +277,24 @@
                 any arguments at all. In that case you'll simply get a new class
                 with an empty constructor.</p>
 
+            <p>Also note that if you call <code>subclass</code> on a Module the child
+                module <strong>won't</strong> automatically inherit the constructor
+                of the parent. This is by design. To inherit the constructor of a parent
+                class simply specify it in your <code>subclass</code> setup:</p>
+
+        <pre><code>
+    var Parent = Stapes.subclass({
+        constructor : function(name) {
+            this.name = name;
+        }
+    });
+
+    var Child = Parent.subclass({
+        // inherit the constructor from parent
+        constructor : Parent.prototype.constructor
+    });
+        </code></pre>
+
             <p>Because <code>subclass</code> set ups the prototype chain correctly
                 the <code>instanceof</code> parameter will work as expected.</p>
 
@@ -499,7 +518,9 @@
                 new <code>bind</code> property of EcmaScript 5.</p>
 
             <pre><code>
-    var module = Stapes.create();
+    var Module = Stapes.subclass();
+
+    var module = new Module();
 
     module.on('ready', function() {
         console.log('your module is ready!');
@@ -519,7 +540,7 @@
         }
     });
 
-    var feedme = Stapes.create();
+    var feedme = new Module();
 
     // Set the scope for the event handler to 'module'
     feedme.on({
@@ -1247,7 +1268,18 @@
 
         <h3 id="m-history">History</h3>
         <ul>
-            <li>0.7.0</li>
+            <li>0.7.1 - February 27th 2013</li>
+            <ul>
+                <li>Thanks to <a href="https://github.com/josher19">josher19</a> the docs now have nice tooltips
+                    for all the methods in the in-code examples!</li>
+                <li><small>Bugfix</small> <code>Stapes.extend</code> was broken (issue <a href="https://github.com/hay/stapes/pull/33">#33</a>). Thanks <a href="https://github.com/gonchuki">gonchuku!</a></li>
+                <li><small>Bugfix</small> Fixed the todos examples, thanks <a href="http://slopesidecreative.com/">Erik</a>!</li>
+                <li><small>Bugfix</small> Fixed events in subclasses. (issue <a href="https://github.com/hay/stapes/pull/29">#29</a>),
+                    thanks <a href="https://github.com/ericchaves">Eric</a>!</li>
+                <li><small>Bugfix</small> Fixed a problem where unbinding an event would throw an error in some rare cases
+                    (<a href="https://github.com/hay/stapes/pull/30">issue #30</a>). Thanks <a href="https://github.com/wellcaffeinated">Jasper</a>!</li>
+            </ul>
+            <li>0.7.0 - January 14th 2013</li>
             <ul>
                 <li><small>Feature</small> Completely revised the creation of new modules with
                     <a href="#m-subclass"><code>subclass</code></a>. The old <a href="m-create"><code>create</code></a>
@@ -1339,11 +1371,17 @@
             <li>Jarrod Overson</li>
             <li><a href="https://github.com/mahonnaise">Jos Hirth (mahonnaise)</a></li>
             <li><a href="https://github.com/Contra">Eric Schoffstall (contra)</a></li>
-            <li><a href="https://github.com/josher19">josher19</a></li>
+            <li><a href="https://github.com/josher19">Joshua S. Weinstein (josher19)</a></li>
+            <li><a href="http://slopesidecreative.com/">Erik Clineschmidt</a></li>
+            <li><a href="https://github.com/ericchaves">Eric Chaves</a></li>
+            <li><a href="https://github.com/josher19">Josher19</a></li>
+            <li><a href="https://github.com/gonchuki">gonchuki</a></li>
         </ul>
     </section> <!-- #content -->
 
-    <script src="web/app.js"></script>
-    <script src="web/rainbow.js"></script>
+    <script src="web/js/app.js"></script>
+    <script src="web/js/rainbow.js"></script>
+    <script src="web/js/minidocs.js"></script>
+    <script src="web/js/stapes_docs.js"></script>
 </body>
 </html>
