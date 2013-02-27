@@ -394,7 +394,10 @@
         }
     };
 
-    _.Module = function(){};
+    _.Module = function() {
+
+    }
+
     _.Module.prototype = {
         // create() is deprecated from 0.8.0
         create : function() {
@@ -550,7 +553,7 @@
         },
 
         "extend" : function() {
-            return _.extendThis.apply(_.Module, arguments);
+            return _.extendThis.apply(_.Module.prototype, arguments);
         },
 
         "mixinEvents" : function(obj) {

@@ -397,3 +397,18 @@ test("chaining", function() {
     module = module.push(true);
     ok(!!module.get && module.size() === 1, "push() should return the object");
 });
+
+test("Extending Stapes (plugins)", function() {
+    expect(1);
+
+    Stapes.extend({
+        foo : function() {
+            ok(true, "New function can be called");
+        }
+    });
+
+    var Module = Stapes.subclass();
+    var module = new Module();
+
+    module.foo();
+});
