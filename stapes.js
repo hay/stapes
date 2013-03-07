@@ -239,22 +239,33 @@
             silent = silent || false;
 
             // Split the key, maybe we want to remove more than one item
-            var attributes = _.trim(keys).split(" ");
+            var attributes = _.trim(keys).split(" ")
+                ,mutateData = {}
+                ;
 
             // Actually delete the item
             for (var i = 0, l = attributes.length; i < l; i++) {
                 var key = _.trim(attributes[i]);
 
                 if (key) {
+                    // Store data for mutate event
+                    mutateData.key = key;
+                    mutateData.oldValue = _.attr(this._guid)[key];
+                    
                     delete _.attr(this._guid)[key];
 
                     // If 'silent' is set, do not throw any events
                     if (!silent) {
                         this.emit('change', key);
                         this.emit('change:' + key);
+                        this.emit('mutate', mutateData);
+                        this.emit('mutate:' + key, mutateData);
                         this.emit('remove', key);
                         this.emit('remove:' + key);
                     }
+                    
+                    // clean up
+                    delete mutateData.oldValue;
                 }
             }
         },
