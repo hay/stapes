@@ -473,6 +473,19 @@
             return arr;
         },
 
+        pick: function() {
+            var result = {};
+
+            for (var i = 0; i < arguments.length; i++) {
+              var key = arguments[i];
+              if (this.has(key)) {
+                result[key] = _.attr(this._guid)[key];
+              }
+            }
+
+            return result;
+        },
+
         has : function(key) {
             return (typeof _.attr(this._guid)[key] !== "undefined");
         },

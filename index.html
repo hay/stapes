@@ -888,6 +888,29 @@
             </code></pre>
         </article>
 
+        <article id="m-pick">
+            <h1>pick</h1>
+
+            <h2>module.pick( key[, key...]);</h2>
+
+            <p>Returns selected attributes as an object. Handy for JSON
+                serializing and persistence layers.</p>
+
+            <pre><code>
+    var Module = Stapes.subclass();
+    var module = new Module();
+
+    module.set({
+        'instrument': 'guitar',
+        'name': 'Johnny',
+        'editing': true
+    });
+
+    module.pick('instrument', 'name'); 
+    // {"instrument": "guitar", "name": "Johnny"}
+            </code></pre>
+        </article>
+
         <article id="m-has">
             <h1>has</h1>
 
