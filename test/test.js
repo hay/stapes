@@ -153,6 +153,23 @@ test("remove", function() {
     ok(module.size() === 0, 'all attributes should be removed');
 })
 
+module("pick");
+
+test("pick", function() {
+    var module = Stapes.create();
+    module.set({
+        'key1': 'value1',
+        'key2': 'value2',
+        'key3': 'value3',
+        'key4': 'value4',
+        'key5': 'value5'
+    });
+
+    deepEqual(module.pick(), {});
+    deepEqual(module.pick('key2', 'key4'), {'key2': 'value2', 'key4': 'value4'});
+    deepEqual(module.pick(['key2', 'key4']), {'key2': 'value2', 'key4': 'value4'});
+});
+
 module("iterators");
 
 test("each and map with a single object", function() {

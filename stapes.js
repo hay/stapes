@@ -473,6 +473,24 @@
             return arr;
         },
 
+        pick: function() {
+            var result = {};
+            var args = slice.call(arguments);
+
+            if (args.length == 1 && _.typeOf(args[0]) == 'array') {
+              args = args[0];
+            }
+
+            for (var i = 0; i < args.length; i++) {
+              var key = args[i];
+              if (this.has(key)) {
+                result[key] = _.attr(this._guid)[key];
+              }
+            }
+
+            return result;
+        },
+
         has : function(key) {
             return (typeof _.attr(this._guid)[key] !== "undefined");
         },
