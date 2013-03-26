@@ -167,6 +167,7 @@ test("pick", function() {
 
     deepEqual(module.pick(), {});
     deepEqual(module.pick('key2', 'key4'), {'key2': 'value2', 'key4': 'value4'});
+    deepEqual(module.pick(['key2', 'key4']), {'key2': 'value2', 'key4': 'value4'});
 });
 
 module("iterators");

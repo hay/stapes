@@ -475,9 +475,14 @@
 
         pick: function() {
             var result = {};
+            var args = slice.call(arguments);
 
-            for (var i = 0; i < arguments.length; i++) {
-              var key = arguments[i];
+            if (args.length == 1 && _.typeOf(args[0]) == 'array') {
+              args = args[0];
+            }
+
+            for (var i = 0; i < args.length; i++) {
+              var key = args[i];
               if (this.has(key)) {
                 result[key] = _.attr(this._guid)[key];
               }
