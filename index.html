@@ -1104,6 +1104,33 @@
             </code></pre>
 
             <p><code>set</code> returns the module, so this method is chainable</p>
+
+            <p>Stapes doesn't have a native way of doing validation, but you could overwrite the <code>set</code> (and possibly <code>update</code>) method to accomplish the same:</p>
+
+            <pre><code>
+    var Person = Stapes.subclass({
+        set : function(key, value) {
+            if (key === 'email') {
+                if (value.indexOf("@") === -1) {
+                    this.emit('error', 'Invalid email adress');
+                } else {
+                    Stapes.prototype.set.apply(this, arguments);
+                }
+            } else {
+                // Normal set() behavior
+                Stapes.prototype.set.apply(this, arguments);
+            }
+        }
+    });
+
+    var johnny = new Person();
+
+    johnny.on('error', function(msg) {
+        alert( msg ); // 'Invalid email adress'
+    });
+
+    johnny.set('email', 'invalid#email.com');
+            </code></pre>
         </article>
 
         <article id="m-size">
