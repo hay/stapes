@@ -336,7 +336,7 @@
 
         typeOf : function(val) {
             if (val === null || typeof val === "undefined") {
-                // This is a special exception for IE, in other browsers the 
+                // This is a special exception for IE, in other browsers the
                 // method below works all the time
                 return String(val);
             } else {
@@ -407,7 +407,7 @@
 
     _.Module = function() {
 
-    }
+    };
 
     _.Module.prototype = {
         // create() is deprecated from 0.8.0
@@ -499,7 +499,11 @@
         },
 
         remove : function(input, silent) {
-            if (typeof input === "function") {
+            if (typeof input === 'undefined') {
+                // With no arguments, remove deletes all attributes
+                _.attributes[this._guid] = {};
+                this.emit('change remove');
+            } else if (typeof input === "function") {
                 this.each(function(item, key) {
                     if (input(item)) {
                         _.removeAttribute.call(this, key, silent);

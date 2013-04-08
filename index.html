@@ -963,6 +963,7 @@
 
             <h2>module.remove( key, [silent] );</h2>
             <h2>module.remove( function );</h2>
+            <h2>module.remove();</h2>
 
             <p>Deletes an attribute. Triggers <code>remove</code> and
             <code>change</code> events.</p>
@@ -991,6 +992,15 @@
 
             <pre><code>
     module.remove('singer', true /* <-- silent flag */);
+            </code></pre>
+
+            <p>Without any arguments, <code>remove</code> deletes all attributes in a module and triggers <code>change</code> and <code>remove</code> events.</p>
+
+            <pre><code>
+    module.push([1,2,3]);
+    module.size(); // 3
+    module.remove();
+    module.size(); // 0
             </code></pre>
 
             <p><code>remove</code> returns the module, so this method is chainable.</p>
@@ -1295,6 +1305,10 @@
 
         <h3 id="m-history">History</h3>
         <ul>
+            <li>0.7.2</li>
+            <ul>
+                <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> without any arguments now removes all attributes in a module.</li>
+            </ul>
             <li>0.7.1 - February 27th 2013</li>
             <ul>
                 <li>Thanks to <a href="https://github.com/josher19">josher19</a> the docs now have nice tooltips

@@ -412,3 +412,41 @@ test("Extending Stapes (plugins)", function() {
 
     module.foo();
 });
+
+test("remove", function() {
+    expect(5);
+
+    var module = new ( Stapes.subclass() );
+
+    module.set({
+        'foo' : 1,
+        'bar' : 2,
+        'baz' : 3,
+        'qux' : 4
+    });
+
+    module.on({
+        'change:foo remove:foo' : function() {
+            ok(true, 'remove with a key argument');
+        },
+
+        'change:bar remove:bar' : function() {
+            ok(true, 'remove with a function argument');
+        }
+    });
+
+    module.remove('foo');
+
+    module.remove(function(val) {
+        return val === 2;
+    });
+
+    module.on({
+        'remove' : function() {
+            console.log(module.size());
+            ok( module.size() === 0, 'remove with no arguments, all attributes removed');
+        }
+    });
+
+    module.remove();
+});
