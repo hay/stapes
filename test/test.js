@@ -413,6 +413,20 @@ test("Extending Stapes (plugins)", function() {
     module.foo();
 });
 
+test("push", function() {
+    expect(0);
+
+    var module = new ( Stapes.subclass() );
+
+    // Issue #39, silent flag ignored in an array
+    module.on('change', function() {
+        ok(false, "Silent flag should be ignored with array");
+    });
+
+    module.push(true, true);
+    module.push([1,2,3], true);
+});
+
 test("remove", function() {
     expect(5);
 

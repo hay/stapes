@@ -931,7 +931,7 @@
             <h1>push</h1>
 
             <h2>module.push( value, [silent] );</h2>
-            <h2>module.push( array );</h2>
+            <h2>module.push( array, [silent] );</h2>
 
             <p>Sets a value, automatically generates an unique uuid as a key.</p>
 
@@ -1308,6 +1308,7 @@
             <li>0.7.2</li>
             <ul>
                 <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> without any arguments now removes all attributes in a module.</li>
+                <li><small>Bugfix</small> The <code>silent</code> flag did not work with <a href="m-push"><code>push</code></a> (issue <a href="https://github.com/hay/stapes/issues/39">#39</a>). Thanks for reporting <a href="https://github.com/Gamadril">Gamadril</a>!</li>
             </ul>
             <li>0.7.1 - February 27th 2013</li>
             <ul>

@@ -489,7 +489,7 @@
         push : function(input, silent) {
             if (_.typeOf(input) === "array") {
                 for (var i = 0, l = input.length; i < l; i++) {
-                    _.setAttribute.call(this, _.makeUuid(), input[i]);
+                    _.setAttribute.call(this, _.makeUuid(), input[i], silent || false);
                 }
             } else {
                 _.setAttribute.call(this, _.makeUuid(), input, silent || false);
