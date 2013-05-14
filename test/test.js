@@ -457,10 +457,33 @@ test("remove", function() {
 
     module.on({
         'remove' : function() {
-            console.log(module.size());
             ok( module.size() === 0, 'remove with no arguments, all attributes removed');
         }
     });
 
     module.remove();
+});
+
+// Not really a bug, but leave this in for documentation purposes
+// Issue #4o
+test("private variables", function() {
+    var Module = (function() {
+        var val;
+
+        return Stapes.subclass({
+            constructor : function( v ) {
+                val = v;
+            },
+
+            getVal : function() {
+                return val;
+            }
+        });
+    })();
+
+    var a = new Module('a');
+    var b = new Module('b');
+
+    ok( a.getVal() === 'a');
+    ok( b.getVal() === 'b');
 });

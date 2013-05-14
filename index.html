@@ -157,6 +157,8 @@
     var module = new Module('Emmylou');
         </code></pre>
 
+        <p>However, note that this will only work with a single instance of the class because the scope stays the same. Creating an extra module will overwrite the private variables from the previous instance.</p>
+
         <h3 id="m-mixinevents-h3">Using event methods with any non-Stapes object or function</h3>
 
         <p>It's possible to add the <a href="#m-events">event methods</a> to any
