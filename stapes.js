@@ -410,14 +410,6 @@
     };
 
     _.Module.prototype = {
-        // create() is deprecated from 0.8.0
-        create : function() {
-            throw new Error(''.concat(
-                'create() on Stapes modules no longer works from 0.8.0. ',
-                'Check the docs.'
-            ));
-        },
-
         each : function(fn, ctx) {
             var attr = _.attr(this._guid);
             for (var key in attr) {
@@ -555,17 +547,6 @@
 
     var Stapes = {
         "_" : _, // private helper functions and properties
-
-        // Compatiblity option, this method is deprecated
-        "create" : function() {
-            var instance = _.create( _.Module.prototype );
-            _.addGuid( instance, true );
-
-            // Mixin events
-            Stapes.mixinEvents( instance );
-
-            return instance;
-        },
 
         "extend" : function() {
             return _.extendThis.apply(_.Module.prototype, arguments);

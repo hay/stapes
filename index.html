@@ -229,7 +229,7 @@
             <p>Create a new Stapes class that you can instantiate later on with
                 <code>new</code>.</p>
 
-            <p class="warning">Note that until Stapes 0.6.0 the preferred way of creating new modules was by using <code>Stapes.create</code>. This has been deprecated by <code>subclass</code> since 0.7.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
+            <p class="warning">Note that until Stapes 0.6.0 the preferred way of creating new modules was by using <code>Stapes.create</code>. This has been replaced by <code>subclass</code> since 0.7.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
 
             <p>You can add a <code>constructor</code> (the function that is run when you
                 instantiate the class) property to the object. All other properties
@@ -1205,7 +1205,7 @@
             <p><code>update</code> returns the module, so this method is chainable.</p>
         </article>
 
-        <h3 id="m-deprecated">Deprecated and removed stuff</h3>
+        <h3 id="m-deprecated">Removed and deprecated stuff</h3>
         <article id="m-deprecated-intro">
             <h1>Introduction</h1>
             <p>These methods, modules and other things are either deprecated
@@ -1215,60 +1215,14 @@
         </article>
 
         <article id="m-create">
-            <h1>create <strong>(deprecated and partially removed)</strong></h1>
+            <h1>create <strong>(removed)</strong></h1>
 
             <h2>Stapes.create()</h2>
             <h2>module.create()</h2>
 
             <p>Create a new instance of a Stapes object.</p>
 
-            <p class="warning">This method has been deprecated and partially removed since 0.7.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
-
-            <p>Always returns <code>this</code>, so you can easily chain
-            <code>create</code> with <code>extend</code>.</p>
-
-            <p>The <code>create()</code> function is comparable to creating a new
-                instance in Javascript with the <code>new</code> operator.
-                <code>create</code> also resets all event handlers and attributes
-                set on the object, so be careful not to initialize modules that
-                don't need to be initialized.</p>
-
-            <p>In Stapes 0.7.0 the <code>create</code> method on the <code>Stapes</code>
-                object was deprecated (but still works) and the <code>create</code> method on new modules
-                now triggers an error (and doesn't work). Both methods are to be removed in a future
-                version.</p>
-
-            <p>In new code, please use <a href="#m-subclass"><code>subclass</code></a>
-                instead of <code>create</code>.</p>
-
-            <p>If you like the old pattern of creating classes with <code>create</code> and
-                <code>extend</code> i recommend you use a pattern like this:</p>
-
-            <pre><code>
-    var Car = (new Stapes.subclass()).extend({
-        type : 'normal car'
-    });
-            </code></pre>
-
-            <p>In releases of Stapes before 0.7.0 calling <code>create</code> on an exisiting module could be used to
-                create child modules.</p>
-
-            <pre><code>
-    var Car = Stapes.create().extend({
-        "type" : "normal car",
-
-        "getCar" : function() {
-            return 'this is a ' + this.type;
-        }
-    });
-
-    var SportsCar = Car.create().extend({
-        "type" : "sports car"
-    });
-
-    Car.getCar(); // 'this is a normal car'
-    SportsCar.getCar(); // 'this is a sports car'
-        </code></pre>
+            <p>This method has been deprecated since 0.7.0 and was completely removed in 0.8.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
         </article>
 
         <article id="m-util">
@@ -1307,8 +1261,9 @@
 
         <h3 id="m-history">History</h3>
         <ul>
-            <li>0.7.2</li>
+            <li>0.8.0</li>
             <ul>
+                <li><a href="#m-create"><code>create()</code></a> has been completely removed after the deprecation in 0.7.0</a>
                 <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> without any arguments now removes all attributes in a module.</li>
                 <li><small>Bugfix</small> The <code>silent</code> flag did not work with <a href="m-push"><code>push</code></a> (issue <a href="https://github.com/hay/stapes/issues/39">#39</a>). Thanks for reporting <a href="https://github.com/Gamadril">Gamadril</a>!</li>
             </ul>
