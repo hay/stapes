@@ -509,13 +509,13 @@
             return this;
         },
 
-        set : function(objOrKey, value, silent) {
+        set : function(objOrKey, valueOrSilent, silent) {
             if (typeof objOrKey === "object") {
                 for (var key in objOrKey) {
-                    _.setAttribute.call(this, key, objOrKey[key]);
+                    _.setAttribute.call(this, key, objOrKey[key], valueOrSilent || false);
                 }
             } else {
-                _.setAttribute.call(this, objOrKey, value, silent || false);
+                _.setAttribute.call(this, objOrKey, valueOrSilent, silent || false);
             }
 
             return this;

@@ -14,17 +14,24 @@ if (!Object.keys) {
 
 module("set");
 
-test("change events", function() {
-    expect(8);
+var EmptyModule = Stapes.subclass();
 
-    var module = Stapes.create();
+test("change events", function() {
+    expect(12);
+
+    var module = new EmptyModule();
 
     module.set('name', 'Johnny');
 
     module.on({
         'change' : function(key) {
-            ok(key === 'name' || key === 'instrument', 'change event when name is set');
-            if (key === "silent") {
+            ok(
+                key === 'name' ||
+                key === 'instrument' ||
+                key === 'screamingobject'
+            , 'change event when name is set');
+
+            if (key === "silent" || key === "silentobject") {
                 ok(false, "Silent event should not trigger");
             }
         },
@@ -33,8 +40,16 @@ test("change events", function() {
             ok(false, "Silent event should not trigger");
         },
 
+        'change:silentobject' : function() {
+            ok(false, "Silent event should not trigger for object");
+        },
+
         'change:name' : function(value) {
             equal(value, 'Emmylou', 'name attribute changed');
+        },
+
+        'change:screamingobject' : function() {
+            ok(true, "Screaming object triggered");
         },
 
         'mutate' : function(value) {
@@ -57,7 +72,8 @@ test("change events", function() {
         },
 
         'create' : function(key) {
-            equal(key, 'instrument', 'create event on attribute addition');
+            ok(key === 'instrument' || key === 'screamingobject'
+            , 'create event on attribute addition');
         },
 
         'update' : function(key) {
@@ -69,12 +85,20 @@ test("change events", function() {
     module.set('instrument', 'guitar');
     module.set('instrument', 'guitar'); // Change event should only be thrown once!
     module.set('silent', 'silent', true); // silent events should not trigger anything
+
+    module.set({
+        silentobject : true
+    }, true /* no events for silent objects as well */);
+
+    module.set({
+        screamingobject : true
+    }); /* but we do want them for non-silent objects */
 });
 
 module("update");
 
 test("update", function() {
-    var module = Stapes.create();
+    var module = new EmptyModule();
 
     module.set('name', 'Johnny');
     module.set('instruments', {
@@ -113,7 +137,7 @@ test("update", function() {
 module("remove");
 
 test("remove", function() {
-    var module = Stapes.create();
+    var module = new EmptyModule();
     module.set('foo', 'bar');
     module.set('silent', 'silent');
     module.set({
@@ -156,7 +180,7 @@ test("remove", function() {
 module("iterators");
 
 test("each and map with a single object", function() {
-    var module = Stapes.create();
+    var module = new EmptyModule();
     module.set({
         'key1': 'value1',
         'key2': 'value2',
@@ -180,8 +204,8 @@ test("each and map with a single object", function() {
 });
 
 test("context of each() is set to current module", function() {
-    var module = Stapes.create();
-    var module2 = Stapes.create();
+    var module = new EmptyModule();
+    var module2 = new EmptyModule();
 
     module.push(1);
 
@@ -203,7 +227,7 @@ test("context of each() is set to current module", function() {
 });
 
 test("each with an array", function() {
-    var module = Stapes.create();
+    var module = new EmptyModule();
     module.push([
        'value1',
        'value2',
@@ -218,13 +242,15 @@ test("each with an array", function() {
 });
 
 test("filter", function() {
-    var module = Stapes.create();
+    var module = new EmptyModule();
     module.set({
         'key1': 'value1',
         'key2': 'value2',
         'key3': 'value3'
     });
-    var module2 = Stapes.create().set('key', 'value');
+
+    var module2 = new EmptyModule();
+    module2.set('key', 'value');
 
     module2.filter(function(value, key) {
         ok(value === "value", "Value should be value");
@@ -267,7 +293,7 @@ test("_.typeof", function() {
 module("events");
 
 test("off", function() {
-    var module = Stapes.create();
+    var module = new EmptyModule();
 
     var handler = function(){};
 
@@ -316,8 +342,8 @@ test("Stapes.mixinEvents", function() {
 });
 
 test("event scope", function() {
-    var module1 = Stapes.create();
-    var module2 = Stapes.create();
+    var module1 = new EmptyModule();
+    var module2 = new EmptyModule();
     var firstDone = false;
 
     module1.on('eventscope', function(data, e) {
@@ -388,7 +414,9 @@ test("events on subclasses", function() {
 });
 
 test("chaining", function() {
-    var module = Stapes.create().set('foo', true);
+    var module = new EmptyModule();
+    module.set('foo', true);
+
     ok(!!module.get && module.get('foo'), "set() should return the object");
     module = module.update('foo', function() { return true; });
     ok(!!module.get && module.get('foo'), "update() should return the object");
@@ -465,18 +493,16 @@ test("remove", function() {
 });
 
 // Not really a bug, but leave this in for documentation purposes
-// Issue #4o
+// Issue #40
 test("private variables", function() {
     var Module = (function() {
-        var val;
-
         return Stapes.subclass({
             constructor : function( v ) {
-                val = v;
+                this._val = v;
             },
 
             getVal : function() {
-                return val;
+                return this._val;
             }
         });
     })();
