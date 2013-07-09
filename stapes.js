@@ -13,11 +13,10 @@
 // < http://en.wikipedia.org/wiki/MIT_License >
 //
 // Stapes.js : http://hay.github.com/stapes
-
 (function() {
     'use strict';
 
-    var VERSION = "0.7.1";
+    var VERSION = "0.8.0";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
@@ -103,7 +102,15 @@
         },
 
         clone : function(obj) {
-            return _.extend({}, obj);
+            var type = _.typeOf(obj);
+
+            if (type === 'object') {
+                return _.extend({}, obj);
+            }
+
+            if (type === 'array') {
+                return obj.slice(0);
+            }
         },
 
         create : function(proto) {
@@ -329,6 +336,8 @@
 
         typeOf : function(val) {
             if (val === null || typeof val === "undefined") {
+                // This is a special exception for IE, in other browsers the
+                // method below works all the time
                 return String(val);
             } else {
                 return Object.prototype.toString.call(val).replace(/\[object |\]/g, '').toLowerCase();
@@ -341,7 +350,9 @@
             // In previous versions of Stapes we didn't have the check for object,
             // but still this worked. In 0.7.0 it suddenly doesn't work anymore and
             // we need the check. Why? I have no clue.
-            if (_.typeOf(item) === 'object') {
+            var type = _.typeOf(item);
+
+            if (type === 'object' || type === 'array') {
                 item = _.clone(item);
             }
 
@@ -396,17 +407,9 @@
 
     _.Module = function() {
 
-    }
+    };
 
     _.Module.prototype = {
-        // create() is deprecated from 0.8.0
-        create : function() {
-            throw new Error(''.concat(
-                'create() on Stapes modules no longer works from 0.8.0. ',
-                'Check the docs.'
-            ));
-        },
-
         each : function(fn, ctx) {
             var attr = _.attr(this._guid);
             for (var key in attr) {
@@ -478,7 +481,7 @@
         push : function(input, silent) {
             if (_.typeOf(input) === "array") {
                 for (var i = 0, l = input.length; i < l; i++) {
-                    _.setAttribute.call(this, _.makeUuid(), input[i]);
+                    _.setAttribute.call(this, _.makeUuid(), input[i], silent || false);
                 }
             } else {
                 _.setAttribute.call(this, _.makeUuid(), input, silent || false);
@@ -488,7 +491,11 @@
         },
 
         remove : function(input, silent) {
-            if (typeof input === "function") {
+            if (typeof input === 'undefined') {
+                // With no arguments, remove deletes all attributes
+                _.attributes[this._guid] = {};
+                this.emit('change remove');
+            } else if (typeof input === "function") {
                 this.each(function(item, key) {
                     if (input(item)) {
                         _.removeAttribute.call(this, key, silent);
@@ -502,13 +509,13 @@
             return this;
         },
 
-        set : function(objOrKey, value, silent) {
+        set : function(objOrKey, valueOrSilent, silent) {
             if (typeof objOrKey === "object") {
                 for (var key in objOrKey) {
-                    _.setAttribute.call(this, key, objOrKey[key]);
+                    _.setAttribute.call(this, key, objOrKey[key], valueOrSilent || false);
                 }
             } else {
-                _.setAttribute.call(this, objOrKey, value, silent || false);
+                _.setAttribute.call(this, objOrKey, valueOrSilent, silent || false);
             }
 
             return this;
@@ -540,17 +547,6 @@
 
     var Stapes = {
         "_" : _, // private helper functions and properties
-
-        // Compatiblity option, this method is deprecated
-        "create" : function() {
-            var instance = _.create( _.Module.prototype );
-            _.addGuid( instance, true );
-
-            // Mixin events
-            Stapes.mixinEvents( instance );
-
-            return instance;
-        },
 
         "extend" : function() {
             return _.extendThis.apply(_.Module.prototype, arguments);

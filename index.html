@@ -32,11 +32,11 @@
         <h3 id="m-downloads">Downloads</h3>
         <ul>
             <li><a href="stapes.min.js">
-                Download production version 0.7.1 (minified)</a>
+                Download production version 0.8.0 (minified)</a>
             </li>
 
-            <li><a href="https://github.com/hay/stapes/archive/v0.7.1.zip">
-                Download development version 0.7.1 (full source and annotated examples)</a>
+            <li><a href="https://github.com/hay/stapes/archive/v0.8.0.zip">
+                Download development version 0.8.0 (full source and annotated examples)</a>
             </li>
 
             <li><a href="http://github.com/hay/stapes">Fork it and report bugs on Github</a>
@@ -49,7 +49,7 @@
         <p><em>Right. There's a zillion other Javascript MVC frameworks, why
         should i choose Stapes.js?</em></p>
 
-        <p>Here's why i think you should use it: it's really tiny (<strong>2.1kb</strong> minified and gzipped),
+        <p>Here's why i think you should use it: it's really tiny (just <strong>2kb</strong> minified and gzipped),
         easy to fit in an existing codebase, and doesn't force you to
         write your code in a specific style. Because of its small size it's <b>ideal
         for mobile development</b>.
@@ -157,6 +157,8 @@
     var module = new Module('Emmylou');
         </code></pre>
 
+        <p>However, note that this will only work with a single instance of the class because the scope stays the same. Creating an extra module will overwrite the private variables from the previous instance.</p>
+
         <h3 id="m-mixinevents-h3">Using event methods with any non-Stapes object or function</h3>
 
         <p>It's possible to add the <a href="#m-events">event methods</a> to any
@@ -227,7 +229,7 @@
             <p>Create a new Stapes class that you can instantiate later on with
                 <code>new</code>.</p>
 
-            <p class="warning">Note that until Stapes 0.6.0 the preferred way of creating new modules was by using <code>Stapes.create</code>. This has been deprecated by <code>subclass</code> since 0.7.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
+            <p class="warning">Note that until Stapes 0.6.0 the preferred way of creating new modules was by using <code>Stapes.create</code>. This has been replaced by <code>subclass</code> since 0.7.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
 
             <p>You can add a <code>constructor</code> (the function that is run when you
                 instantiate the class) property to the object. All other properties
@@ -931,7 +933,7 @@
             <h1>push</h1>
 
             <h2>module.push( value, [silent] );</h2>
-            <h2>module.push( array );</h2>
+            <h2>module.push( array, [silent] );</h2>
 
             <p>Sets a value, automatically generates an unique uuid as a key.</p>
 
@@ -963,6 +965,7 @@
 
             <h2>module.remove( key, [silent] );</h2>
             <h2>module.remove( function );</h2>
+            <h2>module.remove();</h2>
 
             <p>Deletes an attribute. Triggers <code>remove</code> and
             <code>change</code> events.</p>
@@ -993,6 +996,15 @@
     module.remove('singer', true /* <-- silent flag */);
             </code></pre>
 
+            <p>Without any arguments, <code>remove</code> deletes all attributes in a module and triggers <code>change</code> and <code>remove</code> events.</p>
+
+            <pre><code>
+    module.push([1,2,3]);
+    module.size(); // 3
+    module.remove();
+    module.size(); // 0
+            </code></pre>
+
             <p><code>remove</code> returns the module, so this method is chainable.</p>
         </article>
 
@@ -1000,7 +1012,7 @@
             <h1>set</h1>
 
             <h2>module.set(key, value, [silent]);</h2>
-            <h2>module.set(object);</h2>
+            <h2>module.set(object, [silent]);</h2>
 
             <p>Sets an attribute. Use <code><a href="#m-push">push</a></code> if you want to 'push' a value
             with a random uuid, for collections.</p>
@@ -1047,11 +1059,20 @@
     });
             </code></pre>
 
-            <p>If you do not want your <code>set</code> to trigger an event set
+            <p>If you do not want your <code>set</code> to trigger <em>any</em> events set
                 the optional <code>silent</code> flag to true</p>
 
             <pre><code>
     module.set('singer', 'Johnny', true /* <-- silent flag */);
+            </code></pre>
+
+            <p>This also works for objects:</p>
+
+            <pre><code>
+    module.set({
+        'singer' : 'Johnny',
+        'instrument' : 'guitar'
+    }, true /* silent */);
             </code></pre>
 
             <p id="m-mutate">To get the old or previous value of an attribute
@@ -1104,6 +1125,33 @@
             </code></pre>
 
             <p><code>set</code> returns the module, so this method is chainable</p>
+
+            <p>Stapes doesn't have a native way of doing validation, but you could overwrite the <code>set</code> (and possibly <code>update</code>) method to accomplish the same:</p>
+
+            <pre><code>
+    var Person = Stapes.subclass({
+        set : function(key, value) {
+            if (key === 'email') {
+                if (value.indexOf("@") === -1) {
+                    this.emit('error', 'Invalid email adress');
+                } else {
+                    Stapes.prototype.set.apply(this, arguments);
+                }
+            } else {
+                // Normal set() behavior
+                Stapes.prototype.set.apply(this, arguments);
+            }
+        }
+    });
+
+    var johnny = new Person();
+
+    johnny.on('error', function(msg) {
+        alert( msg ); // 'Invalid email adress'
+    });
+
+    johnny.set('email', 'invalid#email.com');
+            </code></pre>
         </article>
 
         <article id="m-size">
@@ -1166,7 +1214,7 @@
             <p><code>update</code> returns the module, so this method is chainable.</p>
         </article>
 
-        <h3 id="m-deprecated">Deprecated and removed stuff</h3>
+        <h3 id="m-deprecated">Removed and deprecated stuff</h3>
         <article id="m-deprecated-intro">
             <h1>Introduction</h1>
             <p>These methods, modules and other things are either deprecated
@@ -1176,60 +1224,14 @@
         </article>
 
         <article id="m-create">
-            <h1>create <strong>(deprecated and partially removed)</strong></h1>
+            <h1>create <strong>(removed)</strong></h1>
 
             <h2>Stapes.create()</h2>
             <h2>module.create()</h2>
 
             <p>Create a new instance of a Stapes object.</p>
 
-            <p class="warning">This method has been deprecated and partially removed since 0.7.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
-
-            <p>Always returns <code>this</code>, so you can easily chain
-            <code>create</code> with <code>extend</code>.</p>
-
-            <p>The <code>create()</code> function is comparable to creating a new
-                instance in Javascript with the <code>new</code> operator.
-                <code>create</code> also resets all event handlers and attributes
-                set on the object, so be careful not to initialize modules that
-                don't need to be initialized.</p>
-
-            <p>In Stapes 0.7.0 the <code>create</code> method on the <code>Stapes</code>
-                object was deprecated (but still works) and the <code>create</code> method on new modules
-                now triggers an error (and doesn't work). Both methods are to be removed in a future
-                version.</p>
-
-            <p>In new code, please use <a href="#m-subclass"><code>subclass</code></a>
-                instead of <code>create</code>.</p>
-
-            <p>If you like the old pattern of creating classes with <code>create</code> and
-                <code>extend</code> i recommend you use a pattern like this:</p>
-
-            <pre><code>
-    var Car = (new Stapes.subclass()).extend({
-        type : 'normal car'
-    });
-            </code></pre>
-
-            <p>In releases of Stapes before 0.7.0 calling <code>create</code> on an exisiting module could be used to
-                create child modules.</p>
-
-            <pre><code>
-    var Car = Stapes.create().extend({
-        "type" : "normal car",
-
-        "getCar" : function() {
-            return 'this is a ' + this.type;
-        }
-    });
-
-    var SportsCar = Car.create().extend({
-        "type" : "sports car"
-    });
-
-    Car.getCar(); // 'this is a normal car'
-    SportsCar.getCar(); // 'this is a sports car'
-        </code></pre>
+            <p>This method has been deprecated since 0.7.0 and was completely removed in 0.8.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
         </article>
 
         <article id="m-util">
@@ -1268,6 +1270,13 @@
 
         <h3 id="m-history">History</h3>
         <ul>
+            <li>0.8.0 - July 9th 2013</li>
+            <ul>
+                <li><a href="#m-create"><code>create()</code></a> has been completely removed after the deprecation in 0.7.0</a>
+                <li><small>Feature</small> <a href="#m-set"><code>set</code></a> now also accepts the <code>silent</code> flag for objects (issue <a href="https://github.com/hay/stapes/pull/28">#28</a>). Thanks for the suggestion <a href="https://github.com/Neogavin">Neogavin</a>!</li>
+                <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> without any arguments now removes all attributes in a module.</li>
+                <li><small>Bugfix</small> The <code>silent</code> flag did not work with <a href="m-push"><code>push</code></a> (issue <a href="https://github.com/hay/stapes/issues/39">#39</a>). Thanks for reporting <a href="https://github.com/Gamadril">Gamadril</a>!</li>
+            </ul>
             <li>0.7.1 - February 27th 2013</li>
             <ul>
                 <li>Thanks to <a href="https://github.com/josher19">josher19</a> the docs now have nice tooltips
@@ -1376,6 +1385,7 @@
             <li><a href="https://github.com/ericchaves">Eric Chaves</a></li>
             <li><a href="https://github.com/josher19">Josher19</a></li>
             <li><a href="https://github.com/gonchuki">gonchuki</a></li>
+            <li><a href="https://github.com/Neogavin">Neogavin</a></li>
         </ul>
     </section> <!-- #content -->
 
