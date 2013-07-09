@@ -1012,7 +1012,7 @@
             <h1>set</h1>
 
             <h2>module.set(key, value, [silent]);</h2>
-            <h2>module.set(object);</h2>
+            <h2>module.set(object, [silent]);</h2>
 
             <p>Sets an attribute. Use <code><a href="#m-push">push</a></code> if you want to 'push' a value
             with a random uuid, for collections.</p>
@@ -1059,11 +1059,20 @@
     });
             </code></pre>
 
-            <p>If you do not want your <code>set</code> to trigger an event set
+            <p>If you do not want your <code>set</code> to trigger <em>any</em> events set
                 the optional <code>silent</code> flag to true</p>
 
             <pre><code>
     module.set('singer', 'Johnny', true /* <-- silent flag */);
+            </code></pre>
+
+            <p>This also works for objects:</p>
+
+            <pre><code>
+    module.set({
+        'singer' : 'Johnny',
+        'instrument' : 'guitar'
+    }, true /* silent */);
             </code></pre>
 
             <p id="m-mutate">To get the old or previous value of an attribute
@@ -1264,6 +1273,7 @@
             <li>0.8.0</li>
             <ul>
                 <li><a href="#m-create"><code>create()</code></a> has been completely removed after the deprecation in 0.7.0</a>
+                <li><small>Feature</small> <a href="#m-set"><code>set</code></a> now also accepts the <code>silent</code> flag for objects (issue <a href="https://github.com/hay/stapes/pull/28">#28</a>). Thanks for the suggestion <a href="https://github.com/Neogavin">Neogavin</a>!</li>
                 <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> without any arguments now removes all attributes in a module.</li>
                 <li><small>Bugfix</small> The <code>silent</code> flag did not work with <a href="m-push"><code>push</code></a> (issue <a href="https://github.com/hay/stapes/issues/39">#39</a>). Thanks for reporting <a href="https://github.com/Gamadril">Gamadril</a>!</li>
             </ul>
@@ -1375,6 +1385,7 @@
             <li><a href="https://github.com/ericchaves">Eric Chaves</a></li>
             <li><a href="https://github.com/josher19">Josher19</a></li>
             <li><a href="https://github.com/gonchuki">gonchuki</a></li>
+            <li><a href="https://github.com/Neogavin">Neogavin</a></li>
         </ul>
     </section> <!-- #content -->
 
