@@ -414,8 +414,14 @@ test("events on subclasses", function() {
 });
 
 test("chaining", function() {
-    var module = new EmptyModule();
-    module.set('foo', true);
+    var Module = Stapes.subclass({
+        constructor : function() {},
+        chain : function() { },
+        noChain : function() { return ""; }
+    });
+
+    var module = new Module();
+    module = module.set('foo', true);
 
     ok(!!module.get && module.get('foo'), "set() should return the object");
     module = module.update('foo', function() { return true; });
@@ -424,6 +430,9 @@ test("chaining", function() {
     ok(!!module.get && module.get('foo') === null, "remove() should return the object");
     module = module.push(true);
     ok(!!module.get && module.size() === 1, "push() should return the object");
+
+    ok(module === module.chain(),'A method without an explicit return value should return the object');
+    ok("" === module.noChain(),'A method with an explicit return value shoudl not return the object');
 });
 
 test("Extending Stapes (plugins)", function() {

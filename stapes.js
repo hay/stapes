@@ -127,12 +127,16 @@
             includeEvents = includeEvents || false;
 
             var superclass = props.superclass.prototype;
+            var target;
 
             // Objects always have a constructor, so we need to be sure this is
             // a property instead of something from the prototype
             var realConstructor = props.hasOwnProperty('constructor') ? props.constructor : function(){};
 
             function constructor() {
+                // Store this scope as target for method chaining
+                target = this;
+
                 // Be kind to people forgetting new
                 if (!(this instanceof constructor)) {
                     throw new Error("Please use 'new' when initializing Stapes classes");
@@ -176,7 +180,16 @@
             // Copy all props given in the definition to the prototype
             for (var key in props) {
                 if (key !== 'constructor' && key !== 'superclass') {
-                    constructor.prototype[key] = props[key];
+                    constructor.prototype[key] =
+
+                    (typeof props[key] === 'function') ?
+
+                    function() {
+                        var result = this.apply(target,arguments);
+                        return result === undefined ? target : result;
+                    }.bind(props[key]) :
+
+                    props[key];
                 }
             }
 
