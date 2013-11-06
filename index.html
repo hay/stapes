@@ -810,19 +810,25 @@
 
             <h2>module.filter( function );</h2>
 
-            <p>Gets an array of attribute values    using a custom function.</p>
+            <p>Gets an array of attribute values using a custom function.</p>
 
             <p>The callback <code>function</code> gets two arguments: the value of the attribute, and the original key.</p>
 
             <pre><code>
-    module.set('singer', {
-        'name' : 'Elvis',
-        'instrument' : 'Guitar'
-    });
+    module.push([
+        {
+            name : 'Johnny',
+            playing : false
+        },
+        {
+            name : 'Emmylou',
+            playing : true
+        }
+    ]);
 
-    var singer = module.filter(function(item, key) {
-        return item.name === "Elvis" && key === "singer";
-    }); // [ { name : 'Elvis', instrument : 'Guitar' }]
+    var playing = module.filter(function(singer) {
+        return singer.playing;
+    }); // [ { name : 'Emmylou', playing : true }]
             </code></pre>
         </article>
 
@@ -830,15 +836,11 @@
             <h1>get</h1>
 
             <h2>module.get( key );</h2>
+            <h2>module.get( key1, key2, ... );</h2>
             <h2>module.get( function );</h2>
 
             <p>Gets an attribute by key. If the item is not available will return
             <code>null</code></p>
-
-            <P>You can also use a function to get a specific key. This is
-                comparable to <code><a href="#m-filter">filter</a></code>,
-                however, <code>filter</code> always returns an array of results,
-                while <code>get</code> always returns a single result.</P>
 
             <pre><code>
     var Module = Stapes.subclass();
@@ -850,13 +852,20 @@
     });
 
     module.get('instrument'); // 'guitar'
-
-    module.get(function(value) {
-        return value === "guitar";
-    }); // 'instrument'
             </code></pre>
-        </article>
 
+            <p>You can get multiple key / value pairs when you
+            use more than one argument:</p>
+
+            <pre><code>
+    module.get('instrument', 'name'); // { 'instrument' : 'guitar', 'name' : 'Johnny' }
+            </code></pre>
+
+            <P>You can also use a function to get a specific value. This is
+                comparable to <code><a href="#m-filter">filter</a></code>,
+                however, <code>filter</code> always returns an array of results,
+                while <code>get</code> always returns a single result.</P>
+        </article>
 
         <article id="m-getall">
             <h1>getAll</h1>
@@ -1270,6 +1279,10 @@
 
         <h3 id="m-history">History</h3>
         <ul>
+            <li>0.8.1</li>
+            <ul>
+                <li><small>Feature</small> <a href="#m-get"><code>get</code></a> now accepts multiple arguments so you can use it like Underscore's <code>pick</code> (Issue <a href="https://github.com/hay/stapes/pull/38">#38</a>). Thanks for the suggestion <a href="https://github.com/santervo">Santervo!</a></li>
+            </ul>
             <li>0.8.0 - July 9th 2013</li>
             <ul>
                 <li><a href="#m-create"><code>create()</code></a> has been completely removed after the deprecation in 0.7.0</a>
@@ -1386,6 +1399,8 @@
             <li><a href="https://github.com/josher19">Josher19</a></li>
             <li><a href="https://github.com/gonchuki">gonchuki</a></li>
             <li><a href="https://github.com/Neogavin">Neogavin</a></li>
+            <li><a href="https://github.com/GMFlash">GMFlash</a></li>
+            <li><a href="https://github.com/santervo">Santtu Lintervo</a></li>
         </ul>
     </section> <!-- #content -->
 

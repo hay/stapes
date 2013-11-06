@@ -426,6 +426,33 @@ test("chaining", function() {
     ok(!!module.get && module.size() === 1, "push() should return the object");
 });
 
+test("get", function() {
+    var module = new EmptyModule();
+
+    module.set({
+        'title' : 'Ring of Fire',
+        'artist' : 'Johnny',
+        'instrument' : 'guitar'
+    });
+
+    ok( module.get('artist') === 'Johnny', "simple get");
+    ok( module.get('undefined') === null, "undefined returns null");
+
+    // Note how the function variaty of get() is pretty much useless
+    // because it returns values instead of key/values
+    // For now, we leave it in Stapes, but it might be deprecated
+    ok(
+        module.get(function(a) {
+            return a === 'guitar';
+        }) === 'guitar',
+        "get with a function"
+    );
+
+    // The 'pick' like variety of get() is a lot more useful
+    var props = module.get('artist', 'instrument');
+    deepEqual(props, { 'artist' : 'Johnny', 'instrument' : 'guitar'}, "get works with multiple string arguments");
+});
+
 test("Extending Stapes (plugins)", function() {
     expect(1);
 

@@ -437,7 +437,20 @@
 
         get : function(input) {
             if (typeof input === "string") {
-                return this.has(input) ? _.attr(this._guid)[input] : null;
+                // If there is more than one argument, give back an object,
+                // like Underscore's pick()
+                if (arguments.length > 1) {
+                    var results = {};
+
+                    for (var i = 0, l = arguments.length; i < l; i++) {
+                        var key = arguments[i];
+                        results[key] = this.get(key);
+                    }
+
+                    return results;
+                } else {
+                    return this.has(input) ? _.attr(this._guid)[input] : null;
+                }
             } else if (typeof input === "function") {
                 var items = this.filter(input);
                 return (items.length) ? items[0] : null;
