@@ -16,7 +16,7 @@
 (function() {
     'use strict';
 
-    var VERSION = "0.8.0";
+    var VERSION = "0.8.1-pre";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
