@@ -12,20 +12,18 @@ if (!Function.prototype.bind) {
     var SCREEN_WIDTH = $(window).width();
     var SCREEN_HEIGHT;
 
-    function rand(min, max) {
-        return Math.floor(Math.random() * (max - min)) + min;
-    }
+    var util = {
+        rand : function(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        },
 
-    function range(val, min, max) {
-        return (val >= min) && (val <= max);
-    }
-
-    function isiOS() {
-        return !!navigator.userAgent.match(/(iPad|iPhone|iPod)/i);
-    }
+        isiOS : function() {
+            return !!navigator.userAgent.match(/(iPad|iPhone|iPod)/i);
+        }
+    };
 
     var Sound = Stapes.subclass({
-        constructor : function() {
+        constructor : function(id) {
             if (!("Audio" in window)) return;
 
             $("body").append(''.concat(
@@ -36,6 +34,14 @@ if (!Function.prototype.bind) {
             ));
 
             this.el = $("#sound").get(0);
+
+            this.el.addEventListener('timeupdate', function(e) {
+                if (this.el.currentTime >= this.playRange[1]) {
+                    this.el.pause();
+                }
+            }.bind(this), false);
+
+            this.playRange = this.sprites[id];
         },
 
         "sprites" : [
@@ -45,36 +51,20 @@ if (!Function.prototype.bind) {
             [3, 3.5]
         ],
 
-        "play" : function(index) {
-            // Sigh.. iPhone doesn't work
-            if (isiOS()) return;
+        "play" : function() {
+            // Sigh.. iPhone and IE9 don't work
+            if (util.isiOS() || !("Audio" in window)) return;
 
-            // And IE < 9 too
-            if (!("Audio" in window)) return;
-
-            var data = this.sprites[index];
-            var self = this;
-
-            this.el.currentTime = data[0];
+            this.el.currentTime = this.playRange[0];
             this.el.play();
-
-            (function doPause() {
-                setTimeout(function() {
-                    if (self.el.currentTime >= data[1]) {
-                        self.el.pause();
-                    } else {
-                        doPause();
-                    }
-                }, 10);
-            })();
         }
     });
 
     var Ball = Stapes.subclass({
         constructor : function() {
             this.set({
-                "direction" : rand(35, 65),
-                "x" : rand(50, 900),
+                "direction" : util.rand(35, 65),
+                "x" : util.rand(50, 900),
                 "y" : 1,
                 "width" : 20,
                 "height" : 20,
@@ -231,7 +221,8 @@ if (!Function.prototype.bind) {
             this.blocks = new Blocks();
             this.timer = new Timer( 1000 / 60 );
             this.ball = new Ball();
-            this.sound = new Sound();
+            this.sound1 = new Sound(0);
+            this.sound2 = new Sound(1);
 
             this.bindEventHandlers();
             this.timer.start();
@@ -256,7 +247,7 @@ if (!Function.prototype.bind) {
                         y = e.pageY - $(self.el).offset().top - Blocks.blockHeight / 2;
 
                     self.blocks.addBlock(x, y);
-                    self.sound.play(2);
+                    self.sound2.play();
                 }
             });
 
@@ -273,7 +264,7 @@ if (!Function.prototype.bind) {
                     } else if (x > SCREEN_WIDTH) {
                         this.ball.set('x', 20);
                     } else {
-                        this.sound.play(0);
+                        this.sound1.play();
                         this.ball.reverseDirection();
                     }
                 }
@@ -283,7 +274,7 @@ if (!Function.prototype.bind) {
                 if (hittedBlock) {
                     hittedBlock.set('color', 'green');
                     hittedBlock.render();
-                    this.sound.play(1);
+                    this.sound2.play();
                     this.ball.reverseDirection();
                 }
 
