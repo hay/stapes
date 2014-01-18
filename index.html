@@ -121,7 +121,7 @@
         }
 
         sayName : function() {
-            console.log('My name is: ' + name);
+            console.log('My name is: ' + this.name);
         }
     });
         </code></pre>
@@ -341,7 +341,7 @@
     }, true /* <-- 'classOnly' flag */);
 
     'subclass' in Class; // true
-    'get' in Class; // false
+    'get' in new Class(); // false
         </code></pre>
 
         </article>

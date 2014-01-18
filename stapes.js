@@ -251,7 +251,7 @@
                     // Store data for mutate event
                     mutateData.key = key;
                     mutateData.oldValue = _.attr(this._guid)[key];
-                    
+
                     delete _.attr(this._guid)[key];
 
                     // If 'silent' is set, do not throw any events
@@ -263,7 +263,7 @@
                         this.emit('remove', key);
                         this.emit('remove:' + key);
                     }
-                    
+
                     // clean up
                     delete mutateData.oldValue;
                 }

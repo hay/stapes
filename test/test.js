@@ -12,9 +12,27 @@ if (!Object.keys) {
     };
 }
 
-module("set");
-
 var EmptyModule = Stapes.subclass();
+
+test("subclassing", function() {
+    var Car = Stapes.subclass();
+    var SuperCar = Car.subclass();
+    var UltraSuperCar = SuperCar.subclass();
+
+    var car = new Car();
+    var superCar = new SuperCar();
+    var ultraSuperCar = new UltraSuperCar();
+
+    ok( car instanceof Car, "direct instancof");
+    ok( superCar instanceof Car, "second inheritance");
+    ok( ultraSuperCar instanceof UltraSuperCar, "third inheritance");
+    ok( !(car instanceof UltraSuperCar), "other way around should not work");
+
+    var ClassOnly = Stapes.subclass({}, true);
+    var c = new ClassOnly();
+    ok( !('get' in c), "No get in classOnly classes");
+    ok( 'subclass' in ClassOnly, "subclass in classOnly classes");
+});
 
 test("change events", function() {
     expect(12);
@@ -95,7 +113,7 @@ test("change events", function() {
     }); /* but we do want them for non-silent objects */
 });
 
-module("update");
+
 
 test("update", function() {
     var module = new EmptyModule();
@@ -134,7 +152,7 @@ test("update", function() {
     }, true /* silent flag */);
 });
 
-module("remove");
+
 
 test("remove", function() {
     var module = new EmptyModule();
@@ -177,7 +195,7 @@ test("remove", function() {
     ok(module.size() === 0, 'all attributes should be removed');
 })
 
-module("iterators");
+
 
 test("each and map with a single object", function() {
     var module = new EmptyModule();
@@ -290,7 +308,7 @@ test("_.typeof", function() {
     ok(Stapes._.typeOf( undefined ) === "undefined", "typeof undefined = undefined");
 });
 
-module("events");
+
 
 test("off", function() {
     var module = new EmptyModule();
