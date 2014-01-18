@@ -6,7 +6,7 @@
 // |____/ \__\__,_| .__/ \___||___(_)/ |___/
 //              |_|              |__/
 //
-// (*) a (really) tiny Javascript MVC microframework
+// (*) the Javascript MVC microframework that does just enough
 //
 // (c) Hay Kranen < hay@bykr.org >
 // Released under the terms of the MIT license
