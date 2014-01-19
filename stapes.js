@@ -13,7 +13,7 @@
 // < http://en.wikipedia.org/wiki/MIT_License >
 //
 // Stapes.js : http://hay.github.com/stapes
-(function() {
+;(function() {
     'use strict';
 
     var VERSION = "0.8.1-pre";
