@@ -1,5 +1,5 @@
 # Stapes.js <sup>*</sup>
-### (*) a (really) tiny Javascript MVC microframework
+### (*) the Javascript MVC microframework that does just enough
 
 Full documentation available here:
 
