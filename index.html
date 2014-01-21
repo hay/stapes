@@ -3,11 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <title>Stapes.js - the Javascript MVC microframework that does just enough</title>
-    <link rel="stylesheet" href="web/css/style.css" />
-    <link rel="stylesheet" href="web/css/code.css" />
-    <link rel="stylesheet" href="web/css/tooltip.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="web-assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="web-assets/css/code.css" />
+    <link rel="stylesheet" href="web-assets/css/style.css" />
 
-    <script>
+    <script type="aap">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-15405780-13']);
       _gaq.push(['_trackPageview']);
@@ -20,1394 +21,1430 @@
     </script>
 </head>
 <body>
-    <nav>
-        <h1>Stapes.js</h1>
-        <ul class="toc"></ul>
-    </nav>
+<!--
+    <div class="navbar" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Stapes.js</a>
+            </div>
 
-    <section id="content">
-        <h1>Stapes.js</h1>
-        <h2>the Javascript MVC microframework that does <em>just enough</em></h2>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </div><
+-->
 
-        <h3 id="m-downloads">Downloads</h3>
-        <ul>
-            <li><a href="stapes.min.js">
-                Download production version 0.8.0 (minified)</a>
-            </li>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="jumbotron">
+                    <!-- <h1><strong>Stapes.js</strong></h1> -->
+                    <img src="web-assets/img/logo.png" />
 
-            <li><a href="https://github.com/hay/stapes/archive/v0.8.0.zip">
-                Download development version 0.8.0 (full source and annotated examples)</a>
-            </li>
+                    <p class="lead">
+                        meet the little Javascript framework that does <em>just enough</em>
+                    </p>
 
-            <li><a href="http://github.com/hay/stapes">Fork it and report bugs on Github</a>
-            </li>
-        </ul>
+                    <p>
+                        <a href="stapes.min.js" class="btn btn-primary btn-lg">
+                            Download Stapes.js 0.8.0 (minified)
+                        </a>
+                    </p>
 
-        <p>For node.js <code>npm install stapes</code> will do.</p>
+                    <p>
+                        <a href="https://github.com/hay/stapes/archive/v0.8.0.zip" class="btn btn-lg btn-link">
+                            Download development version
+                        </a>
+                        <a href="http://github.com/hay/stapes" class="btn btn-lg btn-link">
+                            Contribute on Github
+                        </a>
+                    </p>
 
-        <h3 id="m-phil">Philosophy</h3>
-        <p><em>Right. There's a zillion other Javascript MVC frameworks, why
-        should i choose Stapes.js?</em></p>
+                    <p>Using node? <code>npm install stapes</code> will do.</p>
+                </div> <!-- .jumbotron -->
+            </div>
 
-        <p>Here's why i think you should use it: it's really tiny (just <strong>2kb</strong> minified and gzipped),
-        easy to fit in an existing codebase, and doesn't force you to
-        write your code in a specific style. Because of its small size it's <b>ideal
-        for mobile development</b>.
+            <div class="col-md-4 pull-right">
+                <div id="toc">
+                    <ul class="nav">
+                        <li><a href="#top">Stapes.js</a></li>
+                    </ul>
+                </div>
+            </div>
 
-        <p><em>So, Stapes.js isn't a traditional MVC framework?</em></p>
+            <div class="col-md-8" id="content">
+                <h3 id="m-phil">Philosophy</h3>
+                <p><em>Right. There's a zillion other Javascript MVC frameworks, why
+                should i choose Stapes.js?</em></p>
 
-        <p>No. Stapes doesn't have any pre-defined Models, Views or Controllers.
-        It also doesn't have Collections, Routers, or stuff you might find in other
-        libraries (remember, it's tiny :).</p>
+                <p>Here's why i think you should use it: it's really tiny (just <strong>2kb</strong> minified and gzipped),
+                easy to fit in an existing codebase, and doesn't force you to
+                write your code in a specific style. Because of its small size it's <b>ideal
+                for mobile development</b>.
 
-        <p><em>Right.. so how do i write my code?</em></p>
+                <p><em>So, Stapes.js isn't a traditional MVC framework?</em></p>
 
-        <p>Any way you want. Stapes has all the building blocks you need when
-        writing a MVC app.</p>
+                <p>No. Stapes doesn't have any pre-defined Models, Views or Controllers.
+                It also doesn't have Collections, Routers, or stuff you might find in other
+                libraries (remember, it's tiny :).</p>
 
-        <p><em>Like what?</em></p>
+                <p><em>Right.. so how do i write my code?</em></p>
 
-        <p>Here's a list:</p>
-        <ul>
-            <li>A powerful yet simple event system using <a href="#m-on"><code>on</code></a> and
-            <a href="#m-emit"><code>emit</code></a> methods. Usable on non-Stapes objects as well using
-            <a href="#m-mixinEvents">event mixins</a>.</li>
-            <li><a href="http://wiki.ecmascript.org/doku.php?id=harmony:classes">Ecmascript Harmony-like classes</a> using <a href="#m-subclass"><code>subclass</code></a>.</li>
-            <li>Event-triggering attributes using <a href="#m-get"><code>get</code></a> and <a href="#m-set"><code>set</code></a>.</li>
-            <li>Powerful <a href="#m-filter"><code>filter</code></a> and <a href="#m-remove"><code>remove</code></a> methods for attributes.</li>
-            <li>Usable in traditional Javascript, as an AMD module (for <a href="http://requirejs.org">Require.js</a>)
-            or on the server with <a href="http://www.nodejs.org">Node.js</a></li>
-            <li><a href="#m-plugins">A simple mechanism</a> for writing plugins and extensions to extend the functionality of Stapes.</li>
-            <li>Nice extensive documentation with lots of examples (you're reading that right now ;)</li>
-        </ul>
+                <p>Any way you want. Stapes has all the building blocks you need when
+                writing a MVC app.</p>
 
-        <p><em>But what about templating, persistence, routing, history management, etc?</em></p>
+                <p><em>Like what?</em></p>
 
-        <p>That's the flexibility of Stapes: you're free to use any library you want.</p>
+                <p>Here's a list:</p>
+                <ul>
+                    <li>A powerful yet simple event system using <a href="#m-on"><code>on</code></a> and
+                    <a href="#m-emit"><code>emit</code></a> methods. Usable on non-Stapes objects as well using
+                    <a href="#m-mixinEvents">event mixins</a>.</li>
+                    <li><a href="http://wiki.ecmascript.org/doku.php?id=harmony:classes">Ecmascript Harmony-like classes</a> using <a href="#m-subclass"><code>subclass</code></a>.</li>
+                    <li>Event-triggering attributes using <a href="#m-get"><code>get</code></a> and <a href="#m-set"><code>set</code></a>.</li>
+                    <li>Powerful <a href="#m-filter"><code>filter</code></a> and <a href="#m-remove"><code>remove</code></a> methods for attributes.</li>
+                    <li>Usable in traditional Javascript, as an AMD module (for <a href="http://requirejs.org">Require.js</a>)
+                    or on the server with <a href="http://www.nodejs.org">Node.js</a></li>
+                    <li><a href="#m-plugins">A simple mechanism</a> for writing plugins and extensions to extend the functionality of Stapes.</li>
+                    <li>Nice extensive documentation with lots of examples (you're reading that right now ;)</li>
+                </ul>
 
-        <p><em>Right, so this is your hobby project. Does this actually work in production?</em></p>
+                <p><em>But what about templating, persistence, routing, history management, etc?</em></p>
 
-        <p>Stapes was written for a complex HTML5 media player in a high-traffic website,
-        and it works nicely there, as well as in multiple other projects. Have you used Stapes in your
-        project? <a href="mailto:hay@bykr.org">Let me know</a>, and i'll add you to this site as a showcase.</p>
+                <p>That's the flexibility of Stapes: you're free to use any library you want.</p>
 
-        <p><em>Where do i report bugs, feature requests, patches?</em></p>
+                <p><em>Right, so this is your hobby project. Does this actually work in production?</em></p>
 
-        <p>Please report all of those things on <a href="https://github.com/hay/stapes">Github</a>.</p>
+                <p>Stapes was written for a complex HTML5 media player in a high-traffic website,
+                and it works nicely there, as well as in multiple other projects. Have you used Stapes in your
+                project? <a href="mailto:hay@bykr.org">Let me know</a>, and i'll add you to this site as a showcase.</p>
 
-        <p><em>Does this work in all browsers?</em></p>
+                <p><em>Where do i report bugs, feature requests, patches?</em></p>
 
-        <p>Stapes should work on all current (mobile) browsers, as well as on
-            older browsers like Internet Explorer 8. If you come accross any
-            browser-specific bugs, please <a href="http://github.com/hay/stapes">report them</a>
-            on Github.</p>
+                <p>Please report all of those things on <a href="https://github.com/hay/stapes">Github</a>.</p>
 
-        <p><em>Okay, seems promising. Where do i start?</em></p>
+                <p><em>Does this work in all browsers?</em></p>
 
-        <p>Read on...</p>
+                <p>Stapes should work on all current (mobile) browsers, as well as on
+                    older browsers like Internet Explorer 8. If you come accross any
+                    browser-specific bugs, please <a href="http://github.com/hay/stapes">report them</a>
+                    on Github.</p>
 
-        <h3 id="m-intro">Introduction</h3>
+                <p><em>Okay, seems promising. Where do i start?</em></p>
 
-        <p class="info"><b>If you're new to writing MVC apps you probably want to read this
-        <a href="http://www.haykranen.nl/2012/07/19/learn-mvc-create-a-javascript-todo-list-using-stapes-js-in-less-than-100-lines-code/">
-            beginner's tutorial</a>, and write a todo app in less than 100 lines of code using Stapes</b>.</p>
+                <p>Read on...</p>
 
-        <p>Write your Stapes modules like this</p>
+                <h3 id="m-intro">Introduction</h3>
 
-        <pre><code>
+                <p class="info"><b>If you're new to writing MVC apps you probably want to read this
+                <a href="http://www.haykranen.nl/2012/07/19/learn-mvc-create-a-javascript-todo-list-using-stapes-js-in-less-than-100-lines-code/">
+                    beginner's tutorial</a>, and write a todo app in less than 100 lines of code using Stapes</b>.</p>
+
+                <p>Write your Stapes modules like this</p>
+
+                <pre>
+var Module = Stapes.subclass({
+    constructor : function(name) {
+        this.name = name;
+    }
+
+    sayName : function() {
+        console.log('My name is: ' + this.name);
+    }
+});
+                </pre>
+
+                <p>Then, use it like this.</p>
+
+                <pre>
+var module = new Module('Emmylou');
+
+module.sayName(); // 'My name is Emmylou'
+                </pre>
+
+                <p>If you want to use private variables and functions, use Stapes like this</p>
+
+                <pre>
+var Module = (function() {
+    var name;
+
+    function showPrivate() {
+        console.log("You shouldn't be seeing this", name);
+    }
+
     var Module = Stapes.subclass({
-        constructor : function(name) {
-            this.name = name;
-        }
-
-        sayName : function() {
-            console.log('My name is: ' + this.name);
+        constructor : function(aName) {
+            name = aName;
+            showPrivate();
         }
     });
-        </code></pre>
 
-        <p>Then, use it like this.</p>
+    return Module;
+})();
 
-        <pre><code>
-    var module = new Module('Emmylou');
+var module = new Module('Emmylou');
+                </pre>
 
-    module.sayName(); // 'My name is Emmylou'
-        </code></pre>
+                <p>However, note that this will only work with a single instance of the class because the scope stays the same. Creating an extra module will overwrite the private variables from the previous instance.</p>
 
-        <p>If you want to use private variables and functions, use Stapes like this</p>
+                <h3 id="m-mixinevents-h3">Using event methods with any non-Stapes object or function</h3>
 
-        <pre><code>
-    var Module = (function() {
-        var name;
+                <p>It's possible to add the <a href="#m-events">event methods</a> to any
+                    regular Javascript object or function. See <a href="#m-mixinEvents">
+                    <code>Stapes.mixinEvents</code></a> for more information.</p>
 
-        function showPrivate() {
-            console.log("You shouldn't be seeing this", name);
-        }
+                <h3 id="m-require">Using it together with RequireJS</h3>
 
-        var Module = Stapes.subclass({
-            constructor : function(aName) {
-                name = aName;
-                showPrivate();
-            }
-        });
+                <p>To avoid lots of global variables you can use a dependency loader like
+                <a href="http://www.requirejs.org">Require.JS</a>. This also makes the
+                previous example easier to read.</p>
 
-        return Module;
-    })();
+                <p>A dependency loader also makes it a lot easier to modularize your code and
+                (with the Require.js optimizer) easily minify and concat your app.</p>
 
-    var module = new Module('Emmylou');
-        </code></pre>
+                <pre>
+// 'module.js'
+require(["path/to/Stapes"], function(Stapes) {
+    var name;
 
-        <p>However, note that this will only work with a single instance of the class because the scope stays the same. Creating an extra module will overwrite the private variables from the previous instance.</p>
+    function showPrivate() {
+        console.log("You shouldn't be seeing this: ", name);
+    }
 
-        <h3 id="m-mixinevents-h3">Using event methods with any non-Stapes object or function</h3>
-
-        <p>It's possible to add the <a href="#m-events">event methods</a> to any
-            regular Javascript object or function. See <a href="#m-mixinEvents">
-            <code>Stapes.mixinEvents</code></a> for more information.</p>
-
-        <h3 id="m-require">Using it together with RequireJS</h3>
-
-        <p>To avoid lots of global variables you can use a dependency loader like
-        <a href="http://www.requirejs.org">Require.JS</a>. This also makes the
-        previous example easier to read.</p>
-
-        <p>A dependency loader also makes it a lot easier to modularize your code and
-        (with the Require.js optimizer) easily minify and concat your app.</p>
-
-        <pre><code>
-    // 'module.js'
-    require(["path/to/Stapes"], function(Stapes) {
-        var name;
-
-        function showPrivate() {
-            console.log("You shouldn't be seeing this: ", name);
-        }
-
-        var Module = Stapes.subclass({
-            constructor : function(aName) {
-                name = aName;
-                showPrivate();
-            }
-        });
-
-        return Module;
-    });
-
-    // somewhere else
-    require(['module'], function(Module) {
-        var module = new Module('Elvis'); // You shouldn't be seeing this: Elvis
-    });
-        </code></pre>
-
-        <h3 id="m-examples">Examples</h3>
-        <p>There are three examples available to get a taste on how to write a
-            Stapes.js application.</p>
-
-        <ul>
-            <li><a href="examples/todos">A todo list</a></li>
-            <li><a href="examples/todos-require">A todo list using Require.JS modules</a></li>
-            <li><a href="examples/bounce">A simple bouncing ball demo with HTML5 audio</a></li>
-        </ul>
-
-        <p>Code for these examples is available in the <a href="#m-downloads">development download</a>.</p>
-
-        <p>Note that the two todo examples are also available from
-            <a href="http://addyosmani.github.com/todomvc/labs/">TodoMVC</a>.</p>
-
-        <h3 id="m-general">API: Creation methods</h3>
-        <p>These methods aid in the creation and extension of classes, or
-            <em>modules</em>. These terms are used interchangeably in this
-            document.</p>
-
-        <article id="m-subclass">
-            <h1>subclass</h1>
-
-            <h2>Module.subclass( [object] )</h2>
-
-            <h2>Stapes.subclass( [object, classOnly] )</h2>
-
-            <p>Create a new Stapes class that you can instantiate later on with
-                <code>new</code>.</p>
-
-            <p class="warning">Note that until Stapes 0.6.0 the preferred way of creating new modules was by using <code>Stapes.create</code>. This has been replaced by <code>subclass</code> since 0.7.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
-
-            <p>You can add a <code>constructor</code> (the function that is run when you
-                instantiate the class) property to the object. All other properties
-                will become prototype methods. To add static methods to your class use
-                <a href="#m-extend"><code>extend</code></a>. If you want to add
-                more properties to the prototype of the class later on, use
-                <a href="#m-proto"><code>proto</code></a>.</p>
-
-        <pre><code>
     var Module = Stapes.subclass({
-        constructor : function(name) {
-            this.name = name;
-        },
-
-        getName : function() {
-            return this.name;
+        constructor : function(aName) {
+            name = aName;
+            showPrivate();
         }
     });
 
-    var module = new Module('emmylou');
-    module.getName(); // 'emmylou'
-        </code></pre>
+    return Module;
+});
 
-            <p>When calling <code>subclass</code> on a Stapes class you can extend
-                it into a new class that will inherit all prototype properties of the
-                parent class.</p>
+// somewhere else
+require(['module'], function(Module) {
+    var module = new Module('Elvis'); // You shouldn't be seeing this: Elvis
+});
+                </pre>
 
-        <pre><code>
-    var Module = Stapes.subclass({
-        sayName : function() {
-            console.log('i say my name!');
-        }
-    });
+                <h3 id="m-examples">Examples</h3>
+                <p>There are three examples available to get a taste on how to write a
+                    Stapes.js application.</p>
 
-    var BetterModule = Module.subclass({
-        sayNameBetter : function() {
-            this.sayName(); // Inherits 'sayName' from 'Module'
-            console.log('i say my name better!');
-        }
-    });
+                <ul>
+                    <li><a href="examples/todos">A todo list</a></li>
+                    <li><a href="examples/todos-require">A todo list using Require.JS modules</a></li>
+                    <li><a href="examples/bounce">A simple bouncing ball demo with HTML5 audio</a></li>
+                </ul>
 
-    var module = new BetterModule();
-    module.sayNameBetter(); // 'i say my name! i say my name better!'
-        </code></pre>
+                <p>Code for these examples is available in the <a href="#m-downloads">development download</a>.</p>
 
-            <p>Note that it's perfectly valid to call <code>subclass</code> without
-                any arguments at all. In that case you'll simply get a new class
-                with an empty constructor.</p>
+                <p>Note that the two todo examples are also available from
+                    <a href="http://addyosmani.github.com/todomvc/labs/">TodoMVC</a>.</p>
 
-            <p>Also note that if you call <code>subclass</code> on a Module the child
-                module <strong>won't</strong> automatically inherit the constructor
-                of the parent. This is by design. To inherit the constructor of a parent
-                class simply specify it in your <code>subclass</code> setup:</p>
+                <h3 id="m-general">API: Creation methods</h3>
+                <p>These methods aid in the creation and extension of classes, or
+                    <em>modules</em>. These terms are used interchangeably in this
+                    document.</p>
 
-        <pre><code>
-    var Parent = Stapes.subclass({
-        constructor : function(name) {
-            this.name = name;
-        }
-    });
+                <article id="m-subclass">
+                    <h1>subclass</h1>
 
-    var Child = Parent.subclass({
-        // inherit the constructor from parent
-        constructor : Parent.prototype.constructor
-    });
-        </code></pre>
+                    <h2>Module.subclass( [object] )</h2>
 
-            <p>Because <code>subclass</code> set ups the prototype chain correctly
-                the <code>instanceof</code> parameter will work as expected.</p>
+                    <h2>Stapes.subclass( [object, classOnly] )</h2>
 
-        <pre><code>
-    module instanceof BetterModule; // true
-    module instanceof Module; // true
-        </code></pre>
+                    <p>Create a new Stapes class that you can instantiate later on with
+                        <code>new</code>.</p>
 
-            <p>All modules automatically get a <code>parent</code> property that links
-                back to the prototype of the parent. You can use this to override a
-                method in a new class, but still call the method of the parent class, like
-                the <code>super</code> method that is available in lots of languages.
-                Unfortunately <code>super</code> is a reserved keyword in Javascript, so that's
-                not usable in Stapes.</p>
+                    <p class="alert alert-warning">Note that until Stapes 0.6.0 the preferred way of creating new modules was by using <code>Stapes.create</code>. This has been replaced by <code>subclass</code> since 0.7.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
 
-        <pre><code>
-    var BetterModule = Module.subclass({
-        // Note that this method name is the same as the one in Module
-        sayName : function() {
-            BetterModule.parent.sayName.apply(this, arguments);
-            console.log('i say my name better');
-        }
-    });
+                    <p>You can add a <code>constructor</code> (the function that is run when you
+                        instantiate the class) property to the object. All other properties
+                        will become prototype methods. To add static methods to your class use
+                        <a href="#m-extend"><code>extend</code></a>. If you want to add
+                        more properties to the prototype of the class later on, use
+                        <a href="#m-proto"><code>proto</code></a>.</p>
 
-    var module = new BetterModule();
-    module.sayName(); // 'i say my name! i say my name better!'
-        </code></pre>
+                <pre>
+var Module = Stapes.subclass({
+    constructor : function(name) {
+        this.name = name;
+    },
 
-            <p>The optional <code>classOnly</code> flag can be set to true to make
-                a class without any <a href="#m-events">event</a> or
-                <a href="#m-data">data</a> methods. You will get all of the
-                <a href="#m-general">creation</a> methods, so you can still subclass
-                and extend your class. Use this flag to use Stapes as a simple
-                class creation library.</p>
+    getName : function() {
+        return this.name;
+    }
+});
+
+var module = new Module('emmylou');
+module.getName(); // 'emmylou'
+                </pre>
+
+                    <p>When calling <code>subclass</code> on a Stapes class you can extend
+                        it into a new class that will inherit all prototype properties of the
+                        parent class.</p>
+
+                <pre>
+var Module = Stapes.subclass({
+    sayName : function() {
+        console.log('i say my name!');
+    }
+});
+
+var BetterModule = Module.subclass({
+    sayNameBetter : function() {
+        this.sayName(); // Inherits 'sayName' from 'Module'
+        console.log('i say my name better!');
+    }
+});
+
+var module = new BetterModule();
+module.sayNameBetter(); // 'i say my name! i say my name better!'
+                </pre>
+
+                    <p>Note that it's perfectly valid to call <code>subclass</code> without
+                        any arguments at all. In that case you'll simply get a new class
+                        with an empty constructor.</p>
+
+                    <p>Also note that if you call <code>subclass</code> on a Module the child
+                        module <strong>won't</strong> automatically inherit the constructor
+                        of the parent. This is by design. To inherit the constructor of a parent
+                        class simply specify it in your <code>subclass</code> setup:</p>
+
+                <pre>
+var Parent = Stapes.subclass({
+    constructor : function(name) {
+        this.name = name;
+    }
+});
+
+var Child = Parent.subclass({
+    // inherit the constructor from parent
+    constructor : Parent.prototype.constructor
+});
+                </pre>
+
+                    <p>Because <code>subclass</code> set ups the prototype chain correctly
+                        the <code>instanceof</code> parameter will work as expected.</p>
+
+                <pre>
+module instanceof BetterModule; // true
+module instanceof Module; // true
+                </pre>
+
+                    <p>All modules automatically get a <code>parent</code> property that links
+                        back to the prototype of the parent. You can use this to override a
+                        method in a new class, but still call the method of the parent class, like
+                        the <code>super</code> method that is available in lots of languages.
+                        Unfortunately <code>super</code> is a reserved keyword in Javascript, so that's
+                        not usable in Stapes.</p>
+
+                <pre>
+var BetterModule = Module.subclass({
+    // Note that this method name is the same as the one in Module
+    sayName : function() {
+        BetterModule.parent.sayName.apply(this, arguments);
+        console.log('i say my name better');
+    }
+});
+
+var module = new BetterModule();
+module.sayName(); // 'i say my name! i say my name better!'
+                </pre>
+
+                    <p>The optional <code>classOnly</code> flag can be set to true to make
+                        a class without any <a href="#m-events">event</a> or
+                        <a href="#m-data">data</a> methods. You will get all of the
+                        <a href="#m-general">creation</a> methods, so you can still subclass
+                        and extend your class. Use this flag to use Stapes as a simple
+                        class creation library.</p>
 
 
-        <pre><code>
-    var Class = Stapes.subclass({
-        constructor : function(name) {
-            this.name = name;
-        }
-    }, true /* <-- 'classOnly' flag */);
+                <pre>
+var Class = Stapes.subclass({
+    constructor : function(name) {
+        this.name = name;
+    }
+}, true /* <-- 'classOnly' flag */);
 
-    'subclass' in Class; // true
-    'get' in new Class(); // false
-        </code></pre>
+'subclass' in Class; // true
+'get' in new Class(); // false
+                </pre>
 
-        </article>
+                </article>
 
-        <article id="m-extend">
-            <h1>extend</h1>
+                <article id="m-extend">
+                    <h1>extend</h1>
 
-            <h2>module.extend( object[, object...])</h2>
+                    <h2>module.extend( object[, object...])</h2>
 
-            <h2>Stapes.extend( object )</h2>
+                    <h2>Stapes.extend( object )</h2>
 
-            <p>Extend your class instance properties by giving an
-            object. Keys with the same value will be overwritten. <code>this</code>
-            will be set to the objects context.</p>
+                    <p>Extend your class instance properties by giving an
+                    object. Keys with the same value will be overwritten. <code>this</code>
+                    will be set to the objects context.</p>
 
-            <pre><code>
-    Module.extend({
-        "names" : ['claire', 'alice']
+                    <pre>
+Module.extend({
+    "names" : ['claire', 'alice']
 
-        "sayName" : function(i) {
-            console.log( "Hello " + this.names[i] + "!" );
-        }
-    });
+    "sayName" : function(i) {
+        console.log( "Hello " + this.names[i] + "!" );
+    }
+});
 
-    var module = new Module();
-    module.sayName(1); // 'alice'
-            </code></pre>
+var module = new Module();
+module.sayName(1); // 'alice'
+                    </pre>
 
-            <p>Note that using <code>extend</code> is exactly the same as directly
-                assigning properties to the module:</p>
+                    <p>Note that using <code>extend</code> is exactly the same as directly
+                        assigning properties to the module:</p>
 
-            <pre><code>
-    Module.names = ['claire', 'alice'];
+                    <pre>
+Module.names = ['claire', 'alice'];
 
-    // Is the same as
+// Is the same as
 
-    Module.extend({
-        names : ['claire', 'alice'];
-    });
-            </code></pre>
+Module.extend({
+    names : ['claire', 'alice'];
+});
+                    </pre>
 
-            <p>Both <code>extend</code> and <a href="#m-proto"><code>proto</code></a> accept
-                multiple objects as arguments:</p>
+                    <p>Both <code>extend</code> and <a href="#m-proto"><code>proto</code></a> accept
+                        multiple objects as arguments:</p>
 
-            <pre><code>
-    var module = new (Stapes.subclass());
+                    <pre>
+var module = new (Stapes.subclass());
 
-    var instruments = { guitar : true };
-    var voices = { singing : true };
+var instruments = { guitar : true };
+var voices = { singing : true };
 
-    module.extend(instruments, voices);
+module.extend(instruments, voices);
 
-    console.log('guitar' in module, 'singing' in module); // true, true
-            </code></pre>
+console.log('guitar' in module, 'singing' in module); // true, true
+                    </pre>
 
-            <p><code>extend</code> is also useful for stuff like configuration
-                properties.</p>
+                    <p><code>extend</code> is also useful for stuff like configuration
+                        properties.</p>
 
-            <pre><code>
-    var Module = new Stapes.subclass({
-        constructor : function(props) {
-            this.extend( props );
-        },
+                    <pre>
+var Module = new Stapes.subclass({
+    constructor : function(props) {
+        this.extend( props );
+    },
 
-        sayInfo : function() {
-            console.log(this.name + ' plays ' + this.instrument);
-        }
-    });
+    sayInfo : function() {
+        console.log(this.name + ' plays ' + this.instrument);
+    }
+});
 
-    var module = new Module({
-        'name' : 'Johnny',
-        'instrument' : 'guitar'
-    });
+var module = new Module({
+    'name' : 'Johnny',
+    'instrument' : 'guitar'
+});
 
-    module.sayInfo();
-            </code></pre>
+module.sayInfo();
+                    </pre>
 
-            <p id="m-plugins"><code>Stapes.extend()</code> can be used for writing extra methods
-                and properties that will be available on all Stapes modules,
-                even after you have created them. This is very useful for
-                writing plugins for functionality that isn't in Stapes.</p>
+                    <p id="m-plugins"><code>Stapes.extend()</code> can be used for writing extra methods
+                        and properties that will be available on all Stapes modules,
+                        even after you have created them. This is very useful for
+                        writing plugins for functionality that isn't in Stapes.</p>
 
-            <pre><code>
-    Stapes.extend({
-        // Sets an DOM element for views
-        "setElement" : function(el) {
-            this.el = el;
-            this.$el = $(el); // jQuery or Zepto reference
-        }
-    });
+                    <pre>
+Stapes.extend({
+    // Sets an DOM element for views
+    "setElement" : function(el) {
+        this.el = el;
+        this.$el = $(el); // jQuery or Zepto reference
+    }
+});
 
-    var Module = Stapes.subclass();
-    var module = new Module();
+var Module = Stapes.subclass();
+var module = new Module();
 
-    module.setElement( document.getElementById("app") );
+module.setElement( document.getElementById("app") );
 
-    console.log( module.el ); // "#app" DOM element
-    console.log( module.$el ); // jQuery or Zepto element
-            </code></pre>
+console.log( module.el ); // "#app" DOM element
+console.log( module.$el ); // jQuery or Zepto element
+                    </pre>
 
-            <p>All internal methods are available as the
-                <code>Stapes._</code> object, so if you want you can overwrite
-                and hack virtually all Stapes behaviour. Note that these
-                methods aren't documented, so you should take a look at the
-                source.</p>
-        </article>
+                    <p>All internal methods are available as the
+                        <code>Stapes._</code> object, so if you want you can overwrite
+                        and hack virtually all Stapes behaviour. Note that these
+                        methods aren't documented, so you should take a look at the
+                        source.</p>
+                </article>
 
-        <article id="m-proto">
-            <h1>proto</h1>
+                <article id="m-proto">
+                    <h1>proto</h1>
 
-            <h2>Module.proto( object )</h2>
+                    <h2>Module.proto( object )</h2>
 
-            <p>Adds properties and methods to the prototype of the module.</p>
+                    <p>Adds properties and methods to the prototype of the module.</p>
 
-            <p>Note that it's usally easier to directly add methods to the prototype
-                using the <a href="#m-subclass"><code>subclass</code></a> method.
-                However,if you want to add methods to the prototype later on,
-                <code>proto</code> might be useful.</p>
+                    <p>Note that it's usally easier to directly add methods to the prototype
+                        using the <a href="#m-subclass"><code>subclass</code></a> method.
+                        However,if you want to add methods to the prototype later on,
+                        <code>proto</code> might be useful.</p>
 
-            <pre><code>
-    var Module = Stapes.subclass();
+                    <pre>
+var Module = Stapes.subclass();
 
-    Module.proto({
-        'sayName' : function() {
-            console.log('I say my name');
-        }
-    });
-
-    'sayName' in Module; // false, not a static method
-    'sayName' in Module.prototype; // true
-
-    // Note that using proto is the same as:
-    Module.prototype.sayName = function() {
+Module.proto({
+    'sayName' : function() {
         console.log('I say my name');
-    };
-            </code></pre>
-
-            <p>Both <code>proto</code> and <a href="#m-extend"><code>extend</code></a> accept
-                multiple objects as arguments. This can be very handy for mixins.</p>
-
-            <pre><code>
-    var Module = Stapes.subclass();
-
-    var instruments = { guitar : true };
-    var voices = { singing : true };
-
-    Module.proto(instruments, voices);
-
-    var module = new Module();
-
-    console.log(module.guitar, module.singing); // true, true
-            </code></pre>
-        </article>
-
-        <h3 id="m-events">API: Events</h3>
-        <article id="m-on">
-            <h1>on</h1>
-
-            <h2>module.on(eventName, handler [, context] )</h2>
-            <h2>module.on(object [, context] )</h2>
-            <h2>Stapes.on(object [, context] )</h2>
-            <h2>Stapes.on(eventName, handler [, context] )</h2>
-
-            <p>Add an event listener to a Stapes module or <a href="#m-mixinEvents">object
-                with mixed-in events</a>. When an event is
-                <a href="#m-emit">triggered</a> the <code>handler</code> will be called
-            with two arguments: <code>data</code>, which may contain any data, and an
-            <code>eventObject</code> that contains some useful information about the
-            event, such as the scope, target and event name.</p>
-
-            <p>As an optional third (when defining a single listener) or second
-                (when defining multipe listeners using an object) parameter you can set what the value of
-                <code>this</code> should be in the scope of the event handler.
-                This is handy to prevent having to temporarily save the scope
-                to a <code>self</code> or <code>that</code> variable or use the
-                new <code>bind</code> property of EcmaScript 5.</p>
-
-            <pre><code>
-    var Module = Stapes.subclass();
-
-    var module = new Module();
-
-    module.on('ready', function() {
-        console.log('your module is ready!');
-    });
-
-    module.on({
-        "talk" : function() {
-            console.log('your module is talking!');
-        },
-
-        "walk" : function() {
-            console.log('your module is walking!');
-        },
-
-        "eat" : function( food ) {
-            console.log('your module is eating ' + (this.get('food') || 'nothing'));
-        }
-    });
-
-    var feedme = new Module();
-
-    // Set the scope for the event handler to 'module'
-    feedme.on({
-        "feed" : function( food ) {
-            this.set('food', food);
-        }
-    }, module);
-
-    module.emit('eat');
-    // "your module is eating nothing"
-
-    feedme.emit('feed', 'cookies');
-
-    module.emit('eat');
-    // "your module is eating cookies"
-
-    module.get('food');
-    // "cookies"
-
-    feedme.get('food');
-    // null
-            </code></pre>
-
-            <p>The <code>on</code> method on the global <code>Stapes</code>
-                object can be used to listen to events from all defined modules.
-            </p>
-
-            <p>Listening to the special <code>all</code> event on the <code>Stapes</code>
-                global will trigger on <strong>all</strong> events thrown in all
-                objects. Very useful for debugging, but be careful not to leave it in
-                your production code :)</p>
-
-            <pre><code>
-    var Module = Stapes.subclass({
-        constructor : function(name) {
-            this.name = name;
-        },
-
-        beReady : function() {
-            this.emit('ready');
-        }
-    });
-
-    var module1 = new Module('module1');
-    var module2 = new Module('module2');
-
-    Stapes.on('ready', function(data, e) {
-        console.log('a ready event was triggered in: ' + e.scope.name);
-    });
-
-    module1.beReady(); // 'a ready event was triggered in module 1';
-    module2.beReady(); // 'a ready event was triggered in module 2';
-            </code></pre>
-
-            <p>The <code>all</code> event listener is also available on every module, so
-                you can listen to all events from a specific module.</p>
-
-            <pre><code>
-    var Module = Stapes.subclass({
-        "go" : function() {
-            this.emit('foo');
-            this.emit('bar');
-        }
-    });
-
-    var module = new Module();
-
-    module.on("all", function(data, e) {
-        console.log(e.type);
-    });
-
-    module.go(); // first 'foo', then 'bar'
-            </code></pre>
-        </article>
-
-        <article id="m-off">
-            <h1>off</h1>
-
-            <h2>module.off(eventType, handler)</h2>
-            <h2>module.off(eventType)</h2>
-            <h2>module.off()</h2>
-
-            <p>Removes event handlers from an object. Giving both an eventType
-                and a handler will remove that specific handler from a module.
-                Giving only an eventType will remove all handlers bound to
-                that event type.</p>
-
-            <p>With no arguments at all, <code>off()</code>
-                will remove <i>all</i> event handlers from a module.</p>
-
-            <pre><code>
-    var Module = Stapes.subclass();
-    var module = new Module();
-
-    var handler = function(){};
-
-    module.on({
-        "foo" : handler,
-        "bar" : function(){}
-    });
-
-    module.off("foo", handler); // Removes only the specific handler for foo
-
-    module.off("bar"); // Removes all 'bar' handlers
-
-    module.off(); // Removes all handlers
-            </code></pre>
-
-        </article>
-
-        <article id="m-emit">
-            <h1>emit</h1>
-
-            <h2>module.emit(eventName[, data])</h2>
-
-            <p>Trigger an event on the module. <code>eventName</code> can be a space seperated
-            string if you want to trigger more events. <code>data</code> can be any
-            Javascript variable you want, and will be passed to any event listeners</p>
-
-            <pre><code>
-    var Module = Stapes.subclass({
-        "sleep" : function() {
-            this.emit('sleeping', 'very deep');
-        }
-    });
-
-    var module = new Module();
-
-    module.on('sleeping', function(how) {
-        console.log("i'm sleeping " + how);
-    });
-
-    module.sleep(); // "i'm sleeping very deep"
-            </code></pre>
-        </article>
-
-        <article id="m-mixinEvents">
-            <h1>mixinEvents</h1>
-
-            <h2>Stapes.mixinEvents([object])</h2>
-
-            <p>
-                It's possible to add Stapes' <a href="#m-events">event handling
-                methods</a> to any Javascript object or function. This can be very
-                handy if you want to create an object that only uses event handlers, or
-                for an object or function that already exists and you don't want
-                to convert to a Stapes module.
-            </p>
-
-            <p>Here's how to add event methods to an object:</p>
-
-            <pre><code>
-    var module = {};
-    Stapes.mixinEvents(module);
-
-    module.on('sing', function() {
-        console.log("i'm singing!");
-    });
-
-    module.sing = function() {
-        this.emit('sing');
     }
+});
 
-    module.sing(); // i'm singing!
-            </code></pre>
+'sayName' in Module; // false, not a static method
+'sayName' in Module.prototype; // true
 
-            <p>
-                <code>Stapes.mixinEvents</code> returns the <code>object</code>, so
-                you could write the first two lines from the previous example even shorter:
-            </p>
+// Note that using proto is the same as:
+Module.prototype.sayName = function() {
+    console.log('I say my name');
+};
+                    </pre>
 
-            <pre><code>
-    var module = Stapes.mixinEvents( {} );
-            </code></pre>
+                    <p>Both <code>proto</code> and <a href="#m-extend"><code>extend</code></a> accept
+                        multiple objects as arguments. This can be very handy for mixins.</p>
 
-            <p>
-                No, wait! It can be even shorter! Without any arguments <code>Stapes.mixinEvents</code>
-                returns a new object with mixed-in events.
-            </p>
+                    <pre>
+var Module = Stapes.subclass();
 
-            <pre><code>
-    var module = Stapes.mixinEvents();
-            </code></pre>
+var instruments = { guitar : true };
+var voices = { singing : true };
 
-            <p>You can also add event methods to a function:</p>
+Module.proto(instruments, voices);
 
-            <pre><code>
-    function Module(what) {
-        this.what = what;
-        Stapes.mixinEvents(this);
+var module = new Module();
+
+console.log(module.guitar, module.singing); // true, true
+                    </pre>
+                </article>
+
+                <h3 id="m-events">API: Events</h3>
+                <article id="m-on">
+                    <h1>on</h1>
+
+                    <h2>module.on(eventName, handler [, context] )</h2>
+                    <h2>module.on(object [, context] )</h2>
+                    <h2>Stapes.on(object [, context] )</h2>
+                    <h2>Stapes.on(eventName, handler [, context] )</h2>
+
+                    <p>Add an event listener to a Stapes module or <a href="#m-mixinEvents">object
+                        with mixed-in events</a>. When an event is
+                        <a href="#m-emit">triggered</a> the <code>handler</code> will be called
+                    with two arguments: <code>data</code>, which may contain any data, and an
+                    <code>eventObject</code> that contains some useful information about the
+                    event, such as the scope, target and event name.</p>
+
+                    <p>As an optional third (when defining a single listener) or second
+                        (when defining multipe listeners using an object) parameter you can set what the value of
+                        <code>this</code> should be in the scope of the event handler.
+                        This is handy to prevent having to temporarily save the scope
+                        to a <code>self</code> or <code>that</code> variable or use the
+                        new <code>bind</code> property of EcmaScript 5.</p>
+
+                    <pre>
+var Module = Stapes.subclass();
+
+var module = new Module();
+
+module.on('ready', function() {
+    console.log('your module is ready!');
+});
+
+module.on({
+    "talk" : function() {
+        console.log('your module is talking!');
+    },
+
+    "walk" : function() {
+        console.log('your module is walking!');
+    },
+
+    "eat" : function( food ) {
+        console.log('your module is eating ' + (this.get('food') || 'nothing'));
     }
+});
 
-    Module.prototype.sing = function() {
-        this.emit('sing', this.what);
+var feedme = new Module();
+
+// Set the scope for the event handler to 'module'
+feedme.on({
+    "feed" : function( food ) {
+        this.set('food', food);
     }
+}, module);
 
-    var m = new Module("Happy Birthday");
+module.emit('eat');
+// "your module is eating nothing"
 
-    m.on('sing', function(what) {
-        console.log("i'm singing " + what + "!");
-    });
+feedme.emit('feed', 'cookies');
 
-    m.sing(); // i'm singing Happy Birthday!
-            </code></pre>
+module.emit('eat');
+// "your module is eating cookies"
 
-            <p>Note that these events are also triggered on the main Stapes
-                object, so you can use <code>Stapes.on</code> to catch events
-                from these mixed-in objects as well.</p>
+module.get('food');
+// "cookies"
 
-        <pre><code>
-    Stapes.on('sing', function(data, e) {
-        console.log("Singing from " + e.scope.name);
-    });
+feedme.get('food');
+// null
+                    </pre>
 
-    var module = Stapes.mixinEvents( {} );
+                    <p>The <code>on</code> method on the global <code>Stapes</code>
+                        object can be used to listen to events from all defined modules.
+                    </p>
 
-    module.name = "a cool module!";
+                    <p>Listening to the special <code>all</code> event on the <code>Stapes</code>
+                        global will trigger on <strong>all</strong> events thrown in all
+                        objects. Very useful for debugging, but be careful not to leave it in
+                        your production code :)</p>
 
-    module.sing = function() {
-        this.emit('sing');
+                    <pre>
+var Module = Stapes.subclass({
+    constructor : function(name) {
+        this.name = name;
+    },
+
+    beReady : function() {
+        this.emit('ready');
     }
+});
 
-    module.sing(); // 'Singing from a cool module!'
-        </code></pre>
+var module1 = new Module('module1');
+var module2 = new Module('module2');
 
-        </article>
+Stapes.on('ready', function(data, e) {
+    console.log('a ready event was triggered in: ' + e.scope.name);
+});
 
-        <h3 id="m-data">API: Data methods</h3>
-        <article id="m-each">
-            <h1>each</h1>
+module1.beReady(); // 'a ready event was triggered in module 1';
+module2.beReady(); // 'a ready event was triggered in module 2';
+                    </pre>
 
-            <h2>module.each( function, [context] );</h2>
+                    <p>The <code>all</code> event listener is also available on every module, so
+                        you can listen to all events from a specific module.</p>
 
-            <p>Iterate over all attributes of a module.</p>
+                    <pre>
+var Module = Stapes.subclass({
+    "go" : function() {
+        this.emit('foo');
+        this.emit('bar');
+    }
+});
 
-            <p>When giving a <code>context</code> parameter this will be set as
-                the <code>this</code> value in the iterator function. If <code>context</code>
-                is not set it will be set to the module itself.</p>
+var module = new Module();
 
-            <pre><code>
-    var Module = Stapes.subclass();
-    var singers = ['Johnny', 'Emmylou', 'Gram', 'June'];
-    var module = new Module();
+module.on("all", function(data, e) {
+    console.log(e.type);
+});
 
-    module.msg = "I'll be your ";
+module.go(); // first 'foo', then 'bar'
+                    </pre>
+                </article>
 
-    module.push(singers);
+                <article id="m-off">
+                    <h1>off</h1>
 
-    module.each(function(singer) {
-        console.log(this.msg + singer);
-    });
+                    <h2>module.off(eventType, handler)</h2>
+                    <h2>module.off(eventType)</h2>
+                    <h2>module.off()</h2>
 
-    // Using the second context parameter of each()
-    module.singers = new (Stapes.subclass());
-    module.singers.push( singers );
+                    <p>Removes event handlers from an object. Giving both an eventType
+                        and a handler will remove that specific handler from a module.
+                        Giving only an eventType will remove all handlers bound to
+                        that event type.</p>
 
-    module.singers.each(function(singer) {
-        console.log(this.msg + singer);
-    }, module);
-            </code></pre>
-        </article>
+                    <p>With no arguments at all, <code>off()</code>
+                        will remove <i>all</i> event handlers from a module.</p>
 
-        <article id="m-filter">
-            <h1>filter</h1>
+                    <pre>
+var Module = Stapes.subclass();
+var module = new Module();
 
-            <h2>module.filter( function );</h2>
+var handler = function(){};
 
-            <p>Gets an array of attribute values using a custom function.</p>
+module.on({
+    "foo" : handler,
+    "bar" : function(){}
+});
 
-            <p>The callback <code>function</code> gets two arguments: the value of the attribute, and the original key.</p>
+module.off("foo", handler); // Removes only the specific handler for foo
 
-            <pre><code>
-    module.push([
-        {
-            name : 'Johnny',
-            playing : false
-        },
-        {
-            name : 'Emmylou',
-            playing : true
-        }
-    ]);
+module.off("bar"); // Removes all 'bar' handlers
 
-    var playing = module.filter(function(singer) {
-        return singer.playing;
-    }); // [ { name : 'Emmylou', playing : true }]
-            </code></pre>
-        </article>
+module.off(); // Removes all handlers
+                    </pre>
 
-        <article id="m-get">
-            <h1>get</h1>
+                </article>
 
-            <h2>module.get( key );</h2>
-            <h2>module.get( key1, key2, ... );</h2>
-            <h2>module.get( function );</h2>
+                <article id="m-emit">
+                    <h1>emit</h1>
 
-            <p>Gets an attribute by key. If the item is not available will return
-            <code>null</code></p>
+                    <h2>module.emit(eventName[, data])</h2>
 
-            <pre><code>
-    var Module = Stapes.subclass();
-    var module = new Module();
+                    <p>Trigger an event on the module. <code>eventName</code> can be a space seperated
+                    string if you want to trigger more events. <code>data</code> can be any
+                    Javascript variable you want, and will be passed to any event listeners</p>
 
-    module.set({
-        'instrument': 'guitar',
-        'name': 'Johnny'
-    });
+                    <pre>
+var Module = Stapes.subclass({
+    "sleep" : function() {
+        this.emit('sleeping', 'very deep');
+    }
+});
 
-    module.get('instrument'); // 'guitar'
-            </code></pre>
+var module = new Module();
 
-            <p>You can get multiple key / value pairs when you
-            use more than one argument:</p>
+module.on('sleeping', function(how) {
+    console.log("i'm sleeping " + how);
+});
 
-            <pre><code>
-    module.get('instrument', 'name'); // { 'instrument' : 'guitar', 'name' : 'Johnny' }
-            </code></pre>
+module.sleep(); // "i'm sleeping very deep"
+                    </pre>
+                </article>
 
-            <P>You can also use a function to get a specific value. This is
-                comparable to <code><a href="#m-filter">filter</a></code>,
-                however, <code>filter</code> always returns an array of results,
-                while <code>get</code> always returns a single result.</P>
-        </article>
+                <article id="m-mixinEvents">
+                    <h1>mixinEvents</h1>
 
-        <article id="m-getall">
-            <h1>getAll</h1>
+                    <h2>Stapes.mixinEvents([object])</h2>
 
-            <h2>module.getAll();</h2>
+                    <p>
+                        It's possible to add Stapes' <a href="#m-events">event handling
+                        methods</a> to any Javascript object or function. This can be very
+                        handy if you want to create an object that only uses event handlers, or
+                        for an object or function that already exists and you don't want
+                        to convert to a Stapes module.
+                    </p>
 
-            <p>Returns all the attributes of an module as an object. Handy for JSON
-                serializing and persistence layers.</p>
+                    <p>Here's how to add event methods to an object:</p>
 
-            <p>Note that this method returns a copy/clone instead of a reference.</p>
-        </article>
+                    <pre>
+var module = {};
+Stapes.mixinEvents(module);
 
-        <article id="m-getallasarray">
-            <h1>getAllAsArray</h1>
+module.on('sing', function() {
+    console.log("i'm singing!");
+});
 
-            <h2>module.getAllAsArray();</h2>
+module.sing = function() {
+    this.emit('sing');
+}
 
-            <p>Returns all attributes as an array, so you can easily iterate.
-            Note that the original key of the attribute is always available as a
-            'id' key in the the value, provided your value is an object.</p>
+module.sing(); // i'm singing!
+                    </pre>
 
-            <p>Note that this method returns a copy/clone instead of a reference.</p>
+                    <p>
+                        <code>Stapes.mixinEvents</code> returns the <code>object</code>, so
+                        you could write the first two lines from the previous example even shorter:
+                    </p>
 
-            <pre><code>
-    module.set({
-        "name" : "Johnny",
-        "instrument" : "guitar"
-    });
+                    <pre>
+var module = Stapes.mixinEvents( {} );
+                    </pre>
 
-    module.getAllAsArray().length; // '2'
-            </code></pre>
-        </article>
+                    <p>
+                        No, wait! It can be even shorter! Without any arguments <code>Stapes.mixinEvents</code>
+                        returns a new object with mixed-in events.
+                    </p>
 
-        <article id="m-has">
-            <h1>has</h1>
+                    <pre>
+var module = Stapes.mixinEvents();
+                    </pre>
 
-            <h2>module.has( key );</h2>
+                    <p>You can also add event methods to a function:</p>
 
-            <p>Checks if a key is available and returns true or false.</p>
+                    <pre>
+function Module(what) {
+    this.what = what;
+    Stapes.mixinEvents(this);
+}
 
-            <pre><code>
-    module.set('singer', 'Johnny');
+Module.prototype.sing = function() {
+    this.emit('sing', this.what);
+}
 
-    module.has('singer'); // true
-    module.has('instrument'); // false
-            </code></pre>
-        </article>
+var m = new Module("Happy Birthday");
 
-        <article id="m-map">
-            <h1>map</h1>
+m.on('sing', function(what) {
+    console.log("i'm singing " + what + "!");
+});
 
-            <h2>module.map( function, [context] )</h2>
+m.sing(); // i'm singing Happy Birthday!
+                    </pre>
 
-            <p>Just like <a href="#m-each"><code>each</code></a>, <code>map</code> iterates over
-                all attributes of a module. <code>map</code> returns a new array, where every attribute
-                value of a module has been passed through <code>function</code>.</p>
+                    <p>Note that these events are also triggered on the main Stapes
+                        object, so you can use <code>Stapes.on</code> to catch events
+                        from these mixed-in objects as well.</p>
 
-            <pre><code>
-    module.push([1, 2, 3]);
+                <pre>
+Stapes.on('sing', function(data, e) {
+    console.log("Singing from " + e.scope.name);
+});
 
-    var arr = module.map(function(nr) {
-        return nr * 2;
-    });
+var module = Stapes.mixinEvents( {} );
 
-    console.log(arr); // '[2, 4, 6]'
-            </code></pre>
+module.name = "a cool module!";
 
-            <p>By default <code>map</code> gets the module as the value of <code>this</code>, but this
-                can be overwritten with the second argument.</p>
+module.sing = function() {
+    this.emit('sing');
+}
 
-        </article>
+module.sing(); // 'Singing from a cool module!'
+                </pre>
 
-        <article id="m-push">
-            <h1>push</h1>
+                </article>
 
-            <h2>module.push( value, [silent] );</h2>
-            <h2>module.push( array, [silent] );</h2>
+                <h3 id="m-data">API: Data methods</h3>
+                <article id="m-each">
+                    <h1>each</h1>
 
-            <p>Sets a value, automatically generates an unique uuid as a key.</p>
+                    <h2>module.each( function, [context] );</h2>
 
-            <p>You can also push an array of values.</p>
+                    <p>Iterate over all attributes of a module.</p>
 
-            <p>Just as with <code>set</code> the optional <code>silent</code> flag will
-                prevent any change events from being emitted.</p>
+                    <p>When giving a <code>context</code> parameter this will be set as
+                        the <code>this</code> value in the iterator function. If <code>context</code>
+                        is not set it will be set to the module itself.</p>
 
-            <p>For the rest of the behaviour of this method see <code>
-                <a href="#m-set">set</a></code>.</p>
+                    <pre>
+var Module = Stapes.subclass();
+var singers = ['Johnny', 'Emmylou', 'Gram', 'June'];
+var module = new Module();
 
-            <pre><code>
-    m.push("foo");
+module.msg = "I'll be your ";
 
-    m.getAll(); // will look something like { "5323be61-afb8-4034-b408-51132756cd43" : "foo"}
+module.push(singers);
 
-    m.push([
-        "foo",
-        "bar",
-        "baz"
-    ]);
-            </code></pre>
+module.each(function(singer) {
+    console.log(this.msg + singer);
+});
 
-            <p><code>push</code> returns the module, so this method is chainable.</p>
-        </article>
+// Using the second context parameter of each()
+module.singers = new (Stapes.subclass());
+module.singers.push( singers );
 
-        <article id="m-remove">
-            <h1>remove</h1>
+module.singers.each(function(singer) {
+    console.log(this.msg + singer);
+}, module);
+                    </pre>
+                </article>
 
-            <h2>module.remove( key, [silent] );</h2>
-            <h2>module.remove( function );</h2>
-            <h2>module.remove();</h2>
+                <article id="m-filter">
+                    <h1>filter</h1>
 
-            <p>Deletes an attribute. Triggers <code>remove</code> and
-            <code>change</code> events.</p>
+                    <h2>module.filter( function );</h2>
 
-            <p><code>remove</code> also triggers namespaced <code>change</code> and
-                <code>remove</code> events (e.g. <code>change:foo</code> and
-                <code>remove:foo</code>).</p>
+                    <p>Gets an array of attribute values using a custom function.</p>
 
-            <p>You can either use a <code>key</code> as an argument or a
-            <code>function</code></p>
+                    <p>The callback <code>function</code> gets two arguments: the value of the attribute, and the original key.</p>
 
-            <pre><code>
-    module.remove(function(item) {
-        return item.done === true;
-    });
-            </code></pre>
+                    <pre>
+module.push([
+    {
+        name : 'Johnny',
+        playing : false
+    },
+    {
+        name : 'Emmylou',
+        playing : true
+    }
+]);
 
-            <p>It's possible to remove multiple keys in one go, simply space seperate them:</p>
+var playing = module.filter(function(singer) {
+    return singer.playing;
+}); // [ { name : 'Emmylou', playing : true }]
+                    </pre>
+                </article>
 
-            <pre><code>
-    module.remove('singer instrument johnny');
-            </code></pre>
+                <article id="m-get">
+                    <h1>get</h1>
 
-            <p>If you do not want your <code>remove</code> to trigger an event set
-                the optional <code>silent</code> flag to true.</p>
+                    <h2>module.get( key );</h2>
+                    <h2>module.get( key1, key2, ... );</h2>
+                    <h2>module.get( function );</h2>
 
-            <pre><code>
-    module.remove('singer', true /* <-- silent flag */);
-            </code></pre>
+                    <p>Gets an attribute by key. If the item is not available will return
+                    <code>null</code></p>
 
-            <p>Without any arguments, <code>remove</code> deletes all attributes in a module and triggers <code>change</code> and <code>remove</code> events.</p>
+                    <pre>
+var Module = Stapes.subclass();
+var module = new Module();
 
-            <pre><code>
-    module.push([1,2,3]);
-    module.size(); // 3
-    module.remove();
-    module.size(); // 0
-            </code></pre>
+module.set({
+    'instrument': 'guitar',
+    'name': 'Johnny'
+});
 
-            <p><code>remove</code> returns the module, so this method is chainable.</p>
-        </article>
+module.get('instrument'); // 'guitar'
+                    </pre>
 
-        <article id="m-set">
-            <h1>set</h1>
+                    <p>You can get multiple key / value pairs when you
+                    use more than one argument:</p>
 
-            <h2>module.set(key, value, [silent]);</h2>
-            <h2>module.set(object, [silent]);</h2>
+                    <pre>
+module.get('instrument', 'name'); // { 'instrument' : 'guitar', 'name' : 'Johnny' }
+                    </pre>
 
-            <p>Sets an attribute. Use <code><a href="#m-push">push</a></code> if you want to 'push' a value
-            with a random uuid, for collections.</p>
+                    <P>You can also use a function to get a specific value. This is
+                        comparable to <code><a href="#m-filter">filter</a></code>,
+                        however, <code>filter</code> always returns an array of results,
+                        while <code>get</code> always returns a single result.</P>
+                </article>
 
-            <p>To set multiple attributes in one go, use an object as an first argument.</p>
+                <article id="m-getall">
+                    <h1>getAll</h1>
 
-            <p>Every attribute will trigger a <code>change</code> event. A key
-            that doesn't exist will trigger a <code>create</code> event, a key
-            that does exist will trigger an <code>update</code> event.</p>
+                    <h2>module.getAll();</h2>
 
-            <p>All events will have the key of the attribute as their event value.</p>
+                    <p>Returns all the attributes of an module as an object. Handy for JSON
+                        serializing and persistence layers.</p>
 
-            <p>Special namespaced events will also be triggered. These events have a value
-                of <code>eventType:key</code>. So for example, a <code>set</code> on
-                an attribute called 'name' will generate a <code>change:name</code>
-                event. These events will have the attribute value instead of the
-                key as a data argument in the event callback.</p>
+                    <p>Note that this method returns a copy/clone instead of a reference.</p>
+                </article>
 
-            <pre><code>
-    module.on({
-        "change" : function(key) {
-            console.log('Something happened with ' + key);
-        },
+                <article id="m-getallasarray">
+                    <h1>getAllAsArray</h1>
 
-        "change:name" : function(value) {
-            console.log('name was changed to ' + value);
-        },
+                    <h2>module.getAllAsArray();</h2>
 
-        "create" : function(key) {
-            console.log("New attribute " + key + " added!");
-        },
+                    <p>Returns all attributes as an array, so you can easily iterate.
+                    Note that the original key of the attribute is always available as a
+                    'id' key in the the value, provided your value is an object.</p>
 
-        "update" : function(key) {
-            console.log("Attribute " + key + " was updated!");
-        }
-    });
+                    <p>Note that this method returns a copy/clone instead of a reference.</p>
 
-    module.set('name', 'Elvis'); // will trigger 'change' and 'create' events
-    module.set('name', 'Johnny'); // will trigger 'change' and 'update' events
+                    <pre>
+            module.set({
+                "name" : "Johnny",
+                "instrument" : "guitar"
+            });
 
-    module.set({
-        "name" : "Elvis",
-        "instrument" : "guitar"
-    });
-            </code></pre>
+            module.getAllAsArray().length; // '2'
+                    </pre>
+                </article>
 
-            <p>If you do not want your <code>set</code> to trigger <em>any</em> events set
-                the optional <code>silent</code> flag to true</p>
+                <article id="m-has">
+                    <h1>has</h1>
 
-            <pre><code>
-    module.set('singer', 'Johnny', true /* <-- silent flag */);
-            </code></pre>
+                    <h2>module.has( key );</h2>
 
-            <p>This also works for objects:</p>
+                    <p>Checks if a key is available and returns true or false.</p>
 
-            <pre><code>
-    module.set({
-        'singer' : 'Johnny',
-        'instrument' : 'guitar'
-    }, true /* silent */);
-            </code></pre>
+                    <pre>
+            module.set('singer', 'Johnny');
 
-            <p id="m-mutate">To get the old or previous value of an attribute
-                use the <code>mutate</code> event instead of <code>change</code>.
-                There are both namespaced and general versions of this event, just like
-                <code>change</code>. Instead of the value of the attribute it
-                will return an object with <code>oldValue</code> and <code>newValue</code>
-                properties. For convenience it also returns the <code>key</code>
-                of the attribute.</p>
+            module.has('singer'); // true
+            module.has('instrument'); // false
+                    </pre>
+                </article>
 
-            <pre><code>
-    module.set('name', 'Johnny');
+                <article id="m-map">
+                    <h1>map</h1>
 
-    module.on({
-        "mutate:name" : function(values) {
-            console.log(values.oldValue, values.newValue); // "Johnny, Emmylou"
-        },
+                    <h2>module.map( function, [context] )</h2>
 
-        "mutate" : function(values) {
-            // Returns 'Emmylou'
-            // Note that this is identical to writing:
-            // module.on(
-            //     'change',
-            //     function(key) {
-            //         console.log( module.get(key) );
-            //     }
-            // );
-            console.log(values.newValue);
-        }
-    });
+                    <p>Just like <a href="#m-each"><code>each</code></a>, <code>map</code> iterates over
+                        all attributes of a module. <code>map</code> returns a new array, where every attribute
+                        value of a module has been passed through <code>function</code>.</p>
 
-    module.set('name', 'Emmylou');
-            </code></pre>
+                    <pre>
+            module.push([1, 2, 3]);
 
-            <p>Note that it's still perfectly fine to assign properties to the
-                Stapes module directly, as long as you don't overwrite existing
-                properties. All the data methods are useful if you want to do
-                model-like stuff, but for ordinary properties that don't need
-                change events setting attributes using  <code>get</code> and
-                <code>set</code> is fine.</p>
+            var arr = module.map(function(nr) {
+                return nr * 2;
+            });
 
-            <pre><code>
-    module.on('change:name', function() {
-        // Obviously, this event hander will never trigger
-    });
+            console.log(arr); // '[2, 4, 6]'
+                    </pre>
 
-    module.name = "Elvis";
+                    <p>By default <code>map</code> gets the module as the value of <code>this</code>, but this
+                        can be overwritten with the second argument.</p>
 
-    console.log(module.name); // "Elvis"
-            </code></pre>
+                </article>
 
-            <p><code>set</code> returns the module, so this method is chainable</p>
+                <article id="m-push">
+                    <h1>push</h1>
 
-            <p>Stapes doesn't have a native way of doing validation, but you could overwrite the <code>set</code> (and possibly <code>update</code>) method to accomplish the same:</p>
+                    <h2>module.push( value, [silent] );</h2>
+                    <h2>module.push( array, [silent] );</h2>
 
-            <pre><code>
-    var Person = Stapes.subclass({
-        set : function(key, value) {
-            if (key === 'email') {
-                if (value.indexOf("@") === -1) {
-                    this.emit('error', 'Invalid email adress');
-                } else {
-                    Stapes.prototype.set.apply(this, arguments);
+                    <p>Sets a value, automatically generates an unique uuid as a key.</p>
+
+                    <p>You can also push an array of values.</p>
+
+                    <p>Just as with <code>set</code> the optional <code>silent</code> flag will
+                        prevent any change events from being emitted.</p>
+
+                    <p>For the rest of the behaviour of this method see <code>
+                        <a href="#m-set">set</a></code>.</p>
+
+                    <pre>
+            m.push("foo");
+
+            m.getAll(); // will look something like { "5323be61-afb8-4034-b408-51132756cd43" : "foo"}
+
+            m.push([
+                "foo",
+                "bar",
+                "baz"
+            ]);
+                    </pre>
+
+                    <p><code>push</code> returns the module, so this method is chainable.</p>
+                </article>
+
+                <article id="m-remove">
+                    <h1>remove</h1>
+
+                    <h2>module.remove( key, [silent] );</h2>
+                    <h2>module.remove( function );</h2>
+                    <h2>module.remove();</h2>
+
+                    <p>Deletes an attribute. Triggers <code>remove</code> and
+                    <code>change</code> events.</p>
+
+                    <p><code>remove</code> also triggers namespaced <code>change</code> and
+                        <code>remove</code> events (e.g. <code>change:foo</code> and
+                        <code>remove:foo</code>).</p>
+
+                    <p>You can either use a <code>key</code> as an argument or a
+                    <code>function</code></p>
+
+                    <pre>
+            module.remove(function(item) {
+                return item.done === true;
+            });
+                    </pre>
+
+                    <p>It's possible to remove multiple keys in one go, simply space seperate them:</p>
+
+                    <pre>
+            module.remove('singer instrument johnny');
+                    </pre>
+
+                    <p>If you do not want your <code>remove</code> to trigger an event set
+                        the optional <code>silent</code> flag to true.</p>
+
+                    <pre>
+            module.remove('singer', true /* <-- silent flag */);
+                    </pre>
+
+                    <p>Without any arguments, <code>remove</code> deletes all attributes in a module and triggers <code>change</code> and <code>remove</code> events.</p>
+
+                    <pre>
+            module.push([1,2,3]);
+            module.size(); // 3
+            module.remove();
+            module.size(); // 0
+                    </pre>
+
+                    <p><code>remove</code> returns the module, so this method is chainable.</p>
+                </article>
+
+                <article id="m-set">
+                    <h1>set</h1>
+
+                    <h2>module.set(key, value, [silent]);</h2>
+                    <h2>module.set(object, [silent]);</h2>
+
+                    <p>Sets an attribute. Use <code><a href="#m-push">push</a></code> if you want to 'push' a value
+                    with a random uuid, for collections.</p>
+
+                    <p>To set multiple attributes in one go, use an object as an first argument.</p>
+
+                    <p>Every attribute will trigger a <code>change</code> event. A key
+                    that doesn't exist will trigger a <code>create</code> event, a key
+                    that does exist will trigger an <code>update</code> event.</p>
+
+                    <p>All events will have the key of the attribute as their event value.</p>
+
+                    <p>Special namespaced events will also be triggered. These events have a value
+                        of <code>eventType:key</code>. So for example, a <code>set</code> on
+                        an attribute called 'name' will generate a <code>change:name</code>
+                        event. These events will have the attribute value instead of the
+                        key as a data argument in the event callback.</p>
+
+                    <pre>
+            module.on({
+                "change" : function(key) {
+                    console.log('Something happened with ' + key);
+                },
+
+                "change:name" : function(value) {
+                    console.log('name was changed to ' + value);
+                },
+
+                "create" : function(key) {
+                    console.log("New attribute " + key + " added!");
+                },
+
+                "update" : function(key) {
+                    console.log("Attribute " + key + " was updated!");
                 }
-            } else {
-                // Normal set() behavior
-                Stapes.prototype.set.apply(this, arguments);
-            }
-        }
-    });
+            });
 
-    var johnny = new Person();
+            module.set('name', 'Elvis'); // will trigger 'change' and 'create' events
+            module.set('name', 'Johnny'); // will trigger 'change' and 'update' events
 
-    johnny.on('error', function(msg) {
-        alert( msg ); // 'Invalid email adress'
-    });
+            module.set({
+                "name" : "Elvis",
+                "instrument" : "guitar"
+            });
+                    </pre>
 
-    johnny.set('email', 'invalid#email.com');
-            </code></pre>
-        </article>
+                    <p>If you do not want your <code>set</code> to trigger <em>any</em> events set
+                        the optional <code>silent</code> flag to true</p>
 
-        <article id="m-size">
-            <h1>size</h1>
+                    <pre>
+            module.set('singer', 'Johnny', true /* <-- silent flag */);
+                    </pre>
 
-            <h2>module.size();</h2>
+                    <p>This also works for objects:</p>
 
-            <p>Returns the number of attributes in a module.</p>
+                    <pre>
+            module.set({
+                'singer' : 'Johnny',
+                'instrument' : 'guitar'
+            }, true /* silent */);
+                    </pre>
 
-    <pre><code>
-    module.push(['Johnny', 'Emmylou', 'June', 'Gram']);
+                    <p id="m-mutate">To get the old or previous value of an attribute
+                        use the <code>mutate</code> event instead of <code>change</code>.
+                        There are both namespaced and general versions of this event, just like
+                        <code>change</code>. Instead of the value of the attribute it
+                        will return an object with <code>oldValue</code> and <code>newValue</code>
+                        properties. For convenience it also returns the <code>key</code>
+                        of the attribute.</p>
 
-    console.log( module.size() ); // '4'
-    </code></pre>
-        </article>
+                    <pre>
+            module.set('name', 'Johnny');
 
-        <article id="m-update">
-            <h1>update</h1>
+            module.on({
+                "mutate:name" : function(values) {
+                    console.log(values.oldValue, values.newValue); // "Johnny, Emmylou"
+                },
 
-            <h2>module.update( key, fn, [silent] );</h2>
-            <h2>module.update( fn );</h2>
+                "mutate" : function(values) {
+                    // Returns 'Emmylou'
+                    // Note that this is identical to writing:
+                    // module.on(
+                    //     'change',
+                    //     function(key) {
+                    //         console.log( module.get(key) );
+                    //     }
+                    // );
+                    console.log(values.newValue);
+                }
+            });
 
-            <p>Updates an attribute with a new value, based on the return value
-                of a function.</p>
+            module.set('name', 'Emmylou');
+                    </pre>
 
-            <p>Just as with <code><a href="#m-set">set</a></code> <code>update</code>
-                will generate <code>change</code> and <code>update</code> events.</p>
+                    <p>Note that it's still perfectly fine to assign properties to the
+                        Stapes module directly, as long as you don't overwrite existing
+                        properties. All the data methods are useful if you want to do
+                        model-like stuff, but for ordinary properties that don't need
+                        change events setting attributes using  <code>get</code> and
+                        <code>set</code> is fine.</p>
 
-            <pre><code>
-    module.set('singer', 'Elvis');
+                    <pre>
+            module.on('change:name', function() {
+                // Obviously, this event hander will never trigger
+            });
 
-    module.update('singer', function(singer) {
-        return 'Johnny';
-    });
+            module.name = "Elvis";
 
-    console.log( module.get('singer') ); // 'Johnny';
-            </code></pre>
+            console.log(module.name); // "Elvis"
+                    </pre>
 
-            <p>You can also pass a single function as an argument. In that case,
-                <code>update</code> will run on all attributes in the module.</p>
+                    <p><code>set</code> returns the module, so this method is chainable</p>
 
-            <pre><code>
-    module.push([
-        { "name" : "Johnny", "singer" : false},
-        { "name" : "Emmylou", "singer" : false}
-    ]);
+                    <p>Stapes doesn't have a native way of doing validation, but you could overwrite the <code>set</code> (and possibly <code>update</code>) method to accomplish the same:</p>
 
-    module.update(function(item) {
-        item.singer = true;
-        return item;
-    });
-            </code></pre>
+                    <pre>
+            var Person = Stapes.subclass({
+                set : function(key, value) {
+                    if (key === 'email') {
+                        if (value.indexOf("@") === -1) {
+                            this.emit('error', 'Invalid email adress');
+                        } else {
+                            Stapes.prototype.set.apply(this, arguments);
+                        }
+                    } else {
+                        // Normal set() behavior
+                        Stapes.prototype.set.apply(this, arguments);
+                    }
+                }
+            });
 
-            <p>The callback function in <code>update</code> gets two arguments: the
-                value being modified, and the original key. The <code>this</code>
-                value of the callback will be set to the module you're updating.</p>
+            var johnny = new Person();
 
-            <p>The <code>silent</code> flag will prevent any change events from firing.</p>
+            johnny.on('error', function(msg) {
+                alert( msg ); // 'Invalid email adress'
+            });
 
-            <p><code>update</code> returns the module, so this method is chainable.</p>
-        </article>
+            johnny.set('email', 'invalid#email.com');
+                    </pre>
+                </article>
 
-        <h3 id="m-deprecated">Removed and deprecated stuff</h3>
-        <article id="m-deprecated-intro">
-            <h1>Introduction</h1>
-            <p>These methods, modules and other things are either deprecated
-                or have been removed. Don't use these features in new code,
-                and remove any dependencies on them in your current code, in a future
-                version they might be removed completely.</p>
-        </article>
+                <article id="m-size">
+                    <h1>size</h1>
 
-        <article id="m-create">
-            <h1>create <strong>(removed)</strong></h1>
+                    <h2>module.size();</h2>
 
-            <h2>Stapes.create()</h2>
-            <h2>module.create()</h2>
+                    <p>Returns the number of attributes in a module.</p>
 
-            <p>Create a new instance of a Stapes object.</p>
+            <pre>
+            module.push(['Johnny', 'Emmylou', 'June', 'Gram']);
 
-            <p>This method has been deprecated since 0.7.0 and was completely removed in 0.8.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
-        </article>
+            console.log( module.size() ); // '4'
+            </pre>
+                </article>
 
-        <article id="m-util">
-            <h1>Stapes.util <strong>(removed)</strong></h1>
-            <p>Until version 0.5.1 Stapes included a util module with Underscore-like
-            utilities such as <code>each</code> and <code>map</code>. This was
-            removed in version 0.6.</p>
+                <article id="m-update">
+                    <h1>update</h1>
 
-            <p>If your code depends on the <code>Stapes.util</code>
-            module you can use a <a href="plugins/#m-util">compatibility plugin</a>.</p>
-        </article>
+                    <h2>module.update( key, fn, [silent] );</h2>
+                    <h2>module.update( fn );</h2>
 
-        <h3 id="m-misc">Miscellaneous</h3>
-        <article id="m-version">
-            <h1>version</h1>
+                    <p>Updates an attribute with a new value, based on the return value
+                        of a function.</p>
 
-            <h2>Stapes.version</h2>
+                    <p>Just as with <code><a href="#m-set">set</a></code> <code>update</code>
+                        will generate <code>change</code> and <code>update</code> events.</p>
 
-            <p>Returns the current version of Stapes. Note that this property
-                is only available on the Stapes global variable, not on
-                individual modules.</p>
-        </article>
+                    <pre>
+            module.set('singer', 'Elvis');
 
-        <h3 id="m-bugs">Bugs and known limitations</h3>
-        <ul>
-            <li><p>Attributes are stored in an object internally. According to the Javascript spec
-                objects don't guarantee that properties are returned in order. However, all browsers
-                do return object properties in order except for <a href="http://stackoverflow.com/a/280861/152809">Chrome</a>
-                where numbered keys won't return in order. </p>
-                <p>In the future this will be fixed, but it requires a big rewrite. For now the best way to
-                    prevent this problem is to simply avoid using numbered attributes. So don't write something like
-                    <code>module.set('1', 'one');</code>
-                </p>
-            </li>
-        </ul>
+            module.update('singer', function(singer) {
+                return 'Johnny';
+            });
 
-        <h3 id="m-history">History</h3>
-        <ul>
-            <li>0.8.1</li>
-            <ul>
-                <li><small>Feature</small> <a href="#m-get"><code>get</code></a> now accepts multiple arguments so you can use it like Underscore's <code>pick</code> (Issue <a href="https://github.com/hay/stapes/pull/38">#38</a>). Thanks for the suggestion <a href="https://github.com/santervo">Santervo!</a></li>
-                <li><small>Feature</small> <code>mutate</code> events are now emitted whenever an attribute is removed (issue <a href="https://github.com/hay/stapes/pull/35">#35</a>). Thanks <a href="https://github.com/wellcaffeinated">Jasper</a>!</li>
-            </ul>
-            <li>0.8.0 - July 9th 2013</li>
-            <ul>
-                <li><a href="#m-create"><code>create()</code></a> has been completely removed after the deprecation in 0.7.0</a>
-                <li><small>Feature</small> <a href="#m-set"><code>set</code></a> now also accepts the <code>silent</code> flag for objects (issue <a href="https://github.com/hay/stapes/pull/28">#28</a>). Thanks for the suggestion <a href="https://github.com/Neogavin">Neogavin</a>!</li>
-                <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> without any arguments now removes all attributes in a module.</li>
-                <li><small>Bugfix</small> The <code>silent</code> flag did not work with <a href="m-push"><code>push</code></a> (issue <a href="https://github.com/hay/stapes/issues/39">#39</a>). Thanks for reporting <a href="https://github.com/Gamadril">Gamadril</a>!</li>
-            </ul>
-            <li>0.7.1 - February 27th 2013</li>
-            <ul>
-                <li>Thanks to <a href="https://github.com/josher19">josher19</a> the docs now have nice tooltips
-                    for all the methods in the in-code examples!</li>
-                <li><small>Bugfix</small> <code>Stapes.extend</code> was broken (issue <a href="https://github.com/hay/stapes/pull/33">#33</a>). Thanks <a href="https://github.com/gonchuki">gonchuku!</a></li>
-                <li><small>Bugfix</small> Fixed the todos examples, thanks <a href="http://slopesidecreative.com/">Erik</a>!</li>
-                <li><small>Bugfix</small> Fixed events in subclasses. (issue <a href="https://github.com/hay/stapes/pull/29">#29</a>),
-                    thanks <a href="https://github.com/ericchaves">Eric</a>!</li>
-                <li><small>Bugfix</small> Fixed a problem where unbinding an event would throw an error in some rare cases
-                    (<a href="https://github.com/hay/stapes/pull/30">issue #30</a>). Thanks <a href="https://github.com/wellcaffeinated">Jasper</a>!</li>
-            </ul>
-            <li>0.7.0 - January 14th 2013</li>
-            <ul>
-                <li><small>Feature</small> Completely revised the creation of new modules with
-                    <a href="#m-subclass"><code>subclass</code></a>. The old <a href="m-create"><code>create</code></a>
-                    is still available for backwards compatibility. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read here</a> why i deprecated <code>create</code>.</li>
-                <li><small>Feature</small> Added a <a href="#m-map"><code>map</code></a> function to every module.</li>
-                <li><small>Feature</small> <a href="#m-update"><code>update</code></a> now gets the module set as the
-                    <code>this</code> context, and gets the key in the callback function.</li>
-                <li><small>Feature</small> <a href="#m-update"><code>update</code></a> now has a <code>silent</code> option too.</li>
-                <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> now accepts multiple keys to remove.</li>
-                <li><small>Bugfix</small> <a href="#m-getallasarray"><code>getAllAsArray</code></a> no longer overwrites
-                    an <code>id</code> value if its present in the object</li>
-            </ul>
-            <li>0.6 - October 14th 2012</li>
-            <ul>
-                <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> now also triggers namespaced events
-                    (<a href="https://github.com/hay/stapes/issues/13">issue #13</a>).</li>
-                <li><small>Feature</small> <a href="#m-set"><code>set</code></a>, <a href="#m-push"><code>push</code></a> and
-                    <a href="#m-remove"><code>remove</code></a> now have an optional <code>silent</code> flag that
-                    will preveny any events from being triggered (<a href="https://github.com/hay/stapes/issues/18">issue #18</a>)</li>
-                <li><small>Feature</small> <a href="#m-push"><code>push</code></a>, <a href="#m-set"><code>set</code></a>,
-                    <a href="#m-remove"><code>remove</code></a> and <a href="#m-update"><code>update</code></a> now return the
-                    module, so you can chain these methods (<a href="https://github.com/hay/stapes/issues/17">issue #17</a>)</li>
-                <li><small>Bugfix</small> Specific events that were emitted on <code>Stapes.on</code> gave a wrong scope (<a href="https://github.com/hay/stapes/issues/19">issue #19</a>)</li>
-                <li><small>Bugfix</small> Events didn't bubble up to the global <code>Stapes</code> object
-                    (<a href="https://github.com/hay/stapes/issues/12">issue #12</a>)</li>
-                <li><small>Bugfix</small> Fix for the <code>remove</code> handler in IE8. Thanks <a href="https://github.com/wellcaffeinated">@wellcaffeinated</a>!</li>
-                <li><code>Stapes.util</code> has been removed. If your code depends on it you can use a <a href="plugins/#m-util">compatibility plugin</a>.</li>
-            </ul>
-            <li>0.5.1 - July 20th 2012</li>
-            <ul>
-                <li><small>Feature</small> All private methods are now part of the <code>Stapes._</code> which means
-                    plugin authors can overwrite and redefine every part of Stapes.</li>
-                <li><small>Bugfix</small> Fixed a bug where calling create() on a module wouldn't increase the guid
-                    (issue <a href="https://github.com/hay/stapes/issues/8">#8</a>). Thanks
-                    <a href="https://github.com/wellcaffeinated">@wellcaffeinated</a>!</li>
-            </ul>
-            <li>0.5 - July 2nd 2012</li>
+            console.log( module.get('singer') ); // 'Johnny';
+                    </pre>
+
+                    <p>You can also pass a single function as an argument. In that case,
+                        <code>update</code> will run on all attributes in the module.</p>
+
+                    <pre>
+            module.push([
+                { "name" : "Johnny", "singer" : false},
+                { "name" : "Emmylou", "singer" : false}
+            ]);
+
+            module.update(function(item) {
+                item.singer = true;
+                return item;
+            });
+                    </pre>
+
+                    <p>The callback function in <code>update</code> gets two arguments: the
+                        value being modified, and the original key. The <code>this</code>
+                        value of the callback will be set to the module you're updating.</p>
+
+                    <p>The <code>silent</code> flag will prevent any change events from firing.</p>
+
+                    <p><code>update</code> returns the module, so this method is chainable.</p>
+                </article>
+
+                <h3 id="m-deprecated">Removed and deprecated stuff</h3>
+                <article id="m-deprecated-intro">
+                    <h1>Introduction</h1>
+                    <p>These methods, modules and other things are either deprecated
+                        or have been removed. Don't use these features in new code,
+                        and remove any dependencies on them in your current code, in a future
+                        version they might be removed completely.</p>
+                </article>
+
+                <article id="m-create">
+                    <h1>create <strong>(removed)</strong></h1>
+
+                    <h2>Stapes.create()</h2>
+                    <h2>module.create()</h2>
+
+                    <p>Create a new instance of a Stapes object.</p>
+
+                    <p>This method has been deprecated since 0.7.0 and was completely removed in 0.8.0. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read this blogpost why</a>.</p>
+                </article>
+
+                <article id="m-util">
+                    <h1>Stapes.util <strong>(removed)</strong></h1>
+                    <p>Until version 0.5.1 Stapes included a util module with Underscore-like
+                    utilities such as <code>each</code> and <code>map</code>. This was
+                    removed in version 0.6.</p>
+
+                    <p>If your code depends on the <code>Stapes.util</code>
+                    module you can use a <a href="plugins/#m-util">compatibility plugin</a>.</p>
+                </article>
+
+                <h3 id="m-misc">Miscellaneous</h3>
+                <article id="m-version">
+                    <h1>version</h1>
+
+                    <h2>Stapes.version</h2>
+
+                    <p>Returns the current version of Stapes. Note that this property
+                        is only available on the Stapes global variable, not on
+                        individual modules.</p>
+                </article>
+
+                <h3 id="m-bugs">Bugs and known limitations</h3>
                 <ul>
-                    <li><small>Feature</small> Add event to any method using the <a href="#m-mixinEvents"><code>mixinEvents</code></a>
-                        method</li>
-                    <li><small>Feature</small> Added the <a href="#m-off"><code>off</code></a> event method to remove event handlers</li>
-                    <li>The two <a href="#m-examples">todos examples</a> are updated to the latest version from
-                        <a href="http://todomvc.com">TodoMVC</a></li>
-                </ul>
-            <li>0.4 - May 10th 2012</li>
-                <ul>
-                    <li><small>Feature</small> Added the whole bunch of <a href="#m-util">utility methods</a>.</li>
-                    <li><small>Feature</small> Added an <code><a href="#m-each">each</a></code> method to Modules for easy iteration over attributes</li>
-                    <li><small>Feature</small> Added a <code><a href="#m-size">size</a></code> method to get the number of attributes in a module.</li>
-                    <li><small>Bugfix</small> Data in event handlers was silently changed to <code>null</code> if it was falsy,
-                        so passing <code>false</code> as a data argument would result in handlers getting <code>null</code> instead of
-                        the expected data argument.</li>
-                    <li>Updated the two todos examples, using the versions from the TodoMVC collection</li>
-                    <li>Removed the undocumented <code>init</code> method that was part of every Stapes module</li>
-                    <li>Rewrote the util functions for cleaner code (including a <code>map</code> and an <code>each</code>
-                        with a context parameter).</li>
-                </ul>
-            <li>0.3 - April 5th 2012</li>
-                <ul>
-                    <li><small>Feature</small> Added the <code><a href="#m-mutate">mutate</a></code> change event.</li>
-                    <li><small>Feature</small> <code><a href="#m-update">update</a></code> now accepts a single function as an argument too.</li>
-                    <li><small>Bugfix</small> Setting an attribute with the same value as the old value doesn't trigger a change event anymore.</li>
-                    <li><code><a href="#m-getall">getAll()</a></code> and <code><a href="#m-getallasarray">getAllAsArray()</a></code> now return a clone of the attributes instead of a reference.</li>
-                    <li>Removing the undocumented <code>changemany</code> and <code>createmany</code> events.</li>
-                </ul>
-            <li>0.2.1 - March 28th 2012</li>
-                <ul>
-                    <li>Fixed a bug where global events didn't always work
-                        because the guid was set to 0 initially. Thanks
-                        <a href="http://twitter.com/frenkie">@frenkie</a>!
+                    <li><p>Attributes are stored in an object internally. According to the Javascript spec
+                        objects don't guarantee that properties are returned in order. However, all browsers
+                        do return object properties in order except for <a href="http://stackoverflow.com/a/280861/152809">Chrome</a>
+                        where numbered keys won't return in order. </p>
+                        <p>In the future this will be fixed, but it requires a big rewrite. For now the best way to
+                            prevent this problem is to simply avoid using numbered attributes. So don't write something like
+                            <code>module.set('1', 'one');</code>
+                        </p>
                     </li>
                 </ul>
-            <li>0.2 - March 4th 2012</li>
-            <ul>
-                <li>First release!</li>
-            </ul>
-        </ul>
 
-        <h3 id="m-contributors">Contributors</h3>
-        <p>Thanks to all of you for contributing code, docs, reporting bugs, giving good advice and inspiration!</p>
-        <ul>
-            <li><a href="https://github.com/frenkie">Frank Bosma</a></li>
-            <li><a href="https://github.com/adie">Anton Dieterle</a></li>
-            <li><a href="https://github.com/hogart">Hogart</a></li>
-            <li><a href="https://github.com/addyosmani">Addy Osmani</a></li>
-            <li><a href="https://github.com/sindresorhus/">Sindre Sorhus</a></li>
-            <li><a href="https://github.com/wellcaffeinated">wellcaffeinated (Jasper)</a></li>
-            <li><a href="https://github.com/feklee">Felix E. Klee</a></li>
-            <li>Jarrod Overson</li>
-            <li><a href="https://github.com/mahonnaise">Jos Hirth (mahonnaise)</a></li>
-            <li><a href="https://github.com/Contra">Eric Schoffstall (contra)</a></li>
-            <li><a href="https://github.com/josher19">Joshua S. Weinstein (josher19)</a></li>
-            <li><a href="http://slopesidecreative.com/">Erik Clineschmidt</a></li>
-            <li><a href="https://github.com/ericchaves">Eric Chaves</a></li>
-            <li><a href="https://github.com/josher19">Josher19</a></li>
-            <li><a href="https://github.com/gonchuki">gonchuki</a></li>
-            <li><a href="https://github.com/Neogavin">Neogavin</a></li>
-            <li><a href="https://github.com/GMFlash">GMFlash</a></li>
-            <li><a href="https://github.com/santervo">Santtu Lintervo</a></li>
-        </ul>
-    </section> <!-- #content -->
+                <h3 id="m-history">History</h3>
+                <ul>
+                    <li>0.8.1</li>
+                    <ul>
+                        <li><small>Feature</small> <a href="#m-get"><code>get</code></a> now accepts multiple arguments so you can use it like Underscore's <code>pick</code> (Issue <a href="https://github.com/hay/stapes/pull/38">#38</a>). Thanks for the suggestion <a href="https://github.com/santervo">Santervo!</a></li>
+                        <li><small>Feature</small> <code>mutate</code> events are now emitted whenever an attribute is removed (issue <a href="https://github.com/hay/stapes/pull/35">#35</a>). Thanks <a href="https://github.com/wellcaffeinated">Jasper</a>!</li>
+                    </ul>
+                    <li>0.8.0 - July 9th 2013</li>
+                    <ul>
+                        <li><a href="#m-create"><code>create()</code></a> has been completely removed after the deprecation in 0.7.0</a>
+                        <li><small>Feature</small> <a href="#m-set"><code>set</code></a> now also accepts the <code>silent</code> flag for objects (issue <a href="https://github.com/hay/stapes/pull/28">#28</a>). Thanks for the suggestion <a href="https://github.com/Neogavin">Neogavin</a>!</li>
+                        <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> without any arguments now removes all attributes in a module.</li>
+                        <li><small>Bugfix</small> The <code>silent</code> flag did not work with <a href="m-push"><code>push</code></a> (issue <a href="https://github.com/hay/stapes/issues/39">#39</a>). Thanks for reporting <a href="https://github.com/Gamadril">Gamadril</a>!</li>
+                    </ul>
+                    <li>0.7.1 - February 27th 2013</li>
+                    <ul>
+                        <li>Thanks to <a href="https://github.com/josher19">josher19</a> the docs now have nice tooltips
+                            for all the methods in the in-code examples!</li>
+                        <li><small>Bugfix</small> <code>Stapes.extend</code> was broken (issue <a href="https://github.com/hay/stapes/pull/33">#33</a>). Thanks <a href="https://github.com/gonchuki">gonchuku!</a></li>
+                        <li><small>Bugfix</small> Fixed the todos examples, thanks <a href="http://slopesidecreative.com/">Erik</a>!</li>
+                        <li><small>Bugfix</small> Fixed events in subclasses. (issue <a href="https://github.com/hay/stapes/pull/29">#29</a>),
+                            thanks <a href="https://github.com/ericchaves">Eric</a>!</li>
+                        <li><small>Bugfix</small> Fixed a problem where unbinding an event would throw an error in some rare cases
+                            (<a href="https://github.com/hay/stapes/pull/30">issue #30</a>). Thanks <a href="https://github.com/wellcaffeinated">Jasper</a>!</li>
+                    </ul>
+                    <li>0.7.0 - January 14th 2013</li>
+                    <ul>
+                        <li><small>Feature</small> Completely revised the creation of new modules with
+                            <a href="#m-subclass"><code>subclass</code></a>. The old <a href="m-create"><code>create</code></a>
+                            is still available for backwards compatibility. <a href="http://www.haykranen.nl/2013/01/13/stapes-0-7-0-and-the-end-of-create/">Read here</a> why i deprecated <code>create</code>.</li>
+                        <li><small>Feature</small> Added a <a href="#m-map"><code>map</code></a> function to every module.</li>
+                        <li><small>Feature</small> <a href="#m-update"><code>update</code></a> now gets the module set as the
+                            <code>this</code> context, and gets the key in the callback function.</li>
+                        <li><small>Feature</small> <a href="#m-update"><code>update</code></a> now has a <code>silent</code> option too.</li>
+                        <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> now accepts multiple keys to remove.</li>
+                        <li><small>Bugfix</small> <a href="#m-getallasarray"><code>getAllAsArray</code></a> no longer overwrites
+                            an <code>id</code> value if its present in the object</li>
+                    </ul>
+                    <li>0.6 - October 14th 2012</li>
+                    <ul>
+                        <li><small>Feature</small> <a href="#m-remove"><code>remove</code></a> now also triggers namespaced events
+                            (<a href="https://github.com/hay/stapes/issues/13">issue #13</a>).</li>
+                        <li><small>Feature</small> <a href="#m-set"><code>set</code></a>, <a href="#m-push"><code>push</code></a> and
+                            <a href="#m-remove"><code>remove</code></a> now have an optional <code>silent</code> flag that
+                            will preveny any events from being triggered (<a href="https://github.com/hay/stapes/issues/18">issue #18</a>)</li>
+                        <li><small>Feature</small> <a href="#m-push"><code>push</code></a>, <a href="#m-set"><code>set</code></a>,
+                            <a href="#m-remove"><code>remove</code></a> and <a href="#m-update"><code>update</code></a> now return the
+                            module, so you can chain these methods (<a href="https://github.com/hay/stapes/issues/17">issue #17</a>)</li>
+                        <li><small>Bugfix</small> Specific events that were emitted on <code>Stapes.on</code> gave a wrong scope (<a href="https://github.com/hay/stapes/issues/19">issue #19</a>)</li>
+                        <li><small>Bugfix</small> Events didn't bubble up to the global <code>Stapes</code> object
+                            (<a href="https://github.com/hay/stapes/issues/12">issue #12</a>)</li>
+                        <li><small>Bugfix</small> Fix for the <code>remove</code> handler in IE8. Thanks <a href="https://github.com/wellcaffeinated">@wellcaffeinated</a>!</li>
+                        <li><code>Stapes.util</code> has been removed. If your code depends on it you can use a <a href="plugins/#m-util">compatibility plugin</a>.</li>
+                    </ul>
+                    <li>0.5.1 - July 20th 2012</li>
+                    <ul>
+                        <li><small>Feature</small> All private methods are now part of the <code>Stapes._</code> which means
+                            plugin authors can overwrite and redefine every part of Stapes.</li>
+                        <li><small>Bugfix</small> Fixed a bug where calling create() on a module wouldn't increase the guid
+                            (issue <a href="https://github.com/hay/stapes/issues/8">#8</a>). Thanks
+                            <a href="https://github.com/wellcaffeinated">@wellcaffeinated</a>!</li>
+                    </ul>
+                    <li>0.5 - July 2nd 2012</li>
+                        <ul>
+                            <li><small>Feature</small> Add event to any method using the <a href="#m-mixinEvents"><code>mixinEvents</code></a>
+                                method</li>
+                            <li><small>Feature</small> Added the <a href="#m-off"><code>off</code></a> event method to remove event handlers</li>
+                            <li>The two <a href="#m-examples">todos examples</a> are updated to the latest version from
+                                <a href="http://todomvc.com">TodoMVC</a></li>
+                        </ul>
+                    <li>0.4 - May 10th 2012</li>
+                        <ul>
+                            <li><small>Feature</small> Added the whole bunch of <a href="#m-util">utility methods</a>.</li>
+                            <li><small>Feature</small> Added an <code><a href="#m-each">each</a></code> method to Modules for easy iteration over attributes</li>
+                            <li><small>Feature</small> Added a <code><a href="#m-size">size</a></code> method to get the number of attributes in a module.</li>
+                            <li><small>Bugfix</small> Data in event handlers was silently changed to <code>null</code> if it was falsy,
+                                so passing <code>false</code> as a data argument would result in handlers getting <code>null</code> instead of
+                                the expected data argument.</li>
+                            <li>Updated the two todos examples, using the versions from the TodoMVC collection</li>
+                            <li>Removed the undocumented <code>init</code> method that was part of every Stapes module</li>
+                            <li>Rewrote the util functions for cleaner code (including a <code>map</code> and an <code>each</code>
+                                with a context parameter).</li>
+                        </ul>
+                    <li>0.3 - April 5th 2012</li>
+                        <ul>
+                            <li><small>Feature</small> Added the <code><a href="#m-mutate">mutate</a></code> change event.</li>
+                            <li><small>Feature</small> <code><a href="#m-update">update</a></code> now accepts a single function as an argument too.</li>
+                            <li><small>Bugfix</small> Setting an attribute with the same value as the old value doesn't trigger a change event anymore.</li>
+                            <li><code><a href="#m-getall">getAll()</a></code> and <code><a href="#m-getallasarray">getAllAsArray()</a></code> now return a clone of the attributes instead of a reference.</li>
+                            <li>Removing the undocumented <code>changemany</code> and <code>createmany</code> events.</li>
+                        </ul>
+                    <li>0.2.1 - March 28th 2012</li>
+                        <ul>
+                            <li>Fixed a bug where global events didn't always work
+                                because the guid was set to 0 initially. Thanks
+                                <a href="http://twitter.com/frenkie">@frenkie</a>!
+                            </li>
+                        </ul>
+                    <li>0.2 - March 4th 2012</li>
+                    <ul>
+                        <li>First release!</li>
+                    </ul>
+                </ul>
 
-    <script src="web/js/app.js"></script>
-    <script src="web/js/rainbow.js"></script>
-    <script src="web/js/minidocs.js"></script>
-    <script src="web/js/stapes_docs.js"></script>
+                <h3 id="m-contributors">Contributors</h3>
+                <p>Thanks to all of you for contributing code, docs, reporting bugs, giving good advice and inspiration!</p>
+                <ul>
+                    <li><a href="https://github.com/frenkie">Frank Bosma</a></li>
+                    <li><a href="https://github.com/adie">Anton Dieterle</a></li>
+                    <li><a href="https://github.com/hogart">Hogart</a></li>
+                    <li><a href="https://github.com/addyosmani">Addy Osmani</a></li>
+                    <li><a href="https://github.com/sindresorhus/">Sindre Sorhus</a></li>
+                    <li><a href="https://github.com/wellcaffeinated">wellcaffeinated (Jasper)</a></li>
+                    <li><a href="https://github.com/feklee">Felix E. Klee</a></li>
+                    <li>Jarrod Overson</li>
+                    <li><a href="https://github.com/mahonnaise">Jos Hirth (mahonnaise)</a></li>
+                    <li><a href="https://github.com/Contra">Eric Schoffstall (contra)</a></li>
+                    <li><a href="https://github.com/josher19">Joshua S. Weinstein (josher19)</a></li>
+                    <li><a href="http://slopesidecreative.com/">Erik Clineschmidt</a></li>
+                    <li><a href="https://github.com/ericchaves">Eric Chaves</a></li>
+                    <li><a href="https://github.com/josher19">Josher19</a></li>
+                    <li><a href="https://github.com/gonchuki">gonchuki</a></li>
+                    <li><a href="https://github.com/Neogavin">Neogavin</a></li>
+                    <li><a href="https://github.com/GMFlash">GMFlash</a></li>
+                    <li><a href="https://github.com/santervo">Santtu Lintervo</a></li>
+                </ul>
+            </div> <!-- .col -->
+        </div> <!-- .row -->
+    </div> <!-- .container -->
+
+    <script src="web-assets/js/jquery.min.js"></script>
+    <script src="web-assets/js/bootstrap.min.js"></script>
+    <script src="stapes.js"></script>
+    <script src="web-assets/js/rainbow.js"></script>
+    <script src="web-assets/js/app.js"></script>
+    <script>
+        window.app = new App();
+    </script>
 </body>
 </html>

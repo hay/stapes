@@ -1,0 +1,13 @@
+.jumbotron {
+    text-align: center;
+}
+
+#toc {
+    background: #eee;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#toc.affix {
+    top: 20px;
+}
