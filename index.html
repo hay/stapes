@@ -1135,7 +1135,7 @@ module.update(function(item) {
                     <p><code>update</code> returns the module, so this method is chainable.</p>
                 </article>
 
-                <h3 id="m-deprecated">Removed and deprecated stuff</h3>
+                <h3 id="m-deprecated">Removed and deprecated</h3>
                 <article id="m-deprecated-intro">
                     <h4>Introduction</h4>
                     <p>These methods, modules and other things are either deprecated
@@ -1238,7 +1238,8 @@ var module = new Module('Emmylou');
 
                 <p>However, note that this will only work with a single instance of the class because the scope stays the same. Creating an extra module will overwrite the private variables from the previous instance.</p>
 
-                <h3 id="m-bugs">Bugs and known limitations</h3>
+                <h3 id="m-odds-ends">Odds and ends</h3>
+                <h4 id="m-bugs">Bugs and known limitations</h4>
                 <ul>
                     <li><p>Attributes are stored in an object internally. According to the Javascript spec
                         objects don't guarantee that properties are returned in order. However, all browsers
@@ -1251,12 +1252,13 @@ var module = new Module('Emmylou');
                     </li>
                 </ul>
 
-                <h3 id="m-history">History</h3>
+                <h4 id="m-history">History</h4>
                 <ul>
                     <li>0.8.1</li>
                     <ul>
                         <li><small>Feature</small> <a href="#m-get"><code>get</code></a> now accepts multiple arguments so you can use it like Underscore's <code>pick</code> (Issue <a href="https://github.com/hay/stapes/pull/38">#38</a>). Thanks for the suggestion <a href="https://github.com/santervo">Santervo!</a></li>
                         <li><small>Feature</small> <code>mutate</code> events are now emitted whenever an attribute is removed (issue <a href="https://github.com/hay/stapes/pull/35">#35</a>). Thanks <a href="https://github.com/wellcaffeinated">Jasper</a>!</li>
+                        <li>Not a feature <em>per se</em>, but the website got a complete makeover using the wonderful <a href="http://getbootstrap.com">Bootstrap</a> framework.</li>
                     </ul>
                     <li>0.8.0 - July 9th 2013</li>
                     <ul>
@@ -1355,7 +1357,7 @@ var module = new Module('Emmylou');
                     </ul>
                 </ul>
 
-                <h3 id="m-contributors">Contributors</h3>
+                <h4 id="m-contributors">Contributors</h4>
                 <p>Thanks to all of you for contributing code, docs, reporting bugs, giving good advice and inspiration!</p>
                 <ul>
                     <li><a href="https://github.com/frenkie">Frank Bosma</a></li>

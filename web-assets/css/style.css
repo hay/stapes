@@ -43,3 +43,9 @@
 #toc .active .nav {
     display: block;
 }
+
+small {
+    text-transform: uppercase;
+    color: #999;
+    letter-spacing: 1px;
+}
