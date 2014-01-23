@@ -1,0 +1,51 @@
+.jumbotron {
+    text-align: center;
+    background-color: #1C517D;
+    color: white;
+    margin-top: -15px;
+}
+
+.jumbotron img {
+    max-width: 100%;
+}
+
+.jumbotron a.btn-link {
+    color: #ddd;
+}
+
+.jumbotron a.btn-link:hover {
+    color: white;
+}
+
+#toc {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#toc.affix {
+    top: 20px;
+}
+
+#toc li li a {
+    font-size: 90%;
+    padding: 5px 0 5px 30px;
+}
+
+#toc .nav .nav {
+    display: none;
+}
+
+#toc .active > a {
+    background: #1C517D;
+    color: white;
+}
+
+#toc .active .nav {
+    display: block;
+}
+
+small {
+    text-transform: uppercase;
+    color: #999;
+    letter-spacing: 1px;
+}

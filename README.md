@@ -1,6 +1,6 @@
 # Stapes.js <sup>*</sup>
-### (*) a (really) tiny Javascript MVC microframework
+### (*) the Javascript MVC microframework that does *just enough*
 
 Full documentation available here:
 
-[http://hay.github.com/stapes/](http://hay.github.com/stapes/)
+[http://hay.github.io/stapes/](http://hay.github.io/stapes/)

@@ -6,17 +6,17 @@
 // |____/ \__\__,_| .__/ \___||___(_)/ |___/
 //              |_|              |__/
 //
-// (*) a (really) tiny Javascript MVC microframework
+// (*) the Javascript MVC microframework that does just enough
 //
 // (c) Hay Kranen < hay@bykr.org >
 // Released under the terms of the MIT license
 // < http://en.wikipedia.org/wiki/MIT_License >
 //
 // Stapes.js : http://hay.github.com/stapes
-(function() {
+;(function() {
     'use strict';
 
-    var VERSION = "0.8.0";
+    var VERSION = "0.8.1";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
@@ -239,22 +239,33 @@
             silent = silent || false;
 
             // Split the key, maybe we want to remove more than one item
-            var attributes = _.trim(keys).split(" ");
+            var attributes = _.trim(keys).split(" ")
+                ,mutateData = {}
+                ;
 
             // Actually delete the item
             for (var i = 0, l = attributes.length; i < l; i++) {
                 var key = _.trim(attributes[i]);
 
                 if (key) {
+                    // Store data for mutate event
+                    mutateData.key = key;
+                    mutateData.oldValue = _.attr(this._guid)[key];
+
                     delete _.attr(this._guid)[key];
 
                     // If 'silent' is set, do not throw any events
                     if (!silent) {
                         this.emit('change', key);
                         this.emit('change:' + key);
+                        this.emit('mutate', mutateData);
+                        this.emit('mutate:' + key, mutateData);
                         this.emit('remove', key);
                         this.emit('remove:' + key);
                     }
+
+                    // clean up
+                    delete mutateData.oldValue;
                 }
             }
         },
@@ -437,7 +448,20 @@
 
         get : function(input) {
             if (typeof input === "string") {
-                return this.has(input) ? _.attr(this._guid)[input] : null;
+                // If there is more than one argument, give back an object,
+                // like Underscore's pick()
+                if (arguments.length > 1) {
+                    var results = {};
+
+                    for (var i = 0, l = arguments.length; i < l; i++) {
+                        var key = arguments[i];
+                        results[key] = this.get(key);
+                    }
+
+                    return results;
+                } else {
+                    return this.has(input) ? _.attr(this._guid)[input] : null;
+                }
             } else if (typeof input === "function") {
                 var items = this.filter(input);
                 return (items.length) ? items[0] : null;

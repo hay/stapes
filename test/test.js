@@ -12,9 +12,27 @@ if (!Object.keys) {
     };
 }
 
-module("set");
-
 var EmptyModule = Stapes.subclass();
+
+test("subclassing", function() {
+    var Car = Stapes.subclass();
+    var SuperCar = Car.subclass();
+    var UltraSuperCar = SuperCar.subclass();
+
+    var car = new Car();
+    var superCar = new SuperCar();
+    var ultraSuperCar = new UltraSuperCar();
+
+    ok( car instanceof Car, "direct instancof");
+    ok( superCar instanceof Car, "second inheritance");
+    ok( ultraSuperCar instanceof UltraSuperCar, "third inheritance");
+    ok( !(car instanceof UltraSuperCar), "other way around should not work");
+
+    var ClassOnly = Stapes.subclass({}, true);
+    var c = new ClassOnly();
+    ok( !('get' in c), "No get in classOnly classes");
+    ok( 'subclass' in ClassOnly, "subclass in classOnly classes");
+});
 
 test("change events", function() {
     expect(12);
@@ -95,7 +113,7 @@ test("change events", function() {
     }); /* but we do want them for non-silent objects */
 });
 
-module("update");
+
 
 test("update", function() {
     var module = new EmptyModule();
@@ -134,7 +152,7 @@ test("update", function() {
     }, true /* silent flag */);
 });
 
-module("remove");
+
 
 test("remove", function() {
     var module = new EmptyModule();
@@ -177,7 +195,7 @@ test("remove", function() {
     ok(module.size() === 0, 'all attributes should be removed');
 })
 
-module("iterators");
+
 
 test("each and map with a single object", function() {
     var module = new EmptyModule();
@@ -290,7 +308,7 @@ test("_.typeof", function() {
     ok(Stapes._.typeOf( undefined ) === "undefined", "typeof undefined = undefined");
 });
 
-module("events");
+
 
 test("off", function() {
     var module = new EmptyModule();
@@ -424,6 +442,33 @@ test("chaining", function() {
     ok(!!module.get && module.get('foo') === null, "remove() should return the object");
     module = module.push(true);
     ok(!!module.get && module.size() === 1, "push() should return the object");
+});
+
+test("get", function() {
+    var module = new EmptyModule();
+
+    module.set({
+        'title' : 'Ring of Fire',
+        'artist' : 'Johnny',
+        'instrument' : 'guitar'
+    });
+
+    ok( module.get('artist') === 'Johnny', "simple get");
+    ok( module.get('undefined') === null, "undefined returns null");
+
+    // Note how the function variaty of get() is pretty much useless
+    // because it returns values instead of key/values
+    // For now, we leave it in Stapes, but it might be deprecated
+    ok(
+        module.get(function(a) {
+            return a === 'guitar';
+        }) === 'guitar',
+        "get with a function"
+    );
+
+    // The 'pick' like variety of get() is a lot more useful
+    var props = module.get('artist', 'instrument');
+    deepEqual(props, { 'artist' : 'Johnny', 'instrument' : 'guitar'}, "get works with multiple string arguments");
 });
 
 test("Extending Stapes (plugins)", function() {
