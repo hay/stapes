@@ -6,6 +6,7 @@ window.App = (function() {
             this.createToc();
             this.addAffix();
             this.addSyntaxHighlighting();
+            this.addScrollspy();
         },
 
         addAffix : function() {
@@ -13,6 +14,13 @@ window.App = (function() {
                 offset : {
                     top: this.$toc.offset().top
                 }
+            });
+        },
+
+        addScrollspy : function() {
+            $("body").scrollspy({
+                offset : 10,
+                target : '#toc .nav'
             });
         },
 
@@ -24,11 +32,39 @@ window.App = (function() {
 
         createToc : function() {
             var menu = [];
+            var first = true;
 
-            this.$content.find("h3").each(function() {
+            // This could be better :)
+            var $headings = this.$content.find("h3, h4");
+            var headingsCount = $headings.length - 1;
+
+            $headings.each(function(index) {
                 var $el = $(this);
                 var id = $el.attr('id');
-                menu.push('<li><a href="#' + id + '">' + $el.text() + '</a></li>');
+
+                if (!id) {
+                    id = $el.parent().attr('id');
+                }
+
+                var li = ('<a href="#' + id + '">' + $el.text() + '</a>');
+
+                if ($el.is('h3')) {
+                    li = '<li>' + li;
+
+                    if (first) {
+                        first = false;
+                    } else {
+                        li = '</ul>' + li;
+                    }
+
+                    if (index < headingsCount) {
+                        li = li + '<ul class="nav">';
+                    }
+                } else {
+                    li = '<li>' + li + '</li>';
+                }
+
+                menu.push(li);
             });
 
             this.$toc.find("ul").append( menu.join('') );
