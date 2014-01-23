@@ -71,7 +71,7 @@
             <div class="col-md-4">
                 <h3>Light</h3>
 
-                <p>Because of its size (just <strong>2kb</strong> minified and gzipped) Stapes is ideal to use in a mobile site.</p>
+                <p>Because of its size (just <strong>2kb</strong> minified and gzipped) Stapes is ideal to use in a mobile site. At just around 600 lines of codes, it's easy to debug and see how it works under the hood.</p>
             </div>
         </div>
 
@@ -111,71 +111,6 @@ var Module = Stapes.subclass({
 var module = new Module('Emmylou');
 
 module.sayName(); // 'My name is Emmylou'
-                </pre>
-
-                <p>If you want to use private variables and functions, use Stapes like this</p>
-
-                <pre>
-var Module = (function() {
-    var name;
-
-    function showPrivate() {
-        console.log("You shouldn't be seeing this", name);
-    }
-
-    var Module = Stapes.subclass({
-        constructor : function(aName) {
-            name = aName;
-            showPrivate();
-        }
-    });
-
-    return Module;
-})();
-
-var module = new Module('Emmylou');
-                </pre>
-
-                <p>However, note that this will only work with a single instance of the class because the scope stays the same. Creating an extra module will overwrite the private variables from the previous instance.</p>
-
-                <h4 id="m-mixinevents-h3">Using event methods with any non-Stapes object or function</h4>
-
-                <p>It's possible to add the <a href="#m-events">event methods</a> to any
-                    regular Javascript object or function. See <a href="#m-mixinEvents">
-                    <code>Stapes.mixinEvents</code></a> for more information.</p>
-
-                <h4 id="m-require">Using it together with RequireJS</h4>
-
-                <p>To avoid lots of global variables you can use a dependency loader like
-                <a href="http://www.requirejs.org">Require.JS</a>. This also makes the
-                previous example easier to read.</p>
-
-                <p>A dependency loader also makes it a lot easier to modularize your code and
-                (with the Require.js optimizer) easily minify and concat your app.</p>
-
-                <pre>
-// 'module.js'
-require(["path/to/Stapes"], function(Stapes) {
-    var name;
-
-    function showPrivate() {
-        console.log("You shouldn't be seeing this: ", name);
-    }
-
-    var Module = Stapes.subclass({
-        constructor : function(aName) {
-            name = aName;
-            showPrivate();
-        }
-    });
-
-    return Module;
-});
-
-// somewhere else
-require(['module'], function(Module) {
-    var module = new Module('Elvis'); // You shouldn't be seeing this: Elvis
-});
                 </pre>
 
                 <h4 id="m-examples">Examples</h4>
@@ -287,9 +222,7 @@ module instanceof Module; // true
                     <p>All modules automatically get a <code>parent</code> property that links
                         back to the prototype of the parent. You can use this to override a
                         method in a new class, but still call the method of the parent class, like
-                        the <code>super</code> method that is available in lots of languages.
-                        Unfortunately <code>super</code> is a reserved keyword in Javascript, so that's
-                        not usable in Stapes.</p>
+                        the <code>super</code> method that is available in lots of languages.</p>
 
                 <pre>
 var BetterModule = Module.subclass({
@@ -1243,6 +1176,68 @@ module.update(function(item) {
                         individual modules.</p>
                 </article>
 
+                <h3 id="m-cookbook">Cookbook</h4>
+
+                <p>Here are some notes on using Stapes in various different situations.</p>
+
+                <h4 id="m-module">Module loading</h4>
+
+                <p>Stapes can be used together with an AMD module loader like <a href="http://www.requirejs.org">Require.js</a>, CommonJS loaders like the one in <a href="http://www.nodejs.org">Node</a> or simply as an old-fashioned global variable.</p>
+
+                <p>Here's the example from the <a href="#m-intro">introduction</a> using Require.js</p>
+
+                <pre>
+// 'module.js'
+require(["path/to/Stapes"], function(Stapes) {
+    var name;
+
+    function showPrivate() {
+        console.log("You shouldn't be seeing this: ", name);
+    }
+
+    var Module = Stapes.subclass({
+        constructor : function(aName) {
+            name = aName;
+            showPrivate();
+        }
+    });
+
+    return Module;
+});
+
+// somewhere else
+require(['module'], function(Module) {
+    var module = new Module('Elvis'); // You shouldn't be seeing this: Elvis
+});
+                </pre>
+
+                <h4 id="m-private-variables">Private variables</h4>
+
+                <p>If you want to use private variables and functions, use Stapes like this:</p>
+
+                <pre>
+var Module = (function() {
+    var name;
+
+    function showPrivate() {
+        console.log("You shouldn't be seeing this", name);
+    }
+
+    var Module = Stapes.subclass({
+        constructor : function(aName) {
+            name = aName;
+            showPrivate();
+        }
+    });
+
+    return Module;
+})();
+
+var module = new Module('Emmylou');
+                </pre>
+
+                <p>However, note that this will only work with a single instance of the class because the scope stays the same. Creating an extra module will overwrite the private variables from the previous instance.</p>
+
                 <h3 id="m-bugs">Bugs and known limitations</h3>
                 <ul>
                     <li><p>Attributes are stored in an object internally. According to the Javascript spec
@@ -1396,12 +1391,3 @@ module.update(function(item) {
     </script>
 </body>
 </html>
-
-
-<ul>
-    <li>aap
-    <ul>
-        <li>aap2</li>
-    </ul>
-    </li>
-</ul>

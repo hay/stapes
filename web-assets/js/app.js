@@ -19,7 +19,7 @@ window.App = (function() {
 
         addScrollspy : function() {
             $("body").scrollspy({
-                offset : 10,
+                offset : 80,
                 target : '#toc .nav'
             });
         },

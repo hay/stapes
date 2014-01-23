@@ -28,7 +28,7 @@
 
 #toc li li a {
     font-size: 90%;
-    padding-left: 30px;
+    padding: 5px 0 5px 30px;
 }
 
 #toc .nav .nav {
