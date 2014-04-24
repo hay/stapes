@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Stapes.js - the Javascript MVC microframework that does just enough</title>
+    <title>Stapes.js - the little Javascript framework that does just enough</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="web-assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="web-assets/css/code.css" />
@@ -258,15 +258,18 @@ var Class = Stapes.subclass({
                     will be set to the objects context.</p>
 
                     <pre>
-Module.extend({
-    "names" : ['claire', 'alice']
+var Module = Stapes.subclass();
+
+var module = new Module();
+
+module.extend({
+    "names" : ['claire', 'alice'],
 
     "sayName" : function(i) {
         console.log( "Hello " + this.names[i] + "!" );
     }
 });
 
-var module = new Module();
 module.sayName(1); // 'alice'
                     </pre>
 
@@ -274,11 +277,11 @@ module.sayName(1); // 'alice'
                         assigning properties to the module:</p>
 
                     <pre>
-Module.names = ['claire', 'alice'];
+module.names = ['claire', 'alice'];
 
 // Is the same as
 
-Module.extend({
+module.extend({
     names : ['claire', 'alice'];
 });
                     </pre>
@@ -1336,6 +1339,9 @@ var module = new Module('Emmylou');
                     <li><a href="https://github.com/Neogavin">Neogavin</a></li>
                     <li><a href="https://github.com/GMFlash">GMFlash</a></li>
                     <li><a href="https://github.com/santervo">Santtu Lintervo</a></li>
+                    <li><a href="https://github.com/joshuajabbour">Joshua Jabbour</a></li>
+                    <li><a href="https://github.com/supermensa">Supermensa</a>
+                    <li><a href="https://github.com/flexelektro">Flexelektro</a></li>
                 </ul>
             </div> <!-- .col -->
         </div> <!-- .row -->

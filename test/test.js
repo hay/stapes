@@ -34,6 +34,20 @@ test("subclassing", function() {
     ok( 'subclass' in ClassOnly, "subclass in classOnly classes");
 });
 
+test('extend', function() {
+    var Module = Stapes.subclass();
+    var module = new Module();
+
+    module.extend({
+        'name' : 'foo',
+        'say' : function() {
+            ok(this.name === 'foo');
+        }
+    });
+
+    module.say();
+});
+
 test("change events", function() {
     expect(12);
 
