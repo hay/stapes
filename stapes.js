@@ -64,11 +64,11 @@
             }
 
             for (var eventString in eventMap){
-                var handler = eventMap[eventString], 
+                var handler = eventMap[eventString],
                     events = eventString.split(' ');
 
                 for (var i = 0, l = events.length; i < l; i++) {
-                    var eventType = events[i], 
+                    var eventType = events[i],
                         obj = {
                             guid: this._guid || this._.guid,
                             handler: handler,
@@ -372,16 +372,17 @@
         countBy: function(fn){
             if (!fn || _.typeOf(fn) !== 'function') return {};
 
-            var arr = {}
+            var obj = {}
 
+            // based on underscore countBy
             this.each(function(value, key){
                 var x = fn.call(this, value, key)
 
-                if (_.has(arr, x)) arr[x]++ 
+                if (_.has(arr, x)) arr[x]++
                 else arr[x] = 1;
             });
 
-            return arr
+            return obj
         },
         each: function(fn, ctx){
             var attr = _.attr(this._guid);
@@ -443,8 +444,9 @@
         groupBy: function(fn){
             if (!fn || _.typeOf(fn) !== 'function') return {};
 
-            var arr = {}
+            var obj = {}
 
+            // based on underscore groupBy
             this.each(function(value, key){
                 var x = fn.call(this, value, key)
 
@@ -452,7 +454,7 @@
                 else arr[x] = [value]
             });
 
-            return arr
+            return obj
         },
         has: function(key){
             return (_.typeOf(_.attr(this._guid)[key]) !== 'undefined');
@@ -528,6 +530,8 @@
         sortBy: function(fn){
             if (!fn || _.typeOf(fn) !== 'function') return [];
 
+
+            // based on underscore sortBy
             var map = this.map(function(value, key){
                 return {
                     value: value,
@@ -548,7 +552,7 @@
             var arr = []
 
             for (var i in map){
-                var x = map[i], 
+                var x = map[i],
                     obj = _.has(x, 'key') ? { key: x.key, value: x.value } : x.value
 
                 arr.push(obj)
