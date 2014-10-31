@@ -551,6 +551,73 @@ test("remove", function() {
     module.remove();
 });
 
+test("pluck", function() {
+    expect(1);
+
+    var module = new (Stapes.subclass())
+
+    for (var i = 0, x = 4; i < x; i++) module.push({ hex: (~~(Math.random()*(1<<24))).toString(16) })
+
+    ok(module.pluck('hex').length === 4, 'okay')
+});
+
+test("sortBy", function() {
+    expect(1);
+
+    var module = new (Stapes.subclass())
+
+    module.set({
+        'foo' : 1,
+        'bar' : 2,
+        'baz' : 3,
+        'qux' : 4
+    });
+
+    var sort = module.sortBy(function(value, key){
+        return Math.sin(value)
+    });
+
+    ok(sort.length === 4, 'okay');
+});
+
+test("groupBy", function() {
+    expect(1);
+
+    var module = new (Stapes.subclass())
+
+    module.set({
+        'foo' : 'one',
+        'bar' : 'two',
+        'baz' : 'three',
+        'qux' : 'four'
+    });
+
+    var group = module.groupBy(function(value, key){
+        return value.length
+    });
+
+    ok(group[3].length === 2, 'okay');
+});
+
+test("countBy", function() {
+    expect(1);
+
+    var module = new (Stapes.subclass())
+
+    module.set({
+        'foo' : 1,
+        'bar' : 2,
+        'baz' : 4,
+        'qux' : 6
+    });
+
+    var count = module.countBy(function(value, key){
+        return value % 2 == 0 ? 'even': 'odd';
+    });
+
+    ok(count.even === 3, 'okay');
+});
+
 // Not really a bug, but leave this in for documentation purposes
 // Issue #40
 test("private variables", function() {
