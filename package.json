@@ -18,6 +18,7 @@
         "test": "make test"
     },
     "devDependencies": {
-        "browserstack-runner": "*"
+        "browserstack-runner": "*",
+        "qunit-cli": "*"
     }
 }
