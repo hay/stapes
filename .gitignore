@@ -4,3 +4,4 @@ node_modules
 sauce_connect.log
 BrowserStackLocal
 .vagrant
+browserstack-run.pid
