@@ -1,2 +1,6 @@
 .DS_Store
 tmp
+node_modules
+sauce_connect.log
+BrowserStackLocal
+.vagrant
