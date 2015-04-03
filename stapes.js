@@ -153,6 +153,14 @@
             constructor.prototype = _.create(superclass);
             constructor.prototype.constructor = constructor;
 
+            // copy static methods
+            var exclude = ['extend', 'parent', 'proto', 'subclass'];
+            for (var key in props.superclass) {
+                if (exclude.indexOf(key) == -1) {
+                    constructor[key] = props.superclass[key];
+                }
+            }
+
             _.extend(constructor, {
                 extend : function() {
                     return _.extendThis.apply(this, arguments);

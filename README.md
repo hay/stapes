@@ -4,3 +4,10 @@
 Full documentation available here:
 
 [http://hay.github.io/stapes/](http://hay.github.io/stapes/)
+
+### Testing
+
+```
+npm install qunit-cli
+make test
+```

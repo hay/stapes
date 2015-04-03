@@ -32,20 +32,20 @@ test("subclassing", function() {
     var c = new ClassOnly();
     ok( !('get' in c), "No get in classOnly classes");
     ok( 'subclass' in ClassOnly, "subclass in classOnly classes");
-});
 
-test('extend', function() {
-    var Module = Stapes.subclass();
-    var module = new Module();
+    // ensure static methods are copied
+    var ClassA = Stapes.subclass();
+    ClassA.extend({a: 1});
+    
+    var ClassB = ClassA.subclass();
+    ClassB.extend({a: 2, b: 3});
 
-    module.extend({
-        'name' : 'foo',
-        'say' : function() {
-            ok(this.name === 'foo');
-        }
-    });
-
-    module.say();
+    var ClassC = ClassB.subclass();
+    ok(ClassA.a == 1);
+    ok(ClassB.a == 2);
+    ok(ClassB.b == 3);
+    ok(ClassC.a == 2);
+    ok(ClassC.b == 3);
 });
 
 test("change events", function() {
