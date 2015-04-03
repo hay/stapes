@@ -15,7 +15,7 @@
     "engine" : "node >= 0.5.1",
     "main": "./stapes",
     "scripts": {
-        "test": "make test"
+        "test": "make test-browserstack"
     },
     "devDependencies": {
         "browserstack-runner": "*",
