@@ -24,7 +24,7 @@
 
                     <p>
                         <a href="stapes.min.js" class="btn btn-primary btn-lg">
-                            Download Stapes.js 0.8.1
+                            Download Stapes.js 0.9.0
                         </a>
                     </p>
 
@@ -674,6 +674,61 @@ module.sing(); // 'Singing from a cool module!'
                 </article>
 
                 <h3 id="m-data">Data methods</h3>
+                <article id="m-attr">
+                    <h4>attr</h4>
+
+                    <h5><code>module.attr( propName, [options]</code></h5>
+
+                    <p class="alert alert-warning">This method is unsupported on Internet Explorer 8 and lower.</p>
+
+                    <p>The <code>attr</code> method tells Stapes to treat an ordinary object property as a data attribute, allowing you to turn this:</p>
+
+                    <pre>
+module.on('change:name', function() {
+    console.log(module.get('Johnny')); // 'Johnny'
+})
+
+module.set('name', 'Johnny');
+                    </pre>
+
+                    <p>Into this:</p>
+
+                    <pre>
+module.attr('name');
+
+module.on('change:name', function() {
+    console.log(module.name); // 'Johnny'
+});
+
+module.name = 'Johnny';
+                    </pre>
+
+                    <p>Note that you <b>need</b> to call the <code>attr</code> method before you can use this functionality.</p>
+
+                    <p>The <code>attr</code> method has a second optional argument that expects an object with <code>beforeGet</code> and/or <code>beforeSet</code> methods. You can use this to define functions that handle on the attribute value before it is get or set. This is useful for many situations, such as data validation:</p>
+
+                    <pre>
+module.attr('instrument', {
+    beforeGet : function(instrument) {
+        return "you're playing " + instrument;
+    },
+
+    beforeSet : function(instrument) {
+        if (instrument === 'guitar') {
+            return instrument;
+        } else {
+            throw new Exception("Invalid instrument");
+        }
+    }
+});
+
+module.instrument = 'guitar';
+console.log(module.instrument); // 'you're playing guitar'
+
+module.instrument = 'piano'; // Exception: invalid instrument
+                    </pre>
+                </article>
+
                 <article id="m-each">
                     <h4>each</h4>
 
@@ -1215,6 +1270,10 @@ var module = new Module('Emmylou');
 
                 <h4 id="m-history">History</h4>
                 <ul>
+                    <li>0.9.0</li>
+                    <ul>
+                        <li><small>Feature</small> The <a href="#m-attr"><code>attr</code></a> method allows you to use 'magic' getters and setters instead of the regular <code>get</code> and <code>set</code> methods.</li>
+                    </ul>
                     <li>0.8.1</li>
                     <ul>
                         <li><small>Feature</small> <a href="#m-get"><code>get</code></a> now accepts multiple arguments so you can use it like Underscore's <code>pick</code> (Issue <a href="https://github.com/hay/stapes/pull/38">#38</a>). Thanks for the suggestion <a href="https://github.com/santervo">Santervo!</a></li>

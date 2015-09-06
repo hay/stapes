@@ -16,7 +16,7 @@
 ;(function() {
     'use strict';
 
-    var VERSION = "0.8.1";
+    var VERSION = "0.9-pre";
 
     // Global counter for all events in all modules (including mixed in objects)
     var guid = 1;
@@ -421,6 +421,32 @@
     };
 
     _.Module.prototype = {
+        // Uses Object.defineProperty to make 'magic' getters and setters,
+        // as well as add the beforeGet / beforeSet functionality
+        attr : function(attrName, conf) {
+            conf = conf || {};
+
+            Object.defineProperty(this, attrName, {
+                get : function() {
+                    var val = this.get(attrName);
+
+                    if (conf.beforeGet) {
+                        val = conf.beforeGet(val);
+                    }
+
+                    return val;
+                },
+
+                set : function(val) {
+                    if (conf.beforeSet) {
+                        val = conf.beforeSet(val);
+                    }
+
+                    return this.set(attrName, val);
+                }
+            });
+        },
+
         each : function(fn, ctx) {
             var attr = _.attr(this._guid);
             for (var key in attr) {

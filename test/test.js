@@ -572,3 +572,40 @@ test("private variables", function() {
     ok( a.getVal() === 'a');
     ok( b.getVal() === 'b');
 });
+
+test("magic attributes", function() {
+    expect(4);
+
+    var Module = Stapes.subclass({
+        constructor : function() {
+            this.attr("foo");
+            this.attr("bar", {
+                beforeGet : function(val) {
+                    return 'beforeGet ' + val;
+                },
+
+                beforeSet : function(val) {
+                    return 'beforeSet ' + val;
+                }
+            });
+        }
+    });
+
+    var m = new Module();
+
+    m.on({
+        'change:foo' : function() {
+            ok(true, "magic attribute throw change event");
+        },
+
+        'change:bar' : function(val) {
+            ok(true, "magic attribute throw change event");
+        }
+    });
+
+    m.foo = 'foo';
+    ok(m.foo === 'foo', 'get/set works');
+
+    m.bar = 'bar';
+    ok(m.bar === 'beforeGet beforeSet bar', "beforeGet/Set work");
+});
