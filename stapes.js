@@ -326,7 +326,7 @@
             var mutateData = {
                 "key" : key,
                 "newValue" : value,
-                "oldValue" : oldValue || null
+                "oldValue" : (typeof oldValue !== "undefined") ? oldValue : null
             };
 
             this.emit('mutate', mutateData);
@@ -342,7 +342,11 @@
         },
 
         trim : function(str) {
-            return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+            if ('trim' in String.prototype) {
+                return str.trim();
+            } else {
+                return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+            }
         },
 
         typeOf : function(val) {

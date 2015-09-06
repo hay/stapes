@@ -49,7 +49,7 @@ test('extend', function() {
 });
 
 test("change events", function() {
-    expect(12);
+    expect(14);
 
     var module = new EmptyModule();
 
@@ -125,9 +125,18 @@ test("change events", function() {
     module.set({
         screamingobject : true
     }); /* but we do want them for non-silent objects */
+
+    // Testcase for bug #55
+    var module2 = new EmptyModule();
+
+    module2.on('mutate', function(val) {
+        ok(val.oldValue === false || val.oldValue === 0, "falsy oldValues should return proper value (#55)");
+    });
+
+    module2.set('falsevalue', false, true);
+    module2.set('falsevalue', 0);
+    module2.set('falsevalue', true);
 });
-
-
 
 test("update", function() {
     var module = new EmptyModule();
