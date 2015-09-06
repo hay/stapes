@@ -4,9 +4,13 @@ window.App = (function() {
             this.$toc = $("#toc");
             this.$content = $("#content");
             this.createToc();
-            this.addAffix();
             this.addSyntaxHighlighting();
-            this.addScrollspy();
+
+            if ($(window).width() > 960) {
+                this.addAffix();
+                this.addScrollspy();
+                $("#toc").parent().addClass('pull-right');
+            }
         },
 
         addAffix : function() {
