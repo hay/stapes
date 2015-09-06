@@ -583,16 +583,12 @@ test("private variables", function() {
 });
 
 test("magic attributes", function() {
-    expect(4);
+    expect(6);
 
     var Module = Stapes.subclass({
         constructor : function() {
             this.attr("foo");
             this.attr("bar", {
-                beforeGet : function(val) {
-                    return 'beforeGet ' + val;
-                },
-
                 beforeSet : function(val) {
                     return 'beforeSet ' + val;
                 }
@@ -609,6 +605,10 @@ test("magic attributes", function() {
 
         'change:bar' : function(val) {
             ok(true, "magic attribute throw change event");
+        },
+
+        'change:baz1 change:baz2' : function() {
+            ok(true, "Check for properties changed with extend()")
         }
     });
 
@@ -616,5 +616,14 @@ test("magic attributes", function() {
     ok(m.foo === 'foo', 'get/set works');
 
     m.bar = 'bar';
-    ok(m.bar === 'beforeGet beforeSet bar', "beforeGet/Set work");
+    console.log(m.bar);
+    ok(m.bar === 'beforeSet bar', "beforeSet work");
+
+    m.attr('baz1');
+    m.attr('baz2');
+
+    m.extend({
+        baz1 : true,
+        baz2 : true
+    });
 });

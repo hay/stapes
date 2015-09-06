@@ -59,7 +59,7 @@
             <div class="col-md-4">
                 <h3>Light</h3>
 
-                <p>Because of its size (just <strong>2kb</strong> minified and gzipped) Stapes is ideal to use in a mobile site. At just around 600 lines of codes, it's easy to debug and see how it works under the hood.</p>
+                <p>Because of its size (just <strong>2,5kb</strong> minified and gzipped) Stapes is ideal to use in a mobile site. At just around 600 lines of codes, it's easy to debug and see how it works under the hood.</p>
             </div>
         </div>
 
@@ -677,7 +677,7 @@ module.sing(); // 'Singing from a cool module!'
                 <article id="m-attr">
                     <h4>attr</h4>
 
-                    <h5><code>module.attr( propName, [options]</code></h5>
+                    <h5><code>module.attr( attrName, [options]</code></h5>
 
                     <p class="alert alert-warning">This method is unsupported on Internet Explorer 8 and lower.</p>
 
@@ -705,14 +705,10 @@ module.name = 'Johnny';
 
                     <p>Note that you <b>need</b> to call the <code>attr</code> method before you can use this functionality.</p>
 
-                    <p>The <code>attr</code> method has a second optional argument that expects an object with <code>beforeGet</code> and/or <code>beforeSet</code> methods. You can use this to define functions that handle on the attribute value before it is get or set. This is useful for many situations, such as data validation:</p>
+                    <p>The <code>attr</code> method has a second optional argument that expects an object with a <code>beforeSet</code> method. You can use this to define a function that handle on the attribute value before it is set. This is useful for many situations, such as data validation:</p>
 
                     <pre>
 module.attr('instrument', {
-    beforeGet : function(instrument) {
-        return "you're playing " + instrument;
-    },
-
     beforeSet : function(instrument) {
         if (instrument === 'guitar') {
             return instrument;
@@ -723,9 +719,24 @@ module.attr('instrument', {
 });
 
 module.instrument = 'guitar';
-console.log(module.instrument); // 'you're playing guitar'
+console.log(module.instrument); // 'guitar'
 
 module.instrument = 'piano'; // Exception: invalid instrument
+                    </pre>
+
+                    <p>Note that it's perfectly valid to use <a href="#m-extend"><code>extend</code></a> to change multiple attributes at once:</p>
+
+                    <pre>
+module.extend({
+    'instrument' : 'guitar',
+    'name' : 'Johnny'
+});
+                    </pre>
+
+                    <p>To add more than one attribute in one go, you can use Javascript's <code>forEach</code> method with an array:</p>
+
+                    <pre>
+['instrument', 'name', 'song'].forEach(module.attr, this);
                     </pre>
                 </article>
 

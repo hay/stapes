@@ -426,19 +426,13 @@
 
     _.Module.prototype = {
         // Uses Object.defineProperty to make 'magic' getters and setters,
-        // as well as add the beforeGet / beforeSet functionality
+        // as well as add the beforeSet functionality
         attr : function(attrName, conf) {
             conf = conf || {};
 
             Object.defineProperty(this, attrName, {
                 get : function() {
-                    var val = this.get(attrName);
-
-                    if (conf.beforeGet) {
-                        val = conf.beforeGet(val);
-                    }
-
-                    return val;
+                    return this.get(attrName);
                 },
 
                 set : function(val) {
