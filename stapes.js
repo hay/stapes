@@ -326,7 +326,7 @@
             var mutateData = {
                 "key" : key,
                 "newValue" : value,
-                "oldValue" : oldValue || null
+                "oldValue" : (typeof oldValue !== 'undefined') ? oldValue : null
             };
 
             this.emit('mutate', mutateData);
