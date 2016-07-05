@@ -1,6 +1,5 @@
 {
     "name": "stapes",
-    "version": "0.8.1",
     "main": "./stapes.js",
     "keywords": [
         "mvc", "framework", "lightweight", "base", "events", "class", "data",
