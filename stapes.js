@@ -130,7 +130,7 @@
 
             // Objects always have a constructor, so we need to be sure this is
             // a property instead of something from the prototype
-            var realConstructor = props.hasOwnProperty('constructor') ? props.constructor : function(){};
+            var realConstructor = props.hasOwnProperty('constructor') ? props.constructor : (typeof props == 'function' ? props : function(){});
 
             function constructor() {
                 // Be kind to people forgetting new
@@ -177,6 +177,13 @@
             for (var key in props) {
                 if (key !== 'constructor' && key !== 'superclass') {
                     constructor.prototype[key] = props[key];
+                }
+            }
+
+            // Copy all prototypes functions (compatibility with Coffee)
+            for (var key in props.prototype) {
+                if (key !== 'constructor' && key !== 'superclass' && key !== 'on' && key !== 'emit') {
+                    constructor.prototype[key] = props.prototype[key];
                 }
             }
 
