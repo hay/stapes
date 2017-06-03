@@ -15,6 +15,8 @@
 // Stapes.js : http://hay.github.com/stapes
 ;(function() {
     'use strict';
+    
+    var _guidLut = []; for (var i=0; i<256; i++) { _guidLut[i] = (i<16?'0':'')+(i).toString(16); }    
 
     var VERSION = "1.0.0";
 
@@ -227,12 +229,22 @@
             return _.extend.apply(this, args);
         },
 
-        // from http://stackoverflow.com/a/2117523/152809
+        // from http://stackoverflow.com/a/2117523/152809 e7 chosen
         makeUuid : function() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-                return v.toString(16);
-            });
+            // return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            //     var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            //     return v.toString(16);
+            // });
+            
+            var d0 = Math.random()*0xffffffff|0;
+            var d1 = Math.random()*0xffffffff|0;
+            var d2 = Math.random()*0xffffffff|0;
+            var d3 = Math.random()*0xffffffff|0;
+            return _guidLut[d0&0xff]+_guidLut[d0>>8&0xff]+_guidLut[d0>>16&0xff]+_guidLut[d0>>24&0xff]+'-'+
+              _guidLut[d1&0xff]+_guidLut[d1>>8&0xff]+'-'+_guidLut[d1>>16&0x0f|0x40]+_guidLut[d1>>24&0xff]+'-'+
+              _guidLut[d2&0x3f|0x80]+_guidLut[d2>>8&0xff]+'-'+_guidLut[d2>>16&0xff]+_guidLut[d2>>24&0xff]+
+              _guidLut[d3&0xff]+_guidLut[d3>>8&0xff]+_guidLut[d3>>16&0xff]+_guidLut[d3>>24&0xff];
+            
         },
 
         removeAttribute : function(keys, silent) {

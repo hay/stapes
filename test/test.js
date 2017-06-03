@@ -572,3 +572,77 @@ test("private variables", function() {
     ok( a.getVal() === 'a');
     ok( b.getVal() === 'b');
 });
+
+test("makeUuid faster", function() {
+
+   // should be random
+   for (var q=0; q<30; q++ ) {
+      ok ( Stapes._.makeUuid() !== Stapes._.makeUuid() );
+   }
+
+   ok ( true === /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i.test(Stapes._.makeUuid()));
+
+   var nums = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+   var count = 10000;
+   var divideby = 2/(32/31); // because pos #14 is always 4
+   for (var i=0;i<count;i++) {
+      var x = Stapes._.makeUuid();
+      // of form 56ee5d88-5a14-4ecc-966c-00bf2fcc7cd6
+      nums[parseInt(x[0], 16)]++;
+      nums[parseInt(x[1], 16)]++;
+      nums[parseInt(x[2], 16)]++;
+      nums[parseInt(x[3], 16)]++;
+      nums[parseInt(x[4], 16)]++; 
+      nums[parseInt(x[5], 16)]++;
+      nums[parseInt(x[6], 16)]++;
+      nums[parseInt(x[7], 16)]++;
+      // - 8
+      nums[parseInt(x[9], 16)]++;
+      nums[parseInt(x[10], 16)]++;
+      nums[parseInt(x[11], 16)]++;
+      nums[parseInt(x[12], 16)]++;
+      // - 13
+      // nums[parseInt(x[14], 16)]++; // always 4
+      nums[parseInt(x[15], 16)]++;
+      nums[parseInt(x[16], 16)]++;
+      nums[parseInt(x[17], 16)]++;
+      // - 18
+      nums[parseInt(x[19], 16)]++;
+      nums[parseInt(x[20], 16)]++;
+      nums[parseInt(x[21], 16)]++;
+      nums[parseInt(x[22], 16)]++;
+      // - 23
+      nums[parseInt(x[24], 16)]++;
+      nums[parseInt(x[25], 16)]++;
+      nums[parseInt(x[26], 16)]++;
+      nums[parseInt(x[27], 16)]++;
+      nums[parseInt(x[28], 16)]++;
+      nums[parseInt(x[29], 16)]++;
+      nums[parseInt(x[30], 16)]++;
+      nums[parseInt(x[31], 16)]++;
+      nums[parseInt(x[32], 16)]++;
+      nums[parseInt(x[33], 16)]++;
+      nums[parseInt(x[34], 16)]++;
+      nums[parseInt(x[35], 16)]++;
+   }
+   var numsc = nums.map(function(n){
+      return n / count / divideby;
+   });
+   
+   // hex 14 is always 4 V4 guid, and hex 19 is always between 8 and 11
+   // from 0 - 7 sb between 0.94 and 1.0
+   // from 8-12 sb between 1.00 and 1.10
+   // from 13-17 between 0.94 and 1.0
+   
+   for (var k=0; k<8; k++) {
+      ok ( numsc[k] >= 0.90 && numsc[k] <= 1.0 );
+   }
+   for (var l=8; l<=11; l++) {
+      ok ( numsc[l] >= 1.0 && numsc[l] <= 1.15);
+   }
+   for (var q=12; q<=15; q++) {
+      ok ( numsc[q] >= 0.90 && numsc[q] <= 1.0 );
+   }
+
+});
+
