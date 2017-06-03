@@ -13,5 +13,12 @@
         "url" : "http://github.com/hay/stapes.git"
     },
     "engine" : "node >= 0.5.1",
-    "main": "./stapes"
+    "main": "./stapes",
+    "scripts": {
+        "test": "make test-browserstack"
+    },
+    "devDependencies": {
+        "browserstack-runner": "*",
+        "qunit-cli": "*"
+    }
 }

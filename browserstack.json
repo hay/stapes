@@ -1,0 +1,27 @@
+{
+    "test_framework" : "qunit",
+    "test_path": "test/index.html",
+    "browsers": [
+        "chrome_previous",
+        "chrome_latest",
+        "firefox_previous",
+        "firefox_latest",
+        "ie_9",
+        "ie_10",
+        "ie_11",
+        "opera_previous",
+        "opera_latest",
+        "safari_previous",
+        "safari_latest",
+        {
+          "os": "android",
+          "os_version": "4.0",
+          "device": "Samsung Galaxy Nexus"
+        },
+        {
+          "os": "ios",
+          "os_version": "7.0",
+          "device": "iPhone 5S"
+        }
+    ]
+}
