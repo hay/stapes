@@ -49,3 +49,13 @@ small {
     color: #999;
     letter-spacing: 1px;
 }
+
+.notice {
+    background: #f99;
+    text-align: center;
+    font-size: 18px;
+    padding: 10px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    line-height: 30px;
+}
